@@ -1,5 +1,5 @@
 """
-WSGI config for DietStory-routing project.
+WSGI config for dietstory-routing project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 
@@ -11,6 +11,6 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'DietStory-routing.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'dietstory-routing.settings')
 
 application = get_wsgi_application()
