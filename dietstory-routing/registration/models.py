@@ -55,4 +55,5 @@ class Accounts(models.Model):
     fly = models.IntegerField(default=0, validators=[MinValueValidator(0), MaxValueValidator(250)])
 
     class Meta:
+        managed = False
         db_table = 'accounts'
