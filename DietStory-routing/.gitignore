@@ -2,3 +2,4 @@ dietstory-routing/__pycache__
 dietstory-routing/.idea
 .idea
 registration/__pycache__
+registration/migrations/__pycache__
