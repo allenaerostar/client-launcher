@@ -18,7 +18,7 @@ class SignupView(views.APIView):
     def post(self, request, *args, **kwargs):
 
         params = SignupForm(request.data)
-
+        print((params))
         if params.is_valid():
             username = params.cleaned_data.get('username')
             accounts = Accounts.objects.filter(name=username)
