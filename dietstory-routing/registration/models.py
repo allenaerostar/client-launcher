@@ -8,12 +8,15 @@
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 
+
 class ZeroDateTimeField(models.DateTimeField):
     def get_db_prep_value(self, value, connection, prepared=False):
         value = super(ZeroDateTimeField, self).get_db_prep_value(value, connection, prepared)
         if value is None:
             return "0000-00-00 00:00:00"
         return value
+
+    
 class ZeroDateField(models.DateField):
     def get_db_prep_value(self, value, connection, prepared=False):
         value = super(ZeroDateField, self).get_db_prep_value(value, connection, prepared)
