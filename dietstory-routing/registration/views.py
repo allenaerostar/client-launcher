@@ -26,11 +26,17 @@ class SignupView(views.APIView):
             accounts_filtered_by_email = Accounts.objects.filter(email=email)
 
             if not accounts_filtered_by_username and not accounts_filtered_by_email:
-                password = params.cleaned_data.get('password1')
-                birthday = params.cleaned_data.get('birthday')
-                account = Accounts(name=username, password=password, email=email, birthday=birthday)
-                account.save()
-                return HttpResponse("Successful creation.", status=201)
+                try:
+                    password = params.cleaned_data.get('password1')
+                    birthday = params.cleaned_data.get('birthday')
+                    account = Accounts(name=username, password=password, email=email, birthday=birthday)
+                    account.save()
+
+                    return HttpResponse("Successful creation.", status=201)
+
+                except IOError:
+                    return HttpResponse("Account creation was not successful.", status=500)
+
             else:
                 return HttpResponse("That account already exists.", status=204)
         else:
