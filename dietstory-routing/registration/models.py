@@ -51,7 +51,7 @@ class Accounts(models.Model):
     webadmin = models.IntegerField(default=0, blank=True, null=True)
     nick = models.CharField(max_length=20, blank=True, null=True)
     mute = models.IntegerField(default=0, blank=True, null=True)
-    email = models.CharField(max_length=45, blank=True, null=True)
+    email = models.CharField(unique=True, max_length=45, blank=True, null=True)
     ip = models.TextField(blank=True, null=True)
     rewardpoints = models.IntegerField(default=0)
     hwid = models.CharField(default='', max_length=12)

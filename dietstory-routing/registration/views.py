@@ -18,18 +18,20 @@ class SignupView(views.APIView):
     def post(self, request, *args, **kwargs):
 
         params = SignupForm(request.data)
-        print((params))
+
         if params.is_valid():
             username = params.cleaned_data.get('username')
-            accounts = Accounts.objects.filter(name=username)
-            if not accounts:
+            email = params.cleaned_data.get('email')
+            accounts_filtered_by_username = Accounts.objects.filter(name=username)
+            accounts_filtered_by_email = Accounts.objects.filter(email=email)
+
+            if not accounts_filtered_by_username and not accounts_filtered_by_email:
                 password = params.cleaned_data.get('password1')
-                email = params.cleaned_data.get('email')
                 birthday = params.cleaned_data.get('birthday')
                 account = Accounts(name=username, password=password, email=email, birthday=birthday)
                 account.save()
                 return HttpResponse("Successful creation.", status=201)
             else:
-                return HttpResponse("That account name already exists.", status=204)
+                return HttpResponse("That account already exists.", status=204)
         else:
             return HttpResponse("Inputs have invalid format.", status=400)
