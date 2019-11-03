@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 
-function Registration() {
+const Registration = () => {
   return (
-    <React.Fragment>
+    <Fragment>
       <h1>Registration Form</h1>
-    </React.Fragment>
+    </Fragment>
   );
 }
 

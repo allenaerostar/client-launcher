@@ -1,14 +1,13 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import { Link } from 'react-router-dom';
 
-function Root() {
+const Root = () => {
 
-  var logged_in = false;
-
+  let logged_in = false;
   // IF NOT LOGGED IN THEN DISPLAY LOGIN PAGE
   if(!logged_in){
     return (
-      <React.Fragment>
+      <Fragment>
         <h1>Login Here</h1>
         <form>
           <input type="text" name="username" placeholder="Username"></input>
@@ -17,8 +16,8 @@ function Root() {
           <br />
           <button>Log In</button>
         </form>
-        <p>First time? <Link to="/registrations">Register Here!</Link></p>
-      </React.Fragment>
+        <p>First time? <Link to="/registration">Register Here!</Link></p>
+      </Fragment>
     )
   }
   else{
