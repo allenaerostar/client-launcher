@@ -3,3 +3,4 @@ dietstory-routing/.idea
 .idea
 registration/__pycache__
 registration/migrations/__pycache__
+dietstory_secret_config.json
