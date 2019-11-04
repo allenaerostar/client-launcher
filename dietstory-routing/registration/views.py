@@ -38,6 +38,7 @@ class SignupView(views.APIView):
                         send_verification_email(account.email, account_activation_token.make_token(account))
                     except IOError:
                         print("Failed to send email.")
+
                     return HttpResponse("Successful creation.", status=201)
 
                 except IOError:
