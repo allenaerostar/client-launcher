@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Route} from 'react-router-dom';
 import Root from './components/Root/Root';
 import Registration from './components/Registration/Registration';
 
-import './App.css';
+import './App.scss';
 
 const ipc = window.require('electron').ipcRenderer;
 
