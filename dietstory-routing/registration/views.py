@@ -5,7 +5,7 @@ from rest_framework import views
 from rest_framework import permissions
 from .models import Accounts
 from .validate_forms import SignupForm
-
+from .email import send_email
 
 # Create your views here.
 class SignupView(views.APIView):
@@ -32,6 +32,7 @@ class SignupView(views.APIView):
                     account = Accounts(name=username, password=password, email=email, birthday=birthday)
                     account.save()
 
+                    send_email(account.email, 100)
                     return HttpResponse("Successful creation.", status=201)
 
                 except IOError:

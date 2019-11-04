@@ -120,3 +120,10 @@ USE_TZ = False
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
+
+EMAIL_BACKEND = secret_config['EMAIL_BACKEND']
+EMAIL_HOST = secret_config['EMAIL_HOST']
+EMAIL_PORT = int(secret_config['EMAIL_PORT'])
+EMAIL_HOST_USER = secret_config['EMAIL_HOST_USER']
+EMAIL_HOST_PASSWORD = secret_config['EMAIL_HOST_PASSWORD']
+EMAIL_USE_TLS = bool(secret_config['EMAIL_USE_TLS'])
