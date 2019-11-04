@@ -25,7 +25,20 @@ python manage.py migrate
 ## Start the Django Server    
 cd client-launcher/dietstory-routing  
 python manage.py runserver [host:port]  
-If no host and port is given, the default of 127.0.0.1:8000 is used.  
+
+If no host and port is given, the default of 127.0.0.1:8000 is used. 
+
+## Using Docker
+Build the docker image specified under `docker/` with the following command:
+```
+docker build -t dietstory-django ./docker/
+```
+
+Run the docker image by mounting the project and exposing port 8000:
+```
+docker run -v $(pwd):/mnt -p 8000:8000 dietstory-django
+```
+> Note: Ensure that you have setup a MySQL database for the Django server to connect to. Modify `settings.py` to ensure correct configurations.
 
 
 
