@@ -25,6 +25,7 @@ python manage.py migrate
 ## Start the Django Server    
 cd client-launcher/dietstory-routing  
 python manage.py runserver [host:port]  
+
 If no host and port is given, the default of 127.0.0.1:8000 is used. 
 
 ## Using Docker
