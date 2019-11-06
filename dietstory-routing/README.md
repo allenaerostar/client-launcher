@@ -28,6 +28,21 @@ python manage.py runserver [host:port]
 
 If no host and port is given, the default of 127.0.0.1:8000 is used. 
 
+## Testing
+Run the testing framework by calling the following command:
+
+```
+python manage.py test [-v <verbosity>]
+```
+> Testing server hotloads in-memory SQLite3 instead of using an actual connection for light-weight testing.
+
+To build a coverage report, run:
+```
+coverage run manage.py test [-v <verbosity>]
+coverage html
+```
+> View the coverage report found under `htmlcov/index.html`
+
 ## Using Docker
 Build the docker image specified under `docker/` with the following command:
 ```
