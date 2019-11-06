@@ -2,7 +2,7 @@
 dietstory_secret_config.json
 
 # Pycache
-__pycache
+__pycache__
 
 # MACOS cache
 .DS_Store
