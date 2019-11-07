@@ -44,5 +44,3 @@ class VerifyForm(forms.Form):
 class EmailForm(forms.Form):
     email = forms.EmailField(max_length=45, validators=[validate_email])
 
-
-

@@ -6,6 +6,7 @@ from rest_framework import permissions
 from .models import Accounts
 from .validate_forms import *
 from .email import send_verification_email
+
 from .verification import account_activation_token
 
 
@@ -104,6 +105,7 @@ class SendVerificationView(views.APIView):
 
         else:
             return HttpResponse("Inputs have invalid format.", status=400)
+
 
 
 

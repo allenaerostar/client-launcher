@@ -19,6 +19,7 @@ class ZeroDateTimeField(models.DateTimeField):
 
         if value is None:
             return DATE_TIME_FIELD_DEFAULT
+
         return value
 
     
@@ -29,6 +30,7 @@ class ZeroDateField(models.DateField):
 
         if value is None:
             return DATE_FIELD_DEFAULT
+
         return value
 
 
