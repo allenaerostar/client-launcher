@@ -16,7 +16,7 @@ class MinAgeValidator(BaseValidator):
 class SignupForm(forms.Form):
 
     username = forms.CharField(max_length=13, validators=[validate_slug])
-    email = forms.EmailField(validators=[validate_email])
+    email = forms.EmailField(max_length=45, validators=[validate_email])
     password1 = forms.CharField(max_length=128, validators=[validate_slug])
     password2 = forms.CharField(max_length=128, validators=[validate_slug])
     birthday = forms.DateField(input_formats=['%Y-%m-%d'], validators=[MinAgeValidator(0)])
@@ -34,4 +34,10 @@ class SignupForm(forms.Form):
         password2 = cleaned_data.get('password2')
 
         SignupForm.check_equal_passwords(password1, password2)
+
+
+class VerifyForm(forms.Form):
+    email = forms.EmailField(max_length=45, validators=[validate_email])
+    verify_token = forms.CharField(validators=[validate_slug])
+
 

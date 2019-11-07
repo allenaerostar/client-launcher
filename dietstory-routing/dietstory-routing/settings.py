@@ -127,3 +127,4 @@ EMAIL_PORT = int(secret_config['EMAIL_PORT'])
 EMAIL_HOST_USER = secret_config['EMAIL_HOST_USER']
 EMAIL_HOST_PASSWORD = secret_config['EMAIL_HOST_PASSWORD']
 EMAIL_USE_TLS = bool(secret_config['EMAIL_USE_TLS'])
+

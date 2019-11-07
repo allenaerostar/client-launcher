@@ -8,20 +8,31 @@
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 
+dateFieldDefault = "0000-00-00"
+dateTimeFieldDefault = "0000-00-00 00:00:00"
+
 
 class ZeroDateTimeField(models.DateTimeField):
     def get_db_prep_value(self, value, connection, prepared=False):
-        value = super(ZeroDateTimeField, self).get_db_prep_value(value, connection, prepared)
+        if value == dateTimeFieldDefault:
+            pass
+        else:
+            value = super(ZeroDateTimeField, self).get_db_prep_value(value, connection, prepared)
+
         if value is None:
-            return "0000-00-00 00:00:00"
+            return dateTimeFieldDefault
         return value
 
     
 class ZeroDateField(models.DateField):
     def get_db_prep_value(self, value, connection, prepared=False):
-        value = super(ZeroDateField, self).get_db_prep_value(value, connection, prepared)
+        if value == dateFieldDefault:
+            pass
+        else:
+            value = super(ZeroDateField, self).get_db_prep_value(value, connection, prepared)
+
         if value is None:
-            return "0000-00-00"
+            return dateFieldDefault
         return value
 
 
@@ -56,6 +67,7 @@ class Accounts(models.Model):
     rewardpoints = models.IntegerField(default=0)
     hwid = models.CharField(default='', max_length=12)
     fly = models.IntegerField(default=0, validators=[MinValueValidator(0), MaxValueValidator(250)])
+    verified = models.IntegerField(default=0, validators=[MinValueValidator(0), MaxValueValidator(250)])
 
     class Meta:
         managed = False
