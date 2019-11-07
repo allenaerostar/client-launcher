@@ -75,6 +75,31 @@ class VerifyView(views.APIView):
             return HttpResponse("Verification code is invalid.", status=400)
 
 
+class SendVerificationView(views.APIView):
+    permission_classes = (permissions.AllowAny,)
+
+    def post(self, request, *args, **kwargs):
+
+        params = EmailForm(request.data)
+
+        if params.is_valid():
+            email = params.cleaned_data.get('email')
+            try:
+                user = Accounts.objects.get(email=email, verified=0)
+            except (TypeError, ValueError, OverflowError, Accounts.DoesNotExist):
+                user = None
+
+            if user:
+                send_email(email, account_activation_token.make_token(user))
+
+            return HttpResponse("Verification code has been resent to the valid email address.", status=200)
+
+        else:
+            return HttpResponse("Inputs have invalid format.", status=400)
+
+
+
+
 
 
 
