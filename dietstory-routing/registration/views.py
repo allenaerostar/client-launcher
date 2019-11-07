@@ -103,11 +103,9 @@ class SendVerificationView(views.APIView):
 
             return HttpResponse("No Email has been sent.", status=400)
 
+
         else:
             return HttpResponse("Inputs have invalid format.", status=400)
-
-
-
 
 
 
