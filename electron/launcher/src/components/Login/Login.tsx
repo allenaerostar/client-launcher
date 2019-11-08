@@ -23,11 +23,12 @@ const Login = props => {
       setPassword(value);   
     }
   }
-  console.log(props);
+
   return (
     <>
       <h1>Login Here</h1>
       <form onSubmit={handleSubmit}>
+        <label htmlFor="username">Username:</label>
         <input
           id="username"
           type="text"
@@ -37,6 +38,7 @@ const Login = props => {
         >
         </input>
         <br />
+        <label htmlFor="password">Password:</label>
         <input
           id="password"
           type="password"
@@ -44,7 +46,6 @@ const Login = props => {
           placeholder="Password"
           onChange={handleChange}
         >
-
         </input>
         <br />
         <button type="submit">Log In</button>
