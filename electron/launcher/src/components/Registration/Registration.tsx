@@ -1,10 +1,11 @@
 import React from 'react';
+import { connect } from 'react-redux';
 
 const Registration = () => {
   return (
     <>
+      <h1>Registration Form</h1>
       <form>
-        <h1>Registration Form</h1>
         <label>Username: 
           <input type="text" name="username" placeholder="Username"></input>
         </label>
