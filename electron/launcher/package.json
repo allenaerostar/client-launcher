@@ -19,8 +19,10 @@
     "node-sass": "^4.13.0",
     "react": "^16.11.0",
     "react-dom": "^16.11.0",
+    "react-redux": "^7.1.1",
     "react-router-dom": "^5.1.2",
     "react-scripts": "3.2.0",
+    "redux": "^4.0.4",
     "request": "^2.88.0",
     "request-promise": "^4.2.5",
     "typescript": "3.6.4",
@@ -50,5 +52,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "redux-devtools": "^3.5.0"
   }
 }
