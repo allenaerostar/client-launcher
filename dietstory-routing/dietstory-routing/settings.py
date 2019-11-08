@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 
 import os
 import json
+import sys
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -81,7 +82,9 @@ WSGI_APPLICATION = 'dietstory-routing.wsgi.application'
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
 DATABASES = secret_config['DATABASES']
-
+# Swap for test db if running in test
+if 'test' in sys.argv:
+    DATABASES = secret_config['TEST_DATABASES']
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
@@ -121,10 +124,15 @@ USE_TZ = False
 
 STATIC_URL = '/static/'
 
+# Email account for django to send emails
 EMAIL_BACKEND = secret_config['EMAIL_BACKEND']
 EMAIL_HOST = secret_config['EMAIL_HOST']
 EMAIL_PORT = int(secret_config['EMAIL_PORT'])
 EMAIL_HOST_USER = secret_config['EMAIL_HOST_USER']
 EMAIL_HOST_PASSWORD = secret_config['EMAIL_HOST_PASSWORD']
 EMAIL_USE_TLS = bool(secret_config['EMAIL_USE_TLS'])
+
+
+# Set Django's test runner to the custom class UnManagedModelTestRunner
+TEST_RUNNER = 'dietstory-routing.runners.UnManagedModelTestRunner'
 

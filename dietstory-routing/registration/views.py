@@ -91,8 +91,9 @@ class SendVerificationView(views.APIView):
 
             if user:
                 send_email(email, account_activation_token.make_token(user))
+                return HttpResponse("Verification code has been resent to the valid email address.", status=200)
 
-            return HttpResponse("Verification code has been resent to the valid email address.", status=200)
+            return HttpResponse("No Email has been sent.", status=400)
 
         else:
             return HttpResponse("Inputs have invalid format.", status=400)
