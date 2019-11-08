@@ -29,6 +29,16 @@ python manage.py runserver [host:port]
 If no host and port is given, the default of 127.0.0.1:8000 is used. 
 
 ## Testing
+Add to the secret_config, a new in-memory testing database entry:
+```
+"TEST_DATABASES": {
+	"default": {
+		"ENGINE": "django.db.backends.sqlite3",
+    	"NAME": "dietstory"
+	}
+}
+```
+
 Run the testing framework by calling the following command:
 
 ```
@@ -41,7 +51,7 @@ To build a coverage report, run:
 coverage run manage.py test [-v <verbosity>]
 coverage html
 ```
-> View the coverage report found under `htmlcov/index.html`
+> View the coverage report found under `htmlcov/index.html`. You can install coverage on pip: `pip install coverage`
 
 ## Using Docker
 Build the docker image specified under `docker/` with the following command:
