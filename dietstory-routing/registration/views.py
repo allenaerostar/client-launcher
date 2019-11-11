@@ -1,4 +1,6 @@
-from django.http import HttpResponse
+from django.http import JsonResponse
+from django.shortcuts import render
+from django.contrib.auth import authenticate, login, logout
 from django.utils.decorators import method_decorator
 from django.views.decorators.debug import sensitive_post_parameters
 from rest_framework import views
@@ -6,8 +8,8 @@ from rest_framework import permissions
 from .models import Accounts
 from .validate_forms import *
 from .email import send_verification_email
-
 from .verification import account_activation_token
+from .serializers import AccountSerializer
 
 
 # This view allows user to signup for an dietstory account.
@@ -15,7 +17,7 @@ class SignupView(views.APIView):
     permission_classes = (permissions.AllowAny,)
 
     def get(self, request, *args, **kwargs):
-        return HttpResponse("Welcome to signup page. Please enter username, email, password, and birthday.", status=200)
+        return JsonResponse({'message': "Welcome to signup page. Please enter username, email, password, and birthday."}, status=200)
 
     # @method_decorator(sensitive_post_parameters('password'))
     def post(self, request, *args, **kwargs):
@@ -40,15 +42,15 @@ class SignupView(views.APIView):
                     except IOError:
                         print("Failed to send email.")
 
-                    return HttpResponse("Successful creation.", status=201)
+                    return JsonResponse({'message': "Successful creation."}, status=201)
 
                 except IOError:
-                    return HttpResponse("Account creation was not successful.", status=500)
+                    return JsonResponse({'message': "Account creation was not successful."}, status=500)
 
             else:
-                return HttpResponse("That account already exists.", status=204)
+                return JsonResponse({'message': "That account already exists."}, status=204)
         else:
-            return HttpResponse("Inputs have invalid format.", status=400)
+            return JsonResponse({'message': "Inputs have invalid format."}, status=400)
 
 
 # This view verifies token give by user to verify their dietstory account.
@@ -59,7 +61,7 @@ class VerifyView(views.APIView):
         params = VerifyForm(request.data)
 
         if not params.is_valid():
-            return HttpResponse("Inputs have invalid format.", status=400)
+            return JsonResponse({'message': "Inputs have invalid format."}, status=400)
 
         email = params.cleaned_data.get('email')
         verify_token = params.cleaned_data.get('verify_token')
@@ -73,11 +75,12 @@ class VerifyView(views.APIView):
             try:
                 user.verified = 1
                 user.save()
-                return HttpResponse("Your account has been verified.", status=200)
+
+                return JsonResponse({'message': "Your account has been verified."}, status=200)
             except IOError:
-                return HttpResponse("Account verification was not successful.", status=500)
+                return JsonResponse({'message': "Account verification was not successful."}, status=500)
         else:
-            return HttpResponse("Verification code is invalid.", status=400)
+            return JsonResponse({'message': "Verification code is invalid."}, status=400)
 
 
 class SendVerificationView(views.APIView):
@@ -97,15 +100,44 @@ class SendVerificationView(views.APIView):
             if user:
                 try:
                     send_verification_email(email, account_activation_token.make_token(user))
-                    return HttpResponse("Verification code has been resent to the valid email address.", status=200)
+                    return JsonResponse({'message': "Verification code has been resent to the valid email address."},
+                                        status=200)
                 except IOError:
-                    return HttpResponse("Failed to send confirmation email.", status=500)
+                    return JsonResponse({'message': "Failed to send confirmation email."}, status=500)
 
-            return HttpResponse("No Email has been sent.", status=400)
-
+            return JsonResponse({'message': "No Email has been sent."}, status=400)
 
         else:
-            return HttpResponse("Inputs have invalid format.", status=400)
+            return JsonResponse({'message': "Inputs have invalid format."}, status=400)
+
+
+class LoginView(views.APIView):
+    permission_classes = (permissions.AllowAny,)
+
+    def post(self, request, *args, **kwargs):
+
+        params = LoginForm(request.data)
+        if params.is_valid():
+            username,password = params.cleaned_data.get('username'), params.cleaned_data.get('password')
+            account = authenticate(username=username, password=password)
+            if account is not None:
+                login(request, account)
+                return JsonResponse(AccountSerializer(account).data, status=201)
+            else:
+                return JsonResponse({'message': "Failed to login."}, status=401)
+        else:
+            return JsonResponse({'message': "Inputs have invalid format."}, status=400)
+
+
+class LogoutView(views.APIView):
+    permissions_classes = (permissions.AllowAny,)
+
+    def post(self, request, *args, **kwargs):
+        logout(request)
+        return JsonResponse({'message': "Successfully logged out."}, status=200)
+
+
+
 
 
 
