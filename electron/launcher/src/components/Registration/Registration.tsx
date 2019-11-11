@@ -34,10 +34,6 @@ const Registration = props => {
 
   const formFields = [
     {
-      name: 'email',
-      type: 'email'
-    },
-    {
       name: 'username',
       label: 'Username',
       type: 'text'
@@ -123,13 +119,32 @@ const Registration = props => {
             </React.Fragment>
           ))
         }
+        {/* <label htmlFor="username">Username:</label>
+        <input
+          id="username"
+          type="text"
+          name="username"
+          placeholder="Username">  
+        </input>
+        <label htmlFor="password">Password:</label>
+        <input
+          id="password"
+          type="text"
+          name="password"
+          placeholder="Password">
+        </input>
+        <label htmlFor="email">Email:</label>
+        <input
+          id="email"
+          type="text"
+          name="email"
+          placeholder="email">
+        </input> */}
         <button type="submit">Register</button>
       </form>
     </>
   );
 }
-
-// All of redux store state as argument
 const mapStateToProps = (state) => {
   return state;
 }
