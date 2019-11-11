@@ -34,6 +34,10 @@ const Registration = props => {
 
   const formFields = [
     {
+      name: 'email',
+      type: 'email'
+    },
+    {
       name: 'username',
       label: 'Username',
       type: 'text'
@@ -124,6 +128,8 @@ const Registration = props => {
     </>
   );
 }
+
+// All of redux store state as argument
 const mapStateToProps = (state) => {
   return state;
 }

@@ -36,6 +36,7 @@ const login = (cred) => {
     });
   }
 }
+
 const logout = () => {
   return {
     type: 'LOGOUT',
@@ -86,7 +87,7 @@ const verifyEmail = (postData) => {
     });
   }
 }
-
+  
 export const userActions = {
   login,
   logout,
