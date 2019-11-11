@@ -1,19 +1,15 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import { userActions } from '../../_actions';
 
 const Registration = props => {
-  const [inputs, setInputs] = useState({
-    'email': '',
-    'username': '',
-    'password': ''
-  });
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    props.register();
+  }
 
   const formFields = [
-    {
-      name: 'email',
-      type: 'email'
-    },
     {
       name: 'username',
       type: 'text'
@@ -21,48 +17,66 @@ const Registration = props => {
     {
       name: 'password',
       type: 'password'
+    },
+    {
+      name: 'email',
+      type: 'email'
     }
   ];
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    props.register(inputs);
-  }
-
-  const handleChange = (e) => {
-    const name = e.target.name;
-    const value = e.target.value;
-    setInputs(inputs => ({...inputs, [name]: value}));
-  }
+  // function for futurecases, handling fast input changes
+  // const handleChange = (e) => {
+  //   const name = e.target.name;
+  //   const value = e.target.value;
+  //   if (name === 'username') {
+  //     setUsername(value);
+  //   } else if (name === 'password') {
+  //     setPassword(value);
+  //   }
+  // }
 
   return (
     <>
       <h1>Registration Form</h1>
       <form onSubmit={handleSubmit}>
         {
-          formFields.map( (input,i) => (
-            <React.Fragment key={i}>
+          formFields.map( input => (
+            <>
               <label htmlFor={input.name}>{input.name}:</label>    
               <input
                 id={input.name}
                 type={input.type}
                 name={input.name}
-                placeholder={input.name}
-                onChange={handleChange}
-                value={inputs[input.name]}
-                required
-              >
+                placeholder={input.name}>
               </input>
-            </React.Fragment>
+            </>
           ))
         }
+        {/* <label htmlFor="username">Username:</label>
+        <input
+          id="username"
+          type="text"
+          name="username"
+          placeholder="Username">  
+        </input>
+        <label htmlFor="password">Password:</label>
+        <input
+          id="password"
+          type="text"
+          name="password"
+          placeholder="Password">
+        </input>
+        <label htmlFor="email">Email:</label>
+        <input
+          id="email"
+          type="text"
+          name="email"
+          placeholder="email">
+        </input> */}
         <button type="submit">Register</button>
       </form>
     </>
   );
 }
-
-// All of redux store state as argument
 const mapStateToProps = (state) => {
   return state;
 }

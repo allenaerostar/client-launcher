@@ -1,17 +1,21 @@
-const INITIAL_STATE = {
-  isAuthenticated: false,
-}
+// const INITIAL_STATE = {
+//   isAuthenticated: false,
+// }
 
 // Currently not using our payload to make changes to state
-export default (state = INITIAL_STATE, action) => {
+export default (isAuthenticated = false, action) => {
   switch(action.type) {
     case 'LOGIN':
-      return { ...state, isAuthenticated: true };
+      return isAuthenticated = true;
+      // return { ...state, isAuthenticated: true };
     case 'LOGOUT':
-      return { ...state, isAuthenticated: false };
+      return isAuthenticated = false;
+      // return { ...state, isAuthenticated: false };
     case 'REGISTER':
-      return { ...state, isAuthenticated: false };
+      return isAuthenticated = false;
+      // return { ...state, isAuthenticated: true };
     default:
-      return state;
+      // return state;
+      return isAuthenticated;
   }
 }

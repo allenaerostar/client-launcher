@@ -34,8 +34,7 @@ const App = props => {
 }
 
 const mapStateToProps = (state) => {
-  const { isAuthenticated } = state;
-  return { isAuthenticated };
+  return state;
 }
 
 export default connect(mapStateToProps)(App);
