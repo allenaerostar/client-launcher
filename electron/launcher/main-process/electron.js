@@ -15,14 +15,12 @@ function createWindow() {
         height: 600,
         minWidth:1000,
         minHeight: 600,
-        show: false,
         webPreferences: {
             nodeIntegration: true
         }
     });
     mainWindow.loadURL(isDev? "http://localhost:3000": `file://${path.join(__dirname, "../build/index.html")}`);
     mainWindow.on("closed", () => (mainWindow = null));
-    mainWindow.on("ready-to-show", () => {mainWindow.show});
 }
 
 app.on("ready", createWindow);
@@ -30,16 +28,20 @@ app.on("window-all-closed", () => {if (process.platform !== "darwin") {app.quit(
 app.on("activate", () => {if (mainWindow === null) {createWindow();}});
 
 
-ipc.on('http-registration-req', (e, user) => {
+
+// REGISTRATION
+ipc.on('http-registration', (e, user) => {
     netHandler.registerUser(user).then((response) => {
-            e.reply('http-registration-res', response);
-        }).catch((error) => {
-            e.reply('http-registration-res', error)
-        });
+        e.reply('http-registration-success', response);
+    }).catch((error) => {
+        e.reply('http-registration-fail', error.error)
+    });
 });
 
-
-
-ipc.on('echo-message', (event, message) => {
-    console.log(message);
+// LOGIN W/ USERNAME & PASSWORD
+ipc.on('http-login-credentials', (e, cred) => {
+    //netHandler.loginCredentials(cred)
+    console.log('USERNAME: ' +cred.username);
+    console.log('PASSWORD: ' +cred.password);
+    e.reply('http-login-success', {msg: "LOGIN SUCCESS!!!"});
 });

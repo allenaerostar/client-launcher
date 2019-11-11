@@ -11,16 +11,22 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 
 import os
+import json
+import sys
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+# Load secret config file
+SECRET_CONFIG_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'dietstory_secret_config.json')
+with open(SECRET_CONFIG_FILE, 'r') as f:
+    secret_config = json.load(f)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'gl5x$tzu_kjb=@2!)h)*ur_=5$i##n41(nhb949u0j)6wsz9hs'
+SECRET_KEY = secret_config['SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -75,17 +81,10 @@ WSGI_APPLICATION = 'dietstory-routing.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'DietStory',
-        'USER': 'root',
-        'PASSWORD': 'dietstory',
-        'HOST': '127.0.0.1',
-        'PORT': '3306',
-    }
-}
-
+DATABASES = secret_config['DATABASES']
+# Swap for test db if running in test
+if 'test' in sys.argv:
+    DATABASES = secret_config['TEST_DATABASES']
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
@@ -111,16 +110,19 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'EST'
 
 USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = True
+USE_TZ = False
 
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
+
+# Set Django's test runner to the custom class UnManagedModelTestRunner
+TEST_RUNNER = 'dietstory-routing.runners.UnManagedModelTestRunner'
