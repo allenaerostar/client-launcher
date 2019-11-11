@@ -5,21 +5,23 @@ import { userActions } from '../../_actions';
 
 // Future iterations will an action pulled from redux instead of from App
 const Login = props => {
-  const [inputs, setInputs] = useState({
-    'username': '',
-    'password': ''
-  });
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    props.login(inputs);
+    props.login();
   }
 
   // function for futurecases, handling fast input changes
   const handleChange = (e) => {
     const name = e.target.name;
     const value = e.target.value;
-    setInputs(inputs => ({ ...inputs, [name]: value }));
+    if(name === 'username') {
+      setUsername(value);
+    } else if(name === 'password'){
+      setPassword(value);   
+    }
   }
 
   return (
@@ -33,7 +35,6 @@ const Login = props => {
           name="username"
           placeholder="Username"
           onChange={handleChange}
-          value={inputs.username}
         >
         </input>
         <br />
@@ -44,7 +45,6 @@ const Login = props => {
           name="password" 
           placeholder="Password"
           onChange={handleChange}
-          value={inputs.username}
         >
         </input>
         <br />
