@@ -4,7 +4,7 @@ import registration.models as models
 import registration.verification as verification
 
 class SignupViewTest(TestCase):
-	SIGNUP_VIEW_URL = '/accounts/signup'
+	SIGNUP_VIEW_URL = '/accounts/signup/'
 
 	# Test bad submission
 	def test_empty_form(self):
@@ -88,7 +88,7 @@ class SignupViewTest(TestCase):
 
 
 class VerifyViewTest(TestCase):
-	VERIFY_VIEW_URL = '/accounts/verification'
+	VERIFY_VIEW_URL = '/accounts/verification/'
 
 	def test_empty_form(self):
 		response = self.client.post(VerifyViewTest.VERIFY_VIEW_URL)
@@ -132,7 +132,7 @@ class VerifyViewTest(TestCase):
 		self.assertEqual(response.status_code, 400)
 
 class SendVerificationViewTest(TestCase):
-	SEND_VERIFY_VIEW_URL = '/accounts/resend-verification-code'
+	SEND_VERIFY_VIEW_URL = '/accounts/resend-verification-code/'
 
 	def test_empty_form(self):
 		response = self.client.post(SendVerificationViewTest.SEND_VERIFY_VIEW_URL)

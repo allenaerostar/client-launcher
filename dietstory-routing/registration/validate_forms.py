@@ -45,4 +45,12 @@ class EmailForm(forms.Form):
     email = forms.EmailField(max_length=45, validators=[validate_email])
 
 
+class LoginForm(forms.Form):
+    username = forms.CharField(max_length=13, validators=[validate_slug])
+    password = forms.CharField(max_length=128, validators=[validate_slug])
+
+
+
+
+
 
