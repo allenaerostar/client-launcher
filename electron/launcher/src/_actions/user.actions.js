@@ -5,6 +5,7 @@ const ipc = window.require('electron').ipcRenderer;
 // Action creators for user handling
 // API calls should go here?
 const login = (username, password) => {
+  history.push('/');
    return {
      type: 'LOGIN',
      payload: {
@@ -19,14 +20,6 @@ const logout = () => {
     type: 'LOGOUT',
   }
 }
-// const register = (user) => async (dispatch, getState) => {
-//   dispatch({
-//     type: 'REGISTER',
-//     payload: user
-//   });
-
-//   history.push('/login');
-// }
 
 const register = (user) => {
   return (dispatch) => {
@@ -36,6 +29,7 @@ const register = (user) => {
 
     ipc.on('http-registration-success', (e, res) => {
       dispatch({type: 'REGISTER_SUCCESS'});
+      history.push('/login');
     });
 
     ipc.on('http-registration-fail', (e, err) => {

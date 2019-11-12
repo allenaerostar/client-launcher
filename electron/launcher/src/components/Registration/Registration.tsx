@@ -4,22 +4,30 @@ import { userActions } from '../../_actions';
 
 const Registration = props => {
 
-  const [username, setUsername] = useState('');
-  const [password1, setPassword1] = useState('');
-  const [password2, setPassword2] = useState('');
-  const [email, setEmail] = useState('');
-  const [birthday, setBirthday] = useState('');
+  // const [username, setUsername] = useState('');
+  // const [password1, setPassword1] = useState('');
+  // const [password2, setPassword2] = useState('');
+  // const [email, setEmail] = useState('');
+  // const [birthday, setBirthday] = useState('');
+
+  const [inputs, setInputs] = useState({
+    'username': '',
+    'password': '',
+    'confirm-password': '',
+    'email': '',
+    'birthday': '',
+  });
 
   const handleSubmit = (e) => {
-    let user = {
-      username: username,
-      password1: password1,
-      password2: password2,
-      email: email,
-      birthday: birthday
-    }
+    // let user = {
+    //   username: username,
+    //   password1: password1,
+    //   password2: password2,
+    //   email: email,
+    //   birthday: birthday
+    // }
     e.preventDefault();
-    props.register(user);
+    props.register(inputs);
   }
 
   const formFields = [
@@ -53,17 +61,9 @@ const Registration = props => {
   const handleChange = (e) => {
     const name = e.target.name;
     const value = e.target.value;
-    if (name === 'username') {
-      setUsername(value);
-    } else if (name === 'password') {
-      setPassword1(value);
-    } else if (name === 'confirm-password') {
-      setPassword2(value);
-    } else if (name === 'email') {
-      setEmail(value);
-    } else if (name === 'birthday') {
-      setBirthday(value);
-    }
+    setInputs(inputs => ({
+      ...inputs, [name]: value
+    }));
   }
 
   return (
@@ -71,8 +71,8 @@ const Registration = props => {
       <h1>Registration Form</h1>
       <form onSubmit={handleSubmit}>
         {
-          formFields.map( input => (
-            <>
+          formFields.map( (input, i) => (
+            <React.Fragment key={i}>
               <label htmlFor={input.name}>{input.label}:</label>    
               <input
                 id={input.name}
@@ -83,7 +83,7 @@ const Registration = props => {
               >
               </input>
               <br />
-            </>
+            </React.Fragment>
           ))
         }
         <button type="submit">Register</button>
