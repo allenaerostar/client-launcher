@@ -35,7 +35,8 @@ const register = (user) => {
             username: user.username,
             password: user.password1,
             email: user.email,
-            birthday: user.birthday
+            birthday: user.birthday,
+            verified: false
           }
         }
       });
@@ -49,13 +50,18 @@ const register = (user) => {
   }
 }
 
-const verifyEmail = (code) => {
+const verifyEmail = (postData) => {
   return (dispatch) => {
     dispatch({type: 'VERIFY_EMAIL_START'});
 
-    // ipc.send('http-verify-email', code);
+    ipc.send('http-verify-email', postData);
 
-
+    ipc.on('http-verify-email-success', (e, res) => {
+      dispatch({type: 'VERIFY_EMAIL_SUCCESS'});
+    });
+    ipc.on('http-verify-email-fail', (e, err) => {
+      dispatch({type: 'VERIFY_EMAIL_FAILED'});
+    });
   }
 }
 

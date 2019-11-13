@@ -29,24 +29,32 @@ app.on("activate", () => {if (mainWindow === null) {createWindow();}});
 
 
 
+
+
+
+
 // REGISTRATION
 ipc.on('http-registration', (e, user) => {
-    netHandler.registerUser(user).then((response) => {
+    netHandler.registerUser(user).then(response => {
         e.reply('http-registration-success', response);
-    }).catch((error) => {
+    }).catch(error => {
         e.reply('http-registration-fail', error)
     });
 });
 
 // VERIFYING EMAIL ADDRESS
-// ipc.on('http-verify-email', (e, verificationCode) = {
-    
-// });
+ipc.on('http-verify-email', (e, postData) => {
+    netHandler.verifyAccount(postData).then(response => {
+        e.reply('http-verify-email-success', response);
+    }).catch(error => {
+        e.reply('http-verify-email-fail', error)
+    });
+});
 
 // LOGIN W/ USERNAME & PASSWORD
-ipc.on('http-login-credentials', (e, cred) => {
-    //netHandler.loginCredentials(cred)
-    console.log('USERNAME: ' +cred.username);
-    console.log('PASSWORD: ' +cred.password);
-    e.reply('http-login-success', {msg: "LOGIN SUCCESS!!!"});
-});
+// ipc.on('http-login-credentials', (e, cred) => {
+//     //netHandler.loginCredentials(cred)
+//     console.log('USERNAME: ' +cred.username);
+//     console.log('PASSWORD: ' +cred.password);
+//     e.reply('http-login-success', {msg: "LOGIN SUCCESS!!!"});
+// });

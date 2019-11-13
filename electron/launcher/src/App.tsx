@@ -14,9 +14,6 @@ import { connect } from 'react-redux';
 import './App.scss';
   
 const App = props => {
-
-  console.log(props)
-
   return (
     <Router history={history}>
       <div className="container">
