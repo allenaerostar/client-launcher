@@ -3,7 +3,8 @@ const INITIAL_STATE = {
     username: '',
     password: '',
     email: '',
-    birthday: ''
+    birthday: '',
+    verified: false
   },
   isAuthenticated: false,
   token: null,
