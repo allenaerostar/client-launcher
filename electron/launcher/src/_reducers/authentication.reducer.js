@@ -13,7 +13,7 @@ const INITIAL_STATE = {
 }
 
 // Currently not using our payload to make changes to state
-export default (isAuthenticated = false, action) => {
+export default (state = INITIAL_STATE, action) => {
   switch(action.type) {
     case 'LOGIN_SUCCESS':
       return { 
@@ -40,7 +40,6 @@ export default (isAuthenticated = false, action) => {
     case 'VERIFY_EMAIL_FAILED': 
       return { ...state, error: action.payload.error};
     default:
-      // return state;
-      return isAuthenticated;
+      return state;
   }
 }

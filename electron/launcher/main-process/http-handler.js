@@ -18,11 +18,14 @@ registerUser = (user) => {
   });
 }
 
+// POST REQUEST FOR VERIFYING EMAIL ADDRESS
+//verifyAccount = ()
+
 // POST REQUEST TO LOGIN WITH USERNAME & PASSWORD
 loginCredentials = (cred) => {
   let options = {
     method: 'POST',
-    uri: 'http://127.0.0.1:8000/signup/',
+    uri: 'http://127.0.0.1:8000/accounts/signup/',
     header: {
       'content-type': 'application/x-www-form-urlencoded'
     },

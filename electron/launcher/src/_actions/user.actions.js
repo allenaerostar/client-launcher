@@ -90,6 +90,16 @@ const verifyEmail = (postData) => {
   }
 }
 
+const verifyEmail = (code) => {
+  return (dispatch) => {
+    dispatch({type: 'VERIFY_EMAIL_START'});
+
+    // ipc.send('http-verify-email', code);
+
+
+  }
+}
+
 export const userActions = {
   login,
   logout,
