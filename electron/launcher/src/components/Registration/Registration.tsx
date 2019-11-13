@@ -37,12 +37,12 @@ const Registration = props => {
       type: 'text'
     },
     {
-      name: 'password',
+      name: 'password1',
       label: 'Password',
       type: 'password'
     },
     {
-      name: 'confirm-password',
+      name: 'password2',
       label: 'Confirm Password',
       type: 'password'
     },

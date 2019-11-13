@@ -34,9 +34,14 @@ ipc.on('http-registration', (e, user) => {
     netHandler.registerUser(user).then((response) => {
         e.reply('http-registration-success', response);
     }).catch((error) => {
-        e.reply('http-registration-fail', error.error)
+        e.reply('http-registration-fail', error)
     });
 });
+
+// VERIFYING EMAIL ADDRESS
+// ipc.on('http-verify-email', (e, verificationCode) = {
+    
+// });
 
 // LOGIN W/ USERNAME & PASSWORD
 ipc.on('http-login-credentials', (e, cred) => {
