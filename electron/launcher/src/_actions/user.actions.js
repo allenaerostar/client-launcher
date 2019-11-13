@@ -94,9 +94,14 @@ const verifyEmail = (code) => {
   return (dispatch) => {
     dispatch({type: 'VERIFY_EMAIL_START'});
 
-    // ipc.send('http-verify-email', code);
+    ipc.send('http-verify-email', postData);
 
-
+    ipc.on('http-verify-email-success', (e, res) => {
+      dispatch({type: 'VERIFY_EMAIL_SUCCESS'});
+    });
+    ipc.on('http-verify-email-fail', (e, err) => {
+      dispatch({type: 'VERIFY_EMAIL_FAILED'});
+    });
   }
 }
 
