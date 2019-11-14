@@ -53,7 +53,6 @@ class AccountsManager(BaseUserManager):
             raise ValueError("Birthday must be set.")
 
         account = self.model(name=username, password=password, email=email, birthday=birthday, adminlevel=admin_level)
-        account.set_password(password)
         account.save(using=self._db)
 
         return account
@@ -113,8 +112,12 @@ class Accounts(AbstractBaseUser, PermissionsMixin):
     def is_superuser(self):
         return bool(self.adminlevel > 0)
 
+    def check_password(self, raw_password):
+        return self.password == raw_password
+
     class Meta:
         managed = False
         db_table = 'accounts'
+
 
 

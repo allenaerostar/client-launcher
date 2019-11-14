@@ -84,7 +84,7 @@ class SignupViewTest(TestCase):
 	#			'Content-Type': 'application/x-www-form-urlencoded'
 	#		})
 	#	self.assertEqual(response1.status_code, 201)
-	#	self.assertEqual(response2.status_code, 204)
+	#	self.assertEqual(response2.status_code, 400)
 
 
 class VerifyViewTest(TestCase):

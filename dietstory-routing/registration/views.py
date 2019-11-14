@@ -42,7 +42,7 @@ class SignupView(views.APIView):
                     return JsonResponse({'message': "Account creation was not successful."}, status=500)
 
             else:
-                return JsonResponse({'message': "That account already exists."}, status=204)
+                return JsonResponse({'message': "That account already exists."}, status=400)
         else:
             return JsonResponse({'message': "Inputs have invalid format."}, status=400)
 
@@ -111,29 +111,26 @@ class LoginView(views.APIView):
 
         params = LoginForm(request.data)
         if params.is_valid():
-            username,password = params.cleaned_data.get('username'), params.cleaned_data.get('password')
+            username, password = params.cleaned_data.get('username'), params.cleaned_data.get('password')
             account = authenticate(username=username, password=password)
             if account is not None:
                 login(request, account)
-                return JsonResponse(AccountSerializer(account).data, status=201)
+                return JsonResponse(AccountSerializer(account).data, status=200)
             else:
-                return JsonResponse({'message': "Failed to login."}, status=401)
+                return JsonResponse({'message': "Failed to login."}, status=400)
         else:
             return JsonResponse({'message': "Inputs have invalid format."}, status=400)
 
-
 class LogoutView(views.APIView):
 
+    permissions_classes = (permissions.AllowAny,)
+
+    def get(self, request, *args, **kwargs):
+        return render(request, 'registration/logout.html')
+
     def post(self, request, *args, **kwargs):
-        permissions_classes = (permissions.AllowAny,)
         logout(request)
         return JsonResponse({'message': "Successfully logged out."}, status=200)
-
-
-
-
-
-
 
 
 

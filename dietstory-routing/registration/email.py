@@ -3,6 +3,7 @@ from django.http import HttpResponse
 
 
 def send_email(target_email, verification_code):
+
     email = EmailMessage(
         subject='Verify your dietstory account.',
         body='Please enter the verification code: ' + str(verification_code) + ' to verify your account.\n',
