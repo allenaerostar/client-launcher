@@ -34,7 +34,10 @@ class SignupView(views.APIView):
                     account = Accounts(name=username, password=password, email=email, birthday=birthday)
                     account.save()
 
-                    send_verification_email(account.email, account_activation_token.make_token(account))
+                    try:
+                        send_verification_email(account.email, account_activation_token.make_token(account))
+                    except IOError:
+                        print("Failed to send email.")
                     return HttpResponse("Successful creation.", status=201)
 
                 except IOError:
@@ -90,8 +93,11 @@ class SendVerificationView(views.APIView):
                 user = None
 
             if user:
-                send_verification_email(email, account_activation_token.make_token(user))
-                return HttpResponse("Verification code has been resent to the valid email address.", status=200)
+                try:
+                    send_verification_email(email, account_activation_token.make_token(user))
+                    return HttpResponse("Verification code has been resent to the valid email address.", status=200)
+                except IOError:
+                    return HttpResponse("Failed to send confirmation email.", status=500)
 
             return HttpResponse("No Email has been sent.", status=400)
 
