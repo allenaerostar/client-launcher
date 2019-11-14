@@ -1,8 +1,5 @@
 from django.http import JsonResponse
-from django.shortcuts import render
 from django.contrib.auth import authenticate, login, logout
-from django.utils.decorators import method_decorator
-from django.views.decorators.debug import sensitive_post_parameters
 from rest_framework import views
 from rest_framework import permissions
 from .models import Accounts
@@ -19,7 +16,6 @@ class SignupView(views.APIView):
     def get(self, request, *args, **kwargs):
         return JsonResponse({'message': "Welcome to signup page. Please enter username, email, password, and birthday."}, status=200)
 
-    # @method_decorator(sensitive_post_parameters('password'))
     def post(self, request, *args, **kwargs):
 
         params = SignupForm(request.data)
@@ -128,13 +124,11 @@ class LoginView(views.APIView):
         else:
             return JsonResponse({'message': "Inputs have invalid format."}, status=400)
 
+
 class LogoutView(views.APIView):
     permissions_classes = (permissions.AllowAny,)
 
     permissions_classes = (permissions.AllowAny,)
-
-    def get(self, request, *args, **kwargs):
-        return render(request, 'registration/logout.html')
 
     def post(self, request, *args, **kwargs):
         logout(request)
