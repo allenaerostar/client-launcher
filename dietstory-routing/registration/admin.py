@@ -6,6 +6,6 @@ from .models import Accounts, AccountsManager
  #   model = Accounts
 
 # Register your models here.
-admin.site.register(Accounts)
+#admin.site.register(Accounts)
 #admin.site.register(Accounts, AccountsManager)
 

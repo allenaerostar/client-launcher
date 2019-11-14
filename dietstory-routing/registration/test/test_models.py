@@ -17,4 +17,13 @@ class AccountsModelTest(TestCase):
 		account = models.Accounts.objects.get(name='username')
 		self.assertTrue(account.is_active is False)
 
+	def test_account_is_superuser(self):
+		account = models.Accounts.objects.get(name='username')
+		self.assertTrue(account.is_superuser is False)
+
+	def test_account_check_password(self):
+		account = models.Accounts.objects.get(name='username')
+		self.assertTrue(account.check_password("password") is True)
+
+
 
