@@ -76,6 +76,7 @@ class VerifyView(views.APIView):
             except IOError:
                 return JsonResponse({'message': "Account verification was not successful."}, status=500)
         else:
+
             return JsonResponse({'message': "Verification code is invalid."}, status=400)
 
 
@@ -126,10 +127,10 @@ class LoginView(views.APIView):
 
 
 class LogoutView(views.APIView):
-    permissions_classes = (permissions.AllowAny,)
 
     permissions_classes = (permissions.AllowAny,)
 
     def post(self, request, *args, **kwargs):
         logout(request)
         return JsonResponse({'message': "Successfully logged out."}, status=200)
+
