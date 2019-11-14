@@ -8,31 +8,27 @@
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 
-dateFieldDefault = "0000-00-00"
-dateTimeFieldDefault = "0000-00-00 00:00:00"
+DATE_FIELD_DEFAULT = "0000-00-00"
+DATE_TIME_FIELD_DEFAULT = "0000-00-00 00:00:00"
 
 
 class ZeroDateTimeField(models.DateTimeField):
     def get_db_prep_value(self, value, connection, prepared=False):
-        if value == dateTimeFieldDefault:
-            pass
-        else:
+        if value != DATE_TIME_FIELD_DEFAULT:
             value = super(ZeroDateTimeField, self).get_db_prep_value(value, connection, prepared)
 
         if value is None:
-            return dateTimeFieldDefault
+            return DATE_TIME_FIELD_DEFAULT
         return value
 
     
 class ZeroDateField(models.DateField):
     def get_db_prep_value(self, value, connection, prepared=False):
-        if value == dateFieldDefault:
-            pass
-        else:
+        if value != DATE_FIELD_DEFAULT:
             value = super(ZeroDateField, self).get_db_prep_value(value, connection, prepared)
 
         if value is None:
-            return dateFieldDefault
+            return DATE_FIELD_DEFAULT
         return value
 
 

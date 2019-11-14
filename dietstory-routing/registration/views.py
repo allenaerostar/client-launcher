@@ -5,7 +5,7 @@ from rest_framework import views
 from rest_framework import permissions
 from .models import Accounts
 from .validate_forms import *
-from .email import send_email
+from .email import send_verification_email
 from .verification import account_activation_token
 
 
@@ -34,7 +34,7 @@ class SignupView(views.APIView):
                     account = Accounts(name=username, password=password, email=email, birthday=birthday)
                     account.save()
 
-                    send_email(account.email, account_activation_token.make_token(account))
+                    send_verification_email(account.email, account_activation_token.make_token(account))
                     return HttpResponse("Successful creation.", status=201)
 
                 except IOError:
@@ -90,7 +90,7 @@ class SendVerificationView(views.APIView):
                 user = None
 
             if user:
-                send_email(email, account_activation_token.make_token(user))
+                send_verification_email(email, account_activation_token.make_token(user))
                 return HttpResponse("Verification code has been resent to the valid email address.", status=200)
 
             return HttpResponse("No Email has been sent.", status=400)
