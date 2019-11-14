@@ -18,14 +18,11 @@ const Registration = props => {
     'birthday': '',
   });
 
+  const [formErrors, setFormErrors] = useState({
+
+  })
+
   const handleSubmit = (e) => {
-    // let user = {
-    //   username: username,
-    //   password1: password1,
-    //   password2: password2,
-    //   email: email,
-    //   birthday: birthday
-    // }
     e.preventDefault();
     props.register(inputs);
   }
@@ -64,6 +61,29 @@ const Registration = props => {
     setInputs(inputs => ({
       ...inputs, [name]: value
     }));
+  }
+  
+  const validateField = (fieldName, value) => {
+    // let fieldValidationErrors = errors;
+    let errorMessage = '';
+    switch(fieldName) {
+      case 'username':
+        if(!value.match(/^[a-zA-Z0-9_]+$/)) errorMessage = "Username must contain only Alphanumeric characters and underscores."
+        break;
+      case 'password':
+        if (value.length < 6) errorMessage = "Password length must be at least 6 characters."
+        break;
+      case 'confirm-password':        
+        if (inputs["password"] !== value) errorMessage = "Confirm password should match password."
+        break;
+      case 'email':
+        if (!value.match(/^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i)) errorMessage = "Please enter a valid email address."
+        break;
+      default:
+        break;
+    }
+    // Setform errors here
+  
   }
 
   return (
