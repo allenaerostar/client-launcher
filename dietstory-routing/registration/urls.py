@@ -3,5 +3,7 @@ from . import views
 
 
 urlpatterns = [
-    path('', views.SignupView.as_view()),
+    path('signup', views.SignupView.as_view()),
+    path('verification', views.VerifyView.as_view()),
+    path('resend-verification-code', views.SendVerificationView.as_view()),
 ]
