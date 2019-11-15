@@ -40,7 +40,7 @@ class AccountsManager(BaseUserManager):
 
     use_in_migrations = True
 
-    def _create_user(self, username, password, email, birthday, admin_level):
+    def __create_user(self, username, password, email, birthday, admin_level):
         if not username:
             raise ValueError("Username must be set.")
         if not email:
@@ -56,10 +56,10 @@ class AccountsManager(BaseUserManager):
         return account
 
     def create_user(self, username, password, email, birthday):
-        return self._create_user(username, password, email, birthday, 0)
+        return self.__create_user(username, password, email, birthday, 0)
 
     def create_superuser(self, username, password, email, birthday, admin_level):
-        return self._create_user(username, password, email, birthday, admin_level)
+        return self.__create_user(username, password, email, birthday, admin_level)
 
 
 class Accounts(AbstractBaseUser, PermissionsMixin):
@@ -94,7 +94,7 @@ class Accounts(AbstractBaseUser, PermissionsMixin):
     hwid = models.CharField(default='', max_length=12)
     fly = models.IntegerField(default=0, validators=[MinValueValidator(0), MaxValueValidator(250)])
     verified = models.IntegerField(default=0, validators=[MinValueValidator(0), MaxValueValidator(250)])
-    adminlevel = models.IntegerField(db_column='adminlevel', default=0, validators=[MinValueValidator(0)])
+    adminlevel = models.IntegerField(default=0, validators=[MinValueValidator(0)])
 
     USERNAME_FIELD = 'name'
     EMAIL_FIELD = 'email'
