@@ -1,25 +1,35 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { userActions } from '../../_actions';
+import { AppErrors } from '../AppErrors';
 
 const Registration = props => {
 
   const [inputs, setInputs] = useState({
     'username': '',
-    'password': '',
-    'confirm-password': '',
+    'password1': '',
+    'password2': '',
     'email': '',
     'birthday': '',
   });
 
-  const [formErrors, setFormErrors] = useState({
-  })
+  const [formErrors, setFormErrors] = useState({});
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if(Object.keys(formErrors).length === 0){
+    let submittable = checkFormErrors();
+    if(submittable){
       props.register(inputs);
     }
+  }
+
+  const checkFormErrors = () =>{
+    for (let key in formErrors) {
+      if (formErrors[key] !== "") {
+        return false;
+      }
+    }
+    return true;
   }
 
   const formFields = [
@@ -61,7 +71,6 @@ const Registration = props => {
   }
   
   const validateField = (fieldName, value) => {
-    // let fieldValidationErrors = errors;
     let errorMessage = '';
     switch(fieldName) {
       case 'username':
@@ -83,7 +92,6 @@ const Registration = props => {
     setFormErrors(errors => ({
       ...errors, [fieldName]: errorMessage
     }));
-  
   }
 
   return (
