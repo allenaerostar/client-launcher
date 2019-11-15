@@ -15,8 +15,10 @@ const INITIAL_STATE = {
 // Currently not using our payload to make changes to state
 export default (state = INITIAL_STATE, action) => {
   switch(action.type) {
-    case 'LOGIN':
-      return { ...state, isAuthenticated: true };
+    case 'LOGIN_SUCCESS':
+      return { ...state, user: action.payload.user, isAuthenticated: true };
+    case 'LOGIN_SUCCESS':
+      return { ...state, err: action.payload.error, isAuthenticated: false };
     case 'LOGOUT':
       return { ...state, isAuthenticated: false };
     case 'REGISTER_SUCCESS':

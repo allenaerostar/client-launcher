@@ -4,15 +4,32 @@ const ipc = window.require('electron').ipcRenderer;
 
 // Action creators for user handling
 // API calls should go here?
-const login = (username, password) => {
-  //history.push('/');
-   return {
-     type: 'LOGIN',
-     payload: {
-       username: username,
-       password: password
-     }
-   };
+const login = (cred) => {
+  return (dispatch) => {
+    dispatch({type: 'LOGIN_START'});
+
+    ipc.send('http-login-credentials', cred);
+
+    ipc.on('http-login-credentials-success', (e, res) => {
+      dispatch({
+        type: 'LOGIN_SUCCESS',
+        payload: {
+          user: {
+            username: res.username,
+            email: res.email,
+            isActive: res.is_active,
+            isAdmin: res.is_superuser
+          }
+        }
+      });
+
+      history.push('/');
+    });
+
+    ipc.on('http-login-credentials-fail', (e, err) => {
+      dispatch({type: 'LOGIN_FAILED', payload: {error: err}});
+    });
+  }
 }
 const logout = () => {
   return {
@@ -21,7 +38,6 @@ const logout = () => {
 }
 
 const register = (user) => {
-  console.log(user);
   return (dispatch) => {
     dispatch({type: 'REGISTER_START'});
 
