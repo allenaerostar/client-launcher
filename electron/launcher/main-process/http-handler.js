@@ -4,7 +4,7 @@ const request = require('request-promise');
 registerUser = (user) => {
   let options = {
     method: 'POST',
-    uri: 'http://127.0.0.1:8000/signup/',
+    uri: 'http://127.0.0.1:8000/accounts/signup/',
     header: {'content-type': 'application/x-www-form-urlencoded'},
     form: user,
   }
@@ -40,10 +40,9 @@ verifyAccount = (postData) => {
 loginCredentials = (cred) => {
   let options = {
     method: 'POST',
-    uri: 'http://127.0.0.1:8000/accounts/signup/',
+    uri: 'http://127.0.0.1:8000/accounts/login/',
     header: {'content-type': 'application/x-www-form-urlencoded'},
-    form: cred,
-    resolveWithFullResponse: true
+    form: cred
   }
 
   return new Promise ((resolve, reject) => {
@@ -57,3 +56,4 @@ loginCredentials = (cred) => {
 
 module.exports.registerUser = registerUser;
 module.exports.verifyAccount = verifyAccount;
+module.exports.loginCredentials = loginCredentials;
