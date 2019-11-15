@@ -14,6 +14,18 @@ class SignupView(views.APIView):
     permission_classes = (permissions.AllowAny,)
 
     def get(self, request, *args, **kwargs):
+        """
+        summary: Get Signup description
+        description: Informs required parameters for POST request
+        tags:
+            - SignupView
+        responses:
+            200:
+                content:
+                    application/json:
+                        schema:
+                            type: string
+        """
         return HttpResponse("Welcome to signup page. Please enter username, email, password, and birthday.", status=200)
 
     # @method_decorator(sensitive_post_parameters('password'))

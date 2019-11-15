@@ -19,4 +19,5 @@ from django.urls import path, include
 urlpatterns = [
     path('accounts/', include('registration.urls')),
     path('admin/', admin.site.urls),
+    path('api/', include('swagger-ui.urls')),
 ]
