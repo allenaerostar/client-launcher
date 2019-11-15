@@ -13,7 +13,6 @@ const login = (username, password) => {
        password: password
      }
    };
-   
 }
 const logout = () => {
   return {
@@ -22,6 +21,7 @@ const logout = () => {
 }
 
 const register = (user) => {
+  console.log(user);
   return (dispatch) => {
     dispatch({type: 'REGISTER_START'});
 
