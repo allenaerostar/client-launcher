@@ -23,7 +23,12 @@ const login = (cred) => {
         }
       });
 
-      history.push('/');
+      if(res.is_active){
+        history.push('/');
+      }
+      else{
+        history.push('/verify-email');
+      }
     });
 
     ipc.on('http-login-credentials-fail', (e, err) => {
@@ -52,7 +57,8 @@ const register = (user) => {
             password: user.password1,
             email: user.email,
             birthday: user.birthday,
-            verified: false
+            isActive: false,
+            isAdmin: false
           }
         }
       });
