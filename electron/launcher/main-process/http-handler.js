@@ -40,10 +40,9 @@ verifyAccount = (postData) => {
 loginCredentials = (cred) => {
   let options = {
     method: 'POST',
-    uri: 'http://127.0.0.1:8000/accounts/signup/',
+    uri: 'http://127.0.0.1:8000/accounts/login/',
     header: {'content-type': 'application/x-www-form-urlencoded'},
-    form: cred,
-    resolveWithFullResponse: true
+    form: cred
   }
 
   return new Promise ((resolve, reject) => {

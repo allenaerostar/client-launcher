@@ -46,7 +46,6 @@ const logout = () => {
 }
 
 const register = (user) => {
-  console.log(user);
   return (dispatch) => {
     dispatch({type: 'REGISTER_START'});
 
