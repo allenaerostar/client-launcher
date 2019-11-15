@@ -4,12 +4,6 @@ import { userActions } from '../../_actions';
 
 const Registration = props => {
 
-  // const [username, setUsername] = useState('');
-  // const [password1, setPassword1] = useState('');
-  // const [password2, setPassword2] = useState('');
-  // const [email, setEmail] = useState('');
-  // const [birthday, setBirthday] = useState('');
-
   const [inputs, setInputs] = useState({
     'username': '',
     'password': '',
@@ -19,12 +13,13 @@ const Registration = props => {
   });
 
   const [formErrors, setFormErrors] = useState({
-
   })
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    props.register(inputs);
+    if(Object.keys(formErrors).length === 0){
+      props.register(inputs);
+    }
   }
 
   const formFields = [
@@ -54,13 +49,15 @@ const Registration = props => {
       type: 'text'
     }
   ];
-  // function for futurecases, handling fast input changes
+
   const handleChange = (e) => {
     const name = e.target.name;
     const value = e.target.value;
     setInputs(inputs => ({
       ...inputs, [name]: value
     }));
+
+    validateField(name, value);
   }
   
   const validateField = (fieldName, value) => {
@@ -70,11 +67,11 @@ const Registration = props => {
       case 'username':
         if(!value.match(/^[a-zA-Z0-9_]+$/)) errorMessage = "Username must contain only Alphanumeric characters and underscores."
         break;
-      case 'password':
+      case 'password1':
         if (value.length < 6) errorMessage = "Password length must be at least 6 characters."
         break;
-      case 'confirm-password':        
-        if (inputs["password"] !== value) errorMessage = "Confirm password should match password."
+      case 'password2':        
+        if (inputs["password1"] !== value) errorMessage = "Confirm password should match password."
         break;
       case 'email':
         if (!value.match(/^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i)) errorMessage = "Please enter a valid email address."
@@ -82,7 +79,10 @@ const Registration = props => {
       default:
         break;
     }
-    // Setform errors here
+
+    setFormErrors(errors => ({
+      ...errors, [fieldName]: errorMessage
+    }));
   
   }
 
@@ -102,6 +102,11 @@ const Registration = props => {
                 onChange={handleChange}  
               >
               </input>
+              {
+                !!formErrors[input.name] && formErrors[input.name].length > 0 ?
+                  <p>{formErrors[input.name]}</p>
+                : null  
+              }
               <br />
             </React.Fragment>
           ))
