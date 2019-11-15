@@ -4,7 +4,8 @@ const INITIAL_STATE = {
     password: '',
     email: '',
     birthday: '',
-    verified: false
+    isActive: false,
+    isAdmin: false
   },
   isAuthenticated: false,
   token: null,
@@ -21,7 +22,11 @@ export default (state = INITIAL_STATE, action) => {
     case 'REGISTER_SUCCESS':
       return { ...state, user: action.payload.user };
     case 'REGISTER_FAILED':
-      return { ...state, error: action.payload.error}
+      return { ...state, error: action.payload.error};
+    case 'VERIFY_EMAIL_SUCCESS':
+      return { ...state, user: {...state.user, isActive: true}};
+    case 'VERIFY_EMAIL_FAILED': 
+      return { ...state, error: action.payload.error};
     default:
       return state;
   }

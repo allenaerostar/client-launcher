@@ -1,10 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { userActions } from '../../_actions';
 
 // Future iterations will an action pulled from redux instead of from App
 const Login = props => {
+
+  // Attempts to login automatically from stored session or credentials
+  useEffect(() => {
+    if(props.auth.user.password !== ''){
+      props.login({
+        username: props.auth.user.username,
+        password: props.auth.user.password
+      });
+    }
+  }, []);
+
   const [inputs, setInputs] = useState({
     'username': '',
     'password': ''
