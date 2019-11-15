@@ -201,6 +201,10 @@ class LoginViewTest(TestCase):
 			})
 		self.assertEqual(response.status_code, 200)
 
+	def test_get_login(self):
+		response = self.client.get(LoginViewTest.LOGIN_VIEW_URL)
+		self.assertEqual(response.status_code, 200)
+
 
 class LogoutViewTest(TestCase):
 	LOGOUT_VIEW_URL = '/accounts/logout/'

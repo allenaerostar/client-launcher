@@ -309,6 +309,25 @@ class SendVerificationView(views.APIView):
 class LoginView(views.APIView):
     permission_classes = (permissions.AllowAny,)
 
+    def get(self, request, *args, **kwargs):
+        """
+        summary: Get Login description
+        description: Renders csrf token to request user.
+        tags:
+            - LoginView
+        responses:
+            200:
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                message:
+                                    type: string
+                                    description: Please login using your credentials.
+        """
+        return JsonResponse({'message': "Please login using your credentials."}, status=200)
+
     def post(self, request, *args, **kwargs):
         """
         summary: Post Login description
