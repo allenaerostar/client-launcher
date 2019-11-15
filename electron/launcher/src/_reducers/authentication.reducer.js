@@ -16,7 +16,17 @@ const INITIAL_STATE = {
 export default (state = INITIAL_STATE, action) => {
   switch(action.type) {
     case 'LOGIN_SUCCESS':
-      return { ...state, user: action.payload.user, isAuthenticated: true };
+      return { 
+        ...state, 
+        isAuthenticated: true, 
+        user: {
+          ...state.user,
+          username: action.payload.user.username,
+          email: action.payload.user.email,
+          isActive: action.payload.user.isActive,
+          isAdmin: action.payload.user.isAdmin
+        }
+      };
     case 'LOGIN_SUCCESS':
       return { ...state, err: action.payload.error, isAuthenticated: false };
     case 'LOGOUT':
