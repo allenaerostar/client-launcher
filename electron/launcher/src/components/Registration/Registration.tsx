@@ -56,7 +56,7 @@ const Registration = props => {
     {
       name: 'birthday',
       label: 'Birthday',
-      type: 'text'
+      type: 'date'
     }
   ];
 
