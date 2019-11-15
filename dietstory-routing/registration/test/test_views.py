@@ -3,8 +3,9 @@ from django.urls import reverse
 import registration.models as models
 import registration.verification as verification
 
+
 class SignupViewTest(TestCase):
-	SIGNUP_VIEW_URL = '/accounts/signup'
+	SIGNUP_VIEW_URL = '/accounts/signup/'
 
 	# Test bad submission
 	def test_empty_form(self):
@@ -84,11 +85,11 @@ class SignupViewTest(TestCase):
 	#			'Content-Type': 'application/x-www-form-urlencoded'
 	#		})
 	#	self.assertEqual(response1.status_code, 201)
-	#	self.assertEqual(response2.status_code, 204)
+	#	self.assertEqual(response2.status_code, 400)
 
 
 class VerifyViewTest(TestCase):
-	VERIFY_VIEW_URL = '/accounts/verification'
+	VERIFY_VIEW_URL = '/accounts/verification/'
 
 	def test_empty_form(self):
 		response = self.client.post(VerifyViewTest.VERIFY_VIEW_URL)
@@ -131,8 +132,9 @@ class VerifyViewTest(TestCase):
 			})
 		self.assertEqual(response.status_code, 400)
 
+
 class SendVerificationViewTest(TestCase):
-	SEND_VERIFY_VIEW_URL = '/accounts/resend-verification-code'
+	SEND_VERIFY_VIEW_URL = '/accounts/resend-verification-code/'
 
 	def test_empty_form(self):
 		response = self.client.post(SendVerificationViewTest.SEND_VERIFY_VIEW_URL)
@@ -159,6 +161,55 @@ class SendVerificationViewTest(TestCase):
 				'email': 'pokemondomain.com'
 			})
 		self.assertEqual(response.status_code, 400)
+
+
+class LoginViewTest(TestCase):
+	LOGIN_VIEW_URL = '/accounts/login/'
+
+	def test_empty_form(self):
+		response = self.client.post(LoginViewTest.LOGIN_VIEW_URL)
+		self.assertEqual(response.status_code, 400)
+
+	def test_invalid_parameters(self):
+		response = self.client.post(LoginViewTest.LOGIN_VIEW_URL, {'test': 'test', 'domain': 'domain'})
+		self.assertEqual(response.status_code, 400)
+
+	def test_incorrect_username(self):
+		models.Accounts.objects.create(name='username', password='password', email='pokemon@domain.com',birthday='1990-01-01', tempban='0001-01-01 00:00:01', verified = 1)
+		response = self.client.post(LoginViewTest.LOGIN_VIEW_URL,
+			{
+				'username': 'username1',
+				'password': 'password'
+			})
+		self.assertEqual(response.status_code, 400)
+
+	def test_incorrect_password(self):
+		models.Accounts.objects.create(name='username', password='password', email='pokemon@domain.com',birthday='1990-01-01', tempban='0001-01-01 00:00:01', verified = 1)
+		response = self.client.post(LoginViewTest.LOGIN_VIEW_URL,
+			{
+				'username': 'username',
+				'password': 'password1'
+			})
+		self.assertEqual(response.status_code, 400)
+
+	def test_correct_credentials(self):
+		models.Accounts.objects.create(name='username', password='password', email='pokemon@domain.com',birthday='1990-01-01', tempban='0001-01-01 00:00:01', verified = 1)
+		response = self.client.post(LoginViewTest.LOGIN_VIEW_URL,
+			{
+				'username': 'username',
+				'password': 'password'
+			})
+		self.assertEqual(response.status_code, 200)
+
+
+class LogoutViewTest(TestCase):
+	LOGOUT_VIEW_URL = '/accounts/logout/'
+
+	def test_logout(self):
+
+		response = self.client.post(LogoutViewTest.LOGOUT_VIEW_URL)
+		self.assertEqual(response.status_code, 200)
+
 
 
 
