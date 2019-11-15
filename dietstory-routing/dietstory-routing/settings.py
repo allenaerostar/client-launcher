@@ -125,5 +125,15 @@ USE_TZ = False
 
 STATIC_URL = '/static/'
 
+# Email account for django to send emails
+EMAIL_BACKEND = secret_config['EMAIL_BACKEND']
+EMAIL_HOST = secret_config['EMAIL_HOST']
+EMAIL_PORT = int(secret_config['EMAIL_PORT'])
+EMAIL_HOST_USER = secret_config['EMAIL_HOST_USER']
+EMAIL_HOST_PASSWORD = secret_config['EMAIL_HOST_PASSWORD']
+EMAIL_USE_TLS = bool(secret_config['EMAIL_USE_TLS'])
+
+
 # Set Django's test runner to the custom class UnManagedModelTestRunner
 TEST_RUNNER = 'dietstory-routing.runners.UnManagedModelTestRunner'
+

@@ -4,10 +4,12 @@ from django.views.decorators.debug import sensitive_post_parameters
 from rest_framework import views
 from rest_framework import permissions
 from .models import Accounts
-from .validate_forms import SignupForm
+from .validate_forms import *
+from .email import send_verification_email
+from .verification import account_activation_token
 
 
-# Create your views here.
+# This view allows user to signup for an dietstory account.
 class SignupView(views.APIView):
     permission_classes = (permissions.AllowAny,)
 
@@ -44,6 +46,10 @@ class SignupView(views.APIView):
                     account = Accounts(name=username, password=password, email=email, birthday=birthday)
                     account.save()
 
+                    try:
+                        send_verification_email(account.email, account_activation_token.make_token(account))
+                    except IOError:
+                        print("Failed to send email.")
                     return HttpResponse("Successful creation.", status=201)
 
                 except IOError:
@@ -53,3 +59,66 @@ class SignupView(views.APIView):
                 return HttpResponse("That account already exists.", status=204)
         else:
             return HttpResponse("Inputs have invalid format.", status=400)
+
+
+# This view verifies token give by user to verify their dietstory account.
+class VerifyView(views.APIView):
+    permission_classes = (permissions.AllowAny,)
+
+    def post(self, request, *args, **kwargs):
+        params = VerifyForm(request.data)
+
+        if not params.is_valid():
+            return HttpResponse("Inputs have invalid format.", status=400)
+
+        email = params.cleaned_data.get('email')
+        verify_token = params.cleaned_data.get('verify_token')
+
+        try:
+            user = Accounts.objects.get(email=email)
+        except (TypeError, ValueError, OverflowError, Accounts.DoesNotExist):
+            user = None
+
+        if user and account_activation_token.check_token(user, verify_token):
+            try:
+                user.verified = 1
+                user.save()
+                return HttpResponse("Your account has been verified.", status=200)
+            except IOError:
+                return HttpResponse("Account verification was not successful.", status=500)
+        else:
+            return HttpResponse("Verification code is invalid.", status=400)
+
+
+class SendVerificationView(views.APIView):
+    permission_classes = (permissions.AllowAny,)
+
+    def post(self, request, *args, **kwargs):
+
+        params = EmailForm(request.data)
+
+        if params.is_valid():
+            email = params.cleaned_data.get('email')
+            try:
+                user = Accounts.objects.get(email=email, verified=0)
+            except (TypeError, ValueError, OverflowError, Accounts.DoesNotExist):
+                user = None
+
+            if user:
+                try:
+                    send_verification_email(email, account_activation_token.make_token(user))
+                    return HttpResponse("Verification code has been resent to the valid email address.", status=200)
+                except IOError:
+                    return HttpResponse("Failed to send confirmation email.", status=500)
+
+            return HttpResponse("No Email has been sent.", status=400)
+
+        else:
+            return HttpResponse("Inputs have invalid format.", status=400)
+
+
+
+
+
+
+
