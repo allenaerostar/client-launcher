@@ -60,7 +60,7 @@ const verifyEmail = (postData) => {
       dispatch({type: 'VERIFY_EMAIL_SUCCESS'});
     });
     ipc.on('http-verify-email-fail', (e, err) => {
-      dispatch({type: 'VERIFY_EMAIL_FAILED'});
+      dispatch({type: 'VERIFY_EMAIL_FAILED', payload: {error: err}});
     });
   }
 }
