@@ -36,9 +36,6 @@ const login = (cred) => {
     });
   }
 }
-
-  
-
 const logout = () => {
   return {
     type: 'LOGOUT',
@@ -86,21 +83,6 @@ const verifyEmail = (postData) => {
     });
     ipc.on('http-verify-email-fail', (e, err) => {
       dispatch({type: 'VERIFY_EMAIL_FAILED', payload: {error: err}});
-    });
-  }
-}
-
-const verifyEmail = (code) => {
-  return (dispatch) => {
-    dispatch({type: 'VERIFY_EMAIL_START'});
-
-    ipc.send('http-verify-email', postData);
-
-    ipc.on('http-verify-email-success', (e, res) => {
-      dispatch({type: 'VERIFY_EMAIL_SUCCESS'});
-    });
-    ipc.on('http-verify-email-fail', (e, err) => {
-      dispatch({type: 'VERIFY_EMAIL_FAILED'});
     });
   }
 }

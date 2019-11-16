@@ -51,15 +51,6 @@ ipc.on('http-verify-email', (e, postData) => {
     });
 });
 
-// VERIFYING EMAIL ADDRESS
-ipc.on('http-verify-email', (e, postData) => {
-    netHandler.verifyAccount(postData).then(response => {
-        e.reply('http-verify-email-success', response);
-    }).catch(error => {
-        e.reply('http-verify-email-fail', error);
-    });
-});
-
 // LOGIN W/ USERNAME & PASSWORD
 ipc.on('http-login-credentials', (e, cred) => {
     netHandler.loginCredentials(cred).then(response => {
