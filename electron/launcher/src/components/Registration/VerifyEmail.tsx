@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { userActions } from '../../_actions';
 
-const Registration = props => {
+const VerifiedEmail = props => {
 
   const [postData, setPostData] = useState({
     'email': props.auth.user.email,
@@ -15,8 +15,10 @@ const Registration = props => {
   }
 
   const handleChange = (e) => {
+    const val = e.target.value;
     setPostData(postData => ({
-      ...postData, [e.target.id]: e.target.value
+      email: postData.email,
+      verify_token: val
     }));
   }
 
@@ -25,7 +27,7 @@ const Registration = props => {
       <h1>Verify Account</h1>
       <form onSubmit={handleSubmit}>
         <label htmlFor="verify_token">Verification Code: </label>
-        <input id="verify_token" type="text" onChange={handleChange}></input>
+        <input id="verify_token" type="text" value={postData.verify_token} onChange={handleChange}></input>
         <button type="submit">OK</button>
         {/* 
         Future re-send verification code option? 
@@ -39,4 +41,4 @@ const mapStateToProps = (state) => {
   return state;
 }
 
-export default connect(mapStateToProps, userActions)(Registration);
+export default connect(mapStateToProps, userActions)(VerifiedEmail);

@@ -23,7 +23,7 @@ const login = (cred) => {
         }
       });
 
-      if(res.is_active){
+      if(test.is_active){
         history.push('/');
       }
       else{

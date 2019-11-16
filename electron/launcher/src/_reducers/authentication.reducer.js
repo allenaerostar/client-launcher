@@ -27,8 +27,6 @@ export default (state = INITIAL_STATE, action) => {
           isAdmin: action.payload.user.isAdmin
         }
       };
-    case 'LOGIN_SUCCESS':
-      return { ...state, err: action.payload.error, isAuthenticated: false };
     case 'LOGOUT':
       return { ...state, isAuthenticated: false };
     case 'REGISTER_SUCCESS':

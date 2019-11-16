@@ -11,7 +11,7 @@ registerUser = (user) => {
 
   return new Promise ((resolve, reject) => {
     request(options).then(response => {
-      resolve(response);
+      resolve(JSON.parse(response));
     }).catch(err => {
         reject(err);
     });
@@ -29,7 +29,7 @@ verifyAccount = (postData) => {
 
   return new Promise ((resolve, reject) => {
     request(options).then(response => {
-      resolve(response);
+      resolve(JSON.parse(response));
     }).catch(err => {
       reject(err);
     })
@@ -47,7 +47,7 @@ loginCredentials = (cred) => {
 
   return new Promise ((resolve, reject) => {
     request(options).then(response => {
-      resolve(response);
+      resolve(JSON.parse(response));
     }).catch(err => {
       reject(err);
     });
