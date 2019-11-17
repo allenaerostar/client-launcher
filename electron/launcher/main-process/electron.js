@@ -51,6 +51,15 @@ ipc.on('http-verify-email', (e, postData) => {
     });
 });
 
+// RESENDING VERIFICATION EMAIL
+ipc.on('http-resend-verification-email', (e, postData) => {
+    netHandler.resendVerificationEmail(postData).then(response => {
+        e.reply('http-resend-verification-email-success', response);
+    }).catch(error => {
+        e.reply('http-resend-verification-email-fail', error);
+    });
+});
+
 // LOGIN W/ USERNAME & PASSWORD
 ipc.on('http-login-credentials', (e, cred) => {
     netHandler.loginCredentials(cred).then(response => {

@@ -1,9 +1,18 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import { connect } from 'react-redux';
 import { userActions } from '../../_actions';
 import FormBuilder from '../FormBuilder';
 
 const Registration = props => {
+
+  // Error handling
+  useEffect(() => {
+    if(props.auth.error !== null){
+      let error = JSON.parse(props.auth.error.error);
+      alert(error.message);
+      props.resetError();
+    }
+  }, [props.auth.error]);
 
   const formFields = [
     {

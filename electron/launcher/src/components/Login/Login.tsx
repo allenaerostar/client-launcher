@@ -17,6 +17,14 @@ const Login = props => {
     }
   }, []);
 
+  // Error handling 
+  useEffect(() => {
+    if(props.auth.error !== null){
+      let error = JSON.parse(props.auth.error.error);
+      alert(error.message);
+      props.resetError();
+    }
+  }, [props.auth.error]);
 
   const formFields = [
     {

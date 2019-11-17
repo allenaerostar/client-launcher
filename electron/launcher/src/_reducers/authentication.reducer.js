@@ -27,8 +27,10 @@ export default (state = INITIAL_STATE, action) => {
           isAdmin: action.payload.user.isAdmin
         }
       };
+    case 'LOGIN_FAILED':
+      return { ...state, isAuthenticated: false, error: action.payload.error}
     case 'LOGOUT_SUCCESS':
-      return { ...state, isAuthenticated: false, user: {} };
+      return { ...state, isAuthenticated: false, user: { ...state.user, username: '', password: ''} };
     case 'LOGOUT_FAILED':
       return { ...state, error: action.payload.error };
     case 'REGISTER_SUCCESS':
@@ -39,6 +41,8 @@ export default (state = INITIAL_STATE, action) => {
       return { ...state, user: {...state.user, isActive: true}};
     case 'VERIFY_EMAIL_FAILED': 
       return { ...state, error: action.payload.error};
+    case 'RESET_ERROR':
+      return { ...state, error: null};
     default:
       return state;
   }

@@ -23,7 +23,7 @@ const login = (cred) => {
         }
       });
 
-      if(test.is_active){
+      if(res.is_active){
         history.push('/');
       }
       else{
@@ -93,6 +93,7 @@ const verifyEmail = (postData) => {
 
     ipc.on('http-verify-email-success', (e, res) => {
       dispatch({type: 'VERIFY_EMAIL_SUCCESS'});
+      history.push('/login');
     });
     ipc.on('http-verify-email-fail', (e, err) => {
       dispatch({type: 'VERIFY_EMAIL_FAILED', payload: {error: err}});
@@ -100,9 +101,30 @@ const verifyEmail = (postData) => {
   }
 }
 
+const resendEmail = (postData) => {
+  return (dispatch) => {
+    ipc.send('http-resend-verification-email', postData);
+
+    ipc.on('http-resend-verification-email-success', (e, res) => {
+      dispatch({type: 'RESEND_VERIFICATION_EMAIL_SUCCESS'});
+    });
+    ipc.on('http-resend-verification-email-fail', (e, res) => {
+      dispatch({type: 'RESEND_VERIFICATION_EMAIL_FAILED'});
+    });
+  }
+}
+
+const resetError = (dispatch) => {
+  return {
+    type: 'RESET_ERROR'
+  }
+}
+
 export const userActions = {
   login,
   logout,
   register,
-  verifyEmail
+  verifyEmail,
+  resendEmail,
+  resetError
 };
