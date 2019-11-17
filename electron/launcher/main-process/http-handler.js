@@ -1,7 +1,7 @@
 const request = require('request-promise');
 
 // POST REQUEST TO REGISTER USER
-registerUser = (user) => {
+const registerUser = (user) => {
   let options = {
     method: 'POST',
     uri: 'http://127.0.0.1:8000/accounts/signup/',
@@ -19,7 +19,7 @@ registerUser = (user) => {
 }
 
 // POST REQUEST FOR VERIFYING EMAIL ADDRESS
-verifyAccount = (postData) => {
+const verifyAccount = (postData) => {
   let options = {
     method: 'POST',
     uri: 'http://127.0.0.1:8000/accounts/verification/',
@@ -37,7 +37,7 @@ verifyAccount = (postData) => {
 }
 
 // POST REQUEST TO LOGIN WITH USERNAME & PASSWORD
-loginCredentials = (cred) => {
+const loginCredentials = (cred) => {
   let options = {
     method: 'POST',
     uri: 'http://127.0.0.1:8000/accounts/login/',
@@ -54,6 +54,24 @@ loginCredentials = (cred) => {
   });
 }
 
+const logoutUser = (postData) => {
+  let options = {
+    method: 'POST',
+    uri: 'http://127.0.0.1:8000/accounts/logout/',
+    header: { 'content-type': 'application/x-www-form-urlencoded' },
+    form: postData
+  }
+
+  return new Promise((resolve, reject) => {
+    request(options).then(response => {
+      resolve(JSON.parse(response));
+    }).catch(err => {
+      reject(err);
+    });
+  });
+}
+
+module.exports.logoutUser = logoutUser;
 module.exports.registerUser = registerUser;
 module.exports.verifyAccount = verifyAccount;
 module.exports.loginCredentials = loginCredentials;

@@ -36,9 +36,22 @@ const login = (cred) => {
     });
   }
 }
-const logout = () => {
-  return {
-    type: 'LOGOUT',
+
+const logout = (user) => {
+  return (dispatch) => {
+    ipc.send('http-logout', user);
+
+    ipc.on('http-logout-success', (e, res) => {
+      dispatch({
+        type: 'LOGOUT_SUCCESS' 
+      });
+
+      history.push('/login');
+    });
+
+    ipc.on('http-logout-fail', (e, err) => {
+      dispatch({ type: 'LOGOUT_FAILED', payload: { error: err } });
+    });
   }
 }
 

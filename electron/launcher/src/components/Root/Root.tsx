@@ -1,12 +1,23 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
+import { userActions } from '../../_actions';
 
-const Root = () => {
-    return (
-      <>
-        <h1>Logged In</h1>
-      </>
-    )
+const Root = (props) => {
+
+  const logout = () => {
+    props.logout(props.auth.user);
+  }
+  
+  return (
+    <>
+      <h1>Logged In</h1>
+      <button onClick={logout}>logout</button>
+    </>
+  )
 }
 
-export default Root;
+const mapStateToProps = (state) => {
+  return state;
+}
+
+export default connect(mapStateToProps, userActions)(Root);

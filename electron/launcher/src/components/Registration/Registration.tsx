@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { userActions } from '../../_actions';
-import { AppErrors } from '../AppErrors';
+import FormBuilder from '../FormBuilder';
 
 const Registration = props => {
 

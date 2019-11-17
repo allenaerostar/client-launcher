@@ -59,3 +59,13 @@ ipc.on('http-login-credentials', (e, cred) => {
         e.reply('http-login-credentials-fail', error);
     });
 });
+
+
+// LOGOUT
+ipc.on('http-logout', (e, cred) => {
+    netHandler.logoutUser(cred).then(response => {
+        e.reply('http-logout-success', response);
+    }).catch(error => {
+        e.reply('http-logout-fail', error);
+    });
+});
