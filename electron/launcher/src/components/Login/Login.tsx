@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { userActions } from '../../_actions';
+import FormBuilder from '../FormBuilder';
 
 // Future iterations will an action pulled from redux instead of from App
 const Login = props => {
@@ -16,59 +17,31 @@ const Login = props => {
     }
   }, []);
 
-  const [inputs, setInputs] = useState({
-    'username': '',
-    'password': ''
-  });
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    props.login(inputs);
-  }
-
-  const handleChange = (e) => {
-    const name = e.target.name;
-    const value = e.target.value;
-    setInputs( inputs => ({
-      ...inputs, [name]: value
-    }));
-  }
 
   const formFields = [
     {
       name: 'username',
       label: 'Username',
-      type: 'text'
+      type: 'text',
+      required: true
     },
     {
       name: 'password',
       label: 'Password',
-      type: 'password'
+      type: 'password',
+      required: true
     }
   ];
 
   return (
     <>
       <h1>Login Here</h1>
-      <form onSubmit={handleSubmit}>
-        {
-          formFields.map((input, i) => (
-            <React.Fragment key={i}>
-              <label htmlFor={input.name}>{input.label}:</label>
-              <input
-                id={input.name}
-                type={input.type}
-                name={input.name}
-                placeholder={input.label}
-                onChange={handleChange}
-              >
-              </input>
-              <br />
-            </React.Fragment>
-          ))
-        }
-        <button type="submit">Log In</button>
-      </form>
+      <FormBuilder
+        formFields={formFields}
+        submitFunction={props.register}
+        errorMessageGenerator={false}
+        submitText={"Login"}
+      />
       <p>First time? <Link to="/registration">Register Here!</Link></p>
     </>
   );

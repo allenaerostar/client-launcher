@@ -1,126 +1,79 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import { userActions } from '../../_actions';
 import FormBuilder from '../FormBuilder';
 
 const Registration = props => {
 
-  const [inputs, setInputs] = useState({
-    'username': '',
-    'password1': '',
-    'password2': '',
-    'email': '',
-    'birthday': '',
-  });
-
-  const [formErrors, setFormErrors] = useState({});
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    let submittable = checkFormErrors();
-    if(submittable){
-      props.register(inputs);
-    }
-  }
-
-  const checkFormErrors = () =>{
-    for (let key in formErrors) {
-      if (formErrors[key] !== "") {
-        return false;
-      }
-    }
-    return true;
-  }
-
   const formFields = [
     {
       name: 'username',
       label: 'Username',
-      type: 'text'
+      type: 'text',
+      required: true
     },
     {
       name: 'password1',
       label: 'Password',
-      type: 'password'
+      type: 'password',
+      required: true
     },
     {
       name: 'password2',
       label: 'Confirm Password',
-      type: 'password'
+      type: 'password',
+      required: true
     },
     {
       name: 'email',
       label: 'Email',
-      type: 'email'
+      type: 'email',
+      required: true
     },
     {
       name: 'birthday',
       label: 'Birthday',
-      type: 'date'
+      type: 'date',
+      required: true
     }
   ];
-
-  const handleChange = (e) => {
-    const name = e.target.name;
-    const value = e.target.value;
-    setInputs(inputs => ({
-      ...inputs, [name]: value
-    }));
-
-    validateField(name, value);
-  }
   
-  const validateField = (fieldName, value) => {
-    let errorMessage = '';
+  const errorMessageGenerator = (fieldName, value, formObj) => {
     switch(fieldName) {
       case 'username':
-        if(!value.match(/^[a-zA-Z0-9_]+$/)) errorMessage = "Username must contain only Alphanumeric characters and underscores."
+        if(!value.match(/^[a-zA-Z0-9_]+$/)) {
+          return "Username must contain only Alphanumeric characters and underscores."
+        }
         break;
       case 'password1':
-        if (value.length < 6) errorMessage = "Password length must be at least 6 characters."
+        if (value.length < 6) {
+          return "Password length must be at least 6 characters.";
+        }
         break;
       case 'password2':        
-        if (inputs["password1"] !== value) errorMessage = "Confirm password should match password."
+        if (formObj["password1"] !== value) { 
+          return "Confirm password should match password.";
+        }
         break;
       case 'email':
-        if (!value.match(/^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i)) errorMessage = "Please enter a valid email address."
+        if (!value.match(/^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i)) {
+          return "Please enter a valid email address.";
+        }
         break;
       default:
         break;
     }
-
-    setFormErrors(errors => ({
-      ...errors, [fieldName]: errorMessage
-    }));
   }
 
   return (
     <>
       <h1>Registration Form</h1>
-      <form onSubmit={handleSubmit}>
-        {
-          formFields.map( (input, i) => (
-            <React.Fragment key={i}>
-              <label htmlFor={input.name}>{input.label}:</label>    
-              <input
-                id={input.name}
-                type={input.type}
-                name={input.name}
-                placeholder={input.label}
-                onChange={handleChange}  
-              >
-              </input>
-              {
-                !!formErrors[input.name] && formErrors[input.name].length > 0 ?
-                  <p>{formErrors[input.name]}</p>
-                : null  
-              }
-              <br />
-            </React.Fragment>
-          ))
-        }
-        <button type="submit">Register</button>
-      </form>
+      <FormBuilder 
+        formFields={formFields}
+        submitFunction={props.register}
+        errorMessageGenerator={errorMessageGenerator}
+        submitText={"Register"}
+      />
     </>
   );
 }
