@@ -1,16 +1,8 @@
 import React, { useState } from 'react';
-// import { connect } from 'react-redux';
-// import { userActions } from '../../_actions';
 
-const FormBuilder = ({ formFields, submitFunction }) => {
+const FormBuilder = ({ formFields, submitFunction, errorMessageGenerator, submitText }) => {
 
-  const [inputs, setInputs] = useState({
-    'username': '',
-    'password1': '',
-    'password2': '',
-    'email': '',
-    'birthday': '',
-  });
+  const [inputs, setInputs] = useState({});
 
   const [formErrors, setFormErrors] = useState({});
 
@@ -18,9 +10,7 @@ const FormBuilder = ({ formFields, submitFunction }) => {
     e.preventDefault();
     let submittable = checkFormErrors();
     if (submittable) {
-      //  this changes 
       submitFunction(inputs);
-      // props.register(inputs);
     }
   }
 
@@ -30,6 +20,19 @@ const FormBuilder = ({ formFields, submitFunction }) => {
         return false;
       }
     }
+
+    for(let field in formFields) {
+      if(field.required){
+        if(field in inputs){
+          if (inputs.field.trim() === '') {
+            return false;
+          }
+        } else {
+          return false;
+        }
+      }
+    }
+
     return true;
   }
 
@@ -37,36 +40,21 @@ const FormBuilder = ({ formFields, submitFunction }) => {
   const handleChange = (e) => {
     const name = e.target.name;
     const value = e.target.value;
+
     setInputs(inputs => ({
       ...inputs, [name]: value
     }));
 
-    validateField(name, value);
-  }
-
-  const validateField = (fieldName, value) => {
     let errorMessage = '';
-    switch (fieldName) {
-      case 'username':
-        if (!value.match(/^[a-zA-Z0-9_]+$/)) errorMessage = "Username must contain only Alphanumeric characters and underscores."
-        break;
-      case 'password1':
-        if (value.length < 6) errorMessage = "Password length must be at least 6 characters."
-        break;
-      case 'password2':
-        if (inputs["password1"] !== value) errorMessage = "Confirm password should match password."
-        break;
-      case 'email':
-        if (!value.match(/^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i)) errorMessage = "Please enter a valid email address."
-        break;
-      default:
-        break;
+    if(errorMessageGenerator) {
+      errorMessage = errorMessageGenerator(name, value, inputs) || '';
     }
 
     setFormErrors(errors => ({
-      ...errors, [fieldName]: errorMessage
+      ...errors, [name]: errorMessage
     }));
   }
+
 
   return (
     <form onSubmit={handleSubmit}>
@@ -80,6 +68,7 @@ const FormBuilder = ({ formFields, submitFunction }) => {
               name={input.name}
               placeholder={input.label}
               onChange={handleChange}
+              required={input.required}
             >
             </input>
             {
@@ -91,7 +80,7 @@ const FormBuilder = ({ formFields, submitFunction }) => {
           </React.Fragment>
         ))
       }
-      <button type="submit">Register</button>
+      <button type="submit">{submitText}</button>
     </form>
   );
 }
