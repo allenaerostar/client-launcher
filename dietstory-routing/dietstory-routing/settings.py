@@ -39,12 +39,14 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'registration.apps.RegistrationConfig',
     'swagger-ui',
+    'game_asset_manager',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'storages',
 ]
 
 
@@ -122,6 +124,18 @@ USE_L10N = True
 
 USE_TZ = False
 
+# AWS Settings
+
+AWS_ACCESS_KEY_ID = secret_config['AWS_ACCESS_KEY_ID']
+AWS_SECRET_ACCESS_KEY = secret_config['AWS_SECRET_ACCESS_KEY']
+AWS_STORAGE_BUCKET_NAME = secret_config['AWS_STORAGE_BUCKET_NAME']
+AWS_S3_CUSTOM_DOMAIN = '{}.s3.amazonaws.com'.format(AWS_STORAGE_BUCKET_NAME)
+
+AWS_S3_OBJECT_PARAMETERS = {
+    'CacheControl': 'max-age=86400',
+}
+
+AWS_DEFAULT_ACL = None # Avoid insecure behaviour
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
