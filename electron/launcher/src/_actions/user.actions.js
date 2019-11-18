@@ -1,4 +1,5 @@
 import history from '../_helpers/history';
+import * as actionTypes from './user.actions.types';
 
 const ipc = window.require('electron').ipcRenderer;
 
@@ -6,13 +7,13 @@ const ipc = window.require('electron').ipcRenderer;
 // API calls should go here?
 const login = (cred) => {
   return (dispatch) => {
-    dispatch({type: 'LOGIN_START'});
+    dispatch({type: actionTypes.LOGIN_START});
 
     ipc.send('http-login-credentials', cred);
 
     ipc.on('http-login-credentials-success', (e, res) => {
       dispatch({
-        type: 'LOGIN_SUCCESS',
+        type: actionTypes.LOGIN_SUCCESS,
         payload: {
           user: {
             username: res.username,
@@ -32,7 +33,7 @@ const login = (cred) => {
     });
 
     ipc.on('http-login-credentials-fail', (e, err) => {
-      dispatch({type: 'LOGIN_FAILED', payload: {error: err}});
+      dispatch({type: actionTypes.LOGIN_FAILED, payload: {error: err}});
     });
   }
 }
@@ -42,28 +43,26 @@ const logout = (user) => {
     ipc.send('http-logout', user);
 
     ipc.on('http-logout-success', (e, res) => {
-      dispatch({
-        type: 'LOGOUT_SUCCESS' 
-      });
+      dispatch({type: actionTypes.LOGOUT_SUCCESS });
 
       history.push('/login');
     });
 
     ipc.on('http-logout-fail', (e, err) => {
-      dispatch({ type: 'LOGOUT_FAILED', payload: { error: err } });
+      dispatch({ type: actionTypes.LOGOUT_FAILED, payload: { error: err } });
     });
   }
 }
 
 const register = (user) => {
   return (dispatch) => {
-    dispatch({type: 'REGISTER_START'});
+    dispatch({type: actionTypes.REGISTER_START});
 
     ipc.send('http-registration', user);
 
     ipc.on('http-registration-success', (e, res) => {
       dispatch({
-        type: 'REGISTER_SUCCESS', 
+        type: actionTypes.REGISTER_SUCCESS, 
         payload: {
           user: {
             username: user.username,
@@ -80,23 +79,23 @@ const register = (user) => {
     });
 
     ipc.on('http-registration-fail', (e, err) => {
-      dispatch({type: 'REGISTER_FAILED', payload: {error: err}});
+      dispatch({type: actionTypes.REGISTER_FAILED, payload: {error: err}});
     });
   }
 }
 
 const verifyEmail = (postData) => {
   return (dispatch) => {
-    dispatch({type: 'VERIFY_EMAIL_START'});
+    dispatch({type: actionTypes.VERIFY_EMAIL_START});
 
     ipc.send('http-verify-email', postData);
 
     ipc.on('http-verify-email-success', (e, res) => {
-      dispatch({type: 'VERIFY_EMAIL_SUCCESS'});
+      dispatch({type: actionTypes.VERIFY_EMAIL_SUCCESS});
       history.push('/login');
     });
     ipc.on('http-verify-email-fail', (e, err) => {
-      dispatch({type: 'VERIFY_EMAIL_FAILED', payload: {error: err}});
+      dispatch({type: actionTypes.VERIFY_EMAIL_FAILED, payload: {error: err}});
     });
   }
 }
@@ -106,17 +105,17 @@ const resendEmail = (postData) => {
     ipc.send('http-resend-verification-email', postData);
 
     ipc.on('http-resend-verification-email-success', (e, res) => {
-      dispatch({type: 'RESEND_VERIFICATION_EMAIL_SUCCESS'});
+      dispatch({type: actionTypes.RESEND_VERIFICATION_EMAIL_SUCCESS});
     });
     ipc.on('http-resend-verification-email-fail', (e, res) => {
-      dispatch({type: 'RESEND_VERIFICATION_EMAIL_FAILED'});
+      dispatch({type: actionTypes.RESEND_VERIFICATION_EMAIL_FAILED});
     });
   }
 }
 
 const resetError = (dispatch) => {
   return {
-    type: 'RESET_ERROR'
+    type: actionTypes.RESET_ERROR
   }
 }
 

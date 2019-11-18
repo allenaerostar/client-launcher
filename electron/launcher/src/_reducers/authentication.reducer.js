@@ -1,3 +1,5 @@
+import * as actionTypes from '../_actions/user.actions.types';
+
 const INITIAL_STATE = {
   user: {
     username: '',
@@ -15,7 +17,7 @@ const INITIAL_STATE = {
 // Currently not using our payload to make changes to state
 export default (state = INITIAL_STATE, action) => {
   switch(action.type) {
-    case 'LOGIN_SUCCESS':
+    case actionTypes.LOGIN_SUCCESS:
       return { 
         ...state, 
         isAuthenticated: true, 
@@ -27,21 +29,21 @@ export default (state = INITIAL_STATE, action) => {
           isAdmin: action.payload.user.isAdmin
         }
       };
-    case 'LOGIN_FAILED':
+    case actionTypes.LOGIN_FAILED:
       return { ...state, isAuthenticated: false, error: action.payload.error}
-    case 'LOGOUT_SUCCESS':
+    case actionTypes.LOGOUT_SUCCESS:
       return { ...state, isAuthenticated: false, user: { ...state.user, username: '', password: ''} };
-    case 'LOGOUT_FAILED':
+    case actionTypes.LOGOUT_FAILED:
       return { ...state, error: action.payload.error };
-    case 'REGISTER_SUCCESS':
+    case actionTypes.REGISTER_SUCCESS:
       return { ...state, user: action.payload.user };
-    case 'REGISTER_FAILED':
+    case actionTypes.REGISTER_FAILED:
       return { ...state, error: action.payload.error};
-    case 'VERIFY_EMAIL_SUCCESS':
+    case actionTypes.VERIFY_EMAIL_SUCCESS:
       return { ...state, user: {...state.user, isActive: true}};
-    case 'VERIFY_EMAIL_FAILED': 
+    case actionTypes.VERIFY_EMAIL_FAILED: 
       return { ...state, error: action.payload.error};
-    case 'RESET_ERROR':
+    case actionTypes.RESET_ERROR:
       return { ...state, error: null};
     default:
       return state;

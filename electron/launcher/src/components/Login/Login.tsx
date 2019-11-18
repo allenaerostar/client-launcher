@@ -20,6 +20,7 @@ const Login = props => {
   // Error handling 
   useEffect(() => {
     if(props.auth.error !== null){
+      console.log(props.auth.error);
       let error = JSON.parse(props.auth.error.error);
       alert(error.message);
       props.resetError();
@@ -46,7 +47,7 @@ const Login = props => {
       <h1>Login Here</h1>
       <FormBuilder
         formFields={formFields}
-        submitFunction={props.register}
+        submitFunction={props.login}
         errorMessageGenerator={false}
         submitText={"Login"}
       />
