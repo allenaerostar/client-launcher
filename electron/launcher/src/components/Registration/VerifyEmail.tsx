@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
-import { userActions } from '../../_actions';
+import { userActions } from '_actions';
 
 const VerifiedEmail = props => {
 
@@ -10,6 +10,7 @@ const VerifiedEmail = props => {
       alert(error.message);
       props.resetError();
     }
+    // eslint-disable-next-line
   }, [props.auth.error]);
 
   const [postData, setPostData] = useState({

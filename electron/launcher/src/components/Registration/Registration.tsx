@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react';
 import { connect } from 'react-redux';
-import { userActions } from '../../_actions';
-import FormBuilder from '../FormBuilder';
+import { userActions } from '_actions';
+import FormBuilder from 'components/FormBuilder';
 
 const Registration = props => {
 
@@ -12,6 +12,7 @@ const Registration = props => {
       alert(error.message);
       props.resetError();
     }
+    // eslint-disable-next-line
   }, [props.auth.error]);
 
   const formFields = [

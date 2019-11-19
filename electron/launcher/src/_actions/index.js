@@ -1,2 +1,2 @@
 // Central actions file
-export * from './user.actions';
+export * from '_actions/user.actions';

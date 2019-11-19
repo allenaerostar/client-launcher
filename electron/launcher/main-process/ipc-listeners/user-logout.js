@@ -1,7 +1,7 @@
 const request = require('request-promise');
 const ipc = require('electron').ipcMain;
 
-const config = require('../config.json').DJANGO_SERVER;
+const config = require('config.json').DJANGO_SERVER;
 const djangoUrl = config.HOST +":" +config.PORT;
 
 /***

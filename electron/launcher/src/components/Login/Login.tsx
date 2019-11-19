@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { userActions } from '../../_actions';
-import FormBuilder from '../FormBuilder';
+import { userActions } from '_actions';
+import FormBuilder from 'components/FormBuilder';
 
 // Future iterations will an action pulled from redux instead of from App
 const Login = props => {
@@ -15,7 +15,8 @@ const Login = props => {
         password: props.auth.user.password
       });
     }
-  }, []);
+    // eslint-disable-next-line
+  });
 
   // Error handling 
   useEffect(() => {
@@ -25,6 +26,7 @@ const Login = props => {
       alert(error.message);
       props.resetError();
     }
+    // eslint-disable-next-line
   }, [props.auth.error]);
 
   const formFields = [

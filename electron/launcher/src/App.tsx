@@ -2,16 +2,16 @@ import React from 'react';
 import { isSafeToUnpackElectronOnRemoteBuildServer } from 'app-builder-lib/out/platformPackager'; 
 import { Router, Route, Switch, Link} from 'react-router-dom';
 
-import Root from './components/Root/Root';
-import Login from './components/Login/Login';
-import Registration from './components/Registration/Registration';
-import VerifyEmail from './components/Registration/VerifyEmail';
-import PrivateRoute from './components/PrivateRoute';
-import history from './_helpers/history';
+import Root from 'components/Root/Root';
+import Login from 'components/Login/Login';
+import Registration from 'components/Registration/Registration';
+import VerifyEmail from 'components/Registration/VerifyEmail';
+import PrivateRoute from 'components/PrivateRoute';
+import history from '_helpers/history';
 
 import { connect } from 'react-redux';
 
-import './App.scss';
+import 'App.scss';
   
 const App = props => {
   return (
