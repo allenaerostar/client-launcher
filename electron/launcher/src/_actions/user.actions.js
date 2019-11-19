@@ -1,5 +1,5 @@
 import history from '../_helpers/history';
-import * as actionTypes from './user.actions.types';
+import * as actionTypes from '../_constants/user.types';
 
 const ipc = window.require('electron').ipcRenderer;
 
