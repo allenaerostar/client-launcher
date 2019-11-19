@@ -4,20 +4,29 @@
   "author": "Kevin X",
   "version": "0.1.0",
   "private": true,
-  "main": "public/electron.js",
+  "main": "main-process/electron.js",
   "dependencies": {
     "@types/jest": "24.0.21",
     "@types/node": "12.12.3",
     "@types/react": "16.9.11",
     "@types/react-dom": "16.9.3",
+    "@types/react-router-dom": "^5.1.2",
+    "app-module-path": "^2.2.0",
     "concurrently": "^5.0.0",
     "cross-env": "^6.0.3",
     "electron": "^7.0.0",
     "electron-builder": "^22.1.0",
     "electron-is-dev": "^1.1.0",
+    "node-sass": "^4.13.0",
     "react": "^16.11.0",
     "react-dom": "^16.11.0",
+    "react-redux": "^7.1.1",
+    "react-router-dom": "^5.1.2",
     "react-scripts": "3.2.0",
+    "redux": "^4.0.4",
+    "redux-thunk": "^2.3.0",
+    "request": "^2.88.0",
+    "request-promise": "^4.2.5",
     "typescript": "3.6.4",
     "wait-on": "^3.3.0"
   },
@@ -45,5 +54,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "redux-devtools": "^3.5.0"
   }
 }
