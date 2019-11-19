@@ -20,7 +20,7 @@ THEN POST TO DJANGO SERVER TO LOGOUT.
 ipc.on('http-logout', (e, postData) => {
   let options = {
     method: 'POST',
-    uri: djangoUrl +config.ROUTES.USER_LOGOUT,
+    uri: djangoUrl +'/accounts/logout/',
     header: { 'content-type': 'application/x-www-form-urlencoded' },
     form: postData
   }

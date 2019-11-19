@@ -1,13 +1,6 @@
 {
   "DJANGO_SERVER": {
     "HOST": "http://127.0.0.1",
-    "PORT": 8000,
-    "ROUTES": {
-      "USER_SIGNUP": "/accounts/signup/",
-      "USER_VERIFICATION": "/accounts/verification/",
-      "USER_RESEND_VERIFICATION_CODE": "/accounts/resend-verification-code/",
-      "USER_LOGIN": "/accounts/login/",
-      "USER_LOGOUT": "/accounts/logout/"
-    }
+    "PORT": 8000
   }
 }

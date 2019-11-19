@@ -23,7 +23,7 @@ THEN SENDS AN HTTP POST REQUEST TO DJANGO WEBSERVER TO CREATE USER.
 ipc.on('http-registration', (e, user) => {
   let options = {
     method: 'POST',
-    uri: djangoUrl +config.ROUTES.USER_SIGNUP,
+    uri: djangoUrl +'/accounts/signup/',
     header: {'content-type': 'application/x-www-form-urlencoded'},
     form: user,
   }
@@ -53,7 +53,7 @@ THEN SENDS AN HTTP POST REQUEST TO DJANGO WEBSERVER TO CONFIRM USER'S EMAIL.
 ipc.on('http-verify-email', (e, postData) => {
   let options = {
     method: 'POST',
-    uri: djangoUrl +config.ROUTES.USER_VERIFICATION,
+    uri: djangoUrl +'/accounts/verification/',
     header: {'content-type': 'application/x-www-form-urlencoded'},
     form: postData,
   }
@@ -83,7 +83,7 @@ THEN SENDS AN HTTP POST REQUEST TO DJANGO WEBSERVER TO RESEND CONFIRMATION EMAIL
 ipc.on('http-resend-verification-email', (e, email) => {
   let options = {
     method: 'POST',
-    uri: djangoUrl +config.ROUTES.USER_RESEND_VERIFICATION_CODE,
+    uri: djangoUrl +'/accounts/resend-verification-code/',
     header: {'content-type': 'application/x-www-form-urlencoded'},
     form: email,
   }

@@ -20,7 +20,7 @@ THIS METHOD OF LOGGING IN USES USER'S INPUT (USERNAME & PASSWORD).
 ipc.on('http-login-credentials', (e, cred) => {
   let options = {
     method: 'POST',
-    uri: djangoUrl +config.ROUTES.USER_LOGIN,
+    uri: djangoUrl +'/accounts/login/',
     header: {'content-type': 'application/x-www-form-urlencoded'},
     form: cred
   }
