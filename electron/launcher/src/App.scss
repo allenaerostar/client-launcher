@@ -1,3 +1,48 @@
+@font-face {
+  font-family: 'Klavika';
+  src: url('./assets/fonts/KlavikaRegular-TF.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Klavika';
+  src: url('./assets/fonts/KlavikaMedium-Italic.otf') format('opentype');
+  font-style: italic;
+  font-weight: 500;
+}
+@font-face {
+  font-family: 'Klavika';
+  src: url('./assets/fonts/KlavikaMedium.otf') format('opentype');
+  font-style: normal;
+  font-weight: 500;
+}
+@font-face {
+  font-family: 'Klavika';
+  src: url('./assets/fonts/KlavikaLight-Italic.otf') format('opentype');
+  font-style: italic;
+  font-weight: 200;
+}
+@font-face {
+  font-family: 'Klavika';
+  src: url('./assets/fonts/KlavikaLight.otf') format('opentype');
+  font-style: normal;
+  font-weight: 200;
+}
+@font-face {
+  font-family: 'Klavika';
+  src: url('./assets/fonts/KlavikaBold.otf') format('opentype');
+  font-style: normal;
+  font-weight: 700;
+}
+@font-face {
+  font-family: 'Klavika';
+  src: url('./assets/fonts/KlavikaBold-Italic.otf') format('opentype');
+  font-style: italic;
+  font-weight: 700;
+}
+
+
+
 *{
   box-sizing: border-box;
 }
@@ -6,7 +51,7 @@ html, body {
   font-family: Arial, Helvetica, sans-serif;
 }
 body{
-  // background: url('../src/assets/maplestory-background.png') no-repeat fixed center;
+  background: url('../src/assets/maplestory-background.png') no-repeat fixed center;
   margin: 0;
 }
 .container {

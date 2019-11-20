@@ -46,7 +46,7 @@ const Login = props => {
 
   return (
     <>
-      <h1>Login Here</h1>
+      <h1>Login to your DietStory account</h1>
       <FormBuilder
         formFields={formFields}
         submitFunction={props.login}
