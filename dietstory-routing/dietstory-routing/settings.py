@@ -122,9 +122,8 @@ USE_L10N = True
 USE_TZ = False
 
 # AWS Settings
-
-AWS_CONFIG = secret_config['AWS_CONFIG']
-
+if not 'test' in sys.argv:
+    AWS_CONFIG = secret_config['AWS_CONFIG']
 AWS_DEFAULT_ACL = None # Avoid insecure behaviour
 
 # Static files (CSS, JavaScript, Images)
