@@ -125,7 +125,7 @@ USE_L10N = True
 USE_TZ = False
 
 # AWS Settings
-if not 'test' in sys.argv:
+if not 'test' in sys.argv and 'AWS_CONFIG' in secret_config:
     AWS_CONFIG = secret_config['AWS_CONFIG']
 AWS_DEFAULT_ACL = None # Avoid insecure behaviour
 
