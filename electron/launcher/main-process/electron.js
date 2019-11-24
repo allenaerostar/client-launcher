@@ -3,11 +3,16 @@ const electron = require("electron");
 const app = electron.app;
 const BrowserWindow = electron.BrowserWindow;
 const isDev = require("electron-is-dev");
+const path = require("path");
+const onAppLoad = require("helpers/on-app-load");
 
-// IPC LISTENERS
-require('ipc-listeners/user-login');
-require('ipc-listeners/user-logout');
-require('ipc-listeners/user-registration');
+// SETTING APP PATH
+if(process.platform === 'win32'){
+    global.installationPath = path.join(app.getPath('appData'), '../Local', app.name);
+}
+
+// SCRIPTS WHEN APPLICATION STARTS UP
+onAppLoad.load();
 
 let mainWindow;
 
@@ -17,14 +22,19 @@ function createWindow() {
         height: 600,
         minWidth:1000,
         minHeight: 600,
-        webPreferences: {
-            nodeIntegration: true
-        }
+        show: false,
+        webPreferences: { nodeIntegration: true }
     });
     mainWindow.loadURL(isDev? "http://localhost:3000": `file://${path.join(__dirname, "../build/index.html")}`);
     mainWindow.on("closed", () => (mainWindow = null));
+    mainWindow.once('ready-to-show', () => {mainWindow.show()});
 }
 
 app.on("ready", createWindow);
 app.on("window-all-closed", () => {if (process.platform !== "darwin") {app.quit();}});
 app.on("activate", () => {if (mainWindow === null) {createWindow();}});
+
+// IPC LISTENERS
+require('ipc-listeners/user-login');
+require('ipc-listeners/user-logout');
+require('ipc-listeners/user-registration');
