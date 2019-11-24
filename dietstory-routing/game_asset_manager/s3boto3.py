@@ -43,7 +43,7 @@ class S3Client:
 	def get_object_presigned_url(self, key, expires=300):
 		try:
 			res = self.__s3_client.generate_presigned_url(
-				'get_object', 
+				'get_object',
 				Params={
 					'Bucket': self.__bucket,
 					'Key': key },

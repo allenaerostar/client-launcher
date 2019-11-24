@@ -127,7 +127,6 @@ USE_TZ = False
 # AWS Settings
 if not 'test' in sys.argv and 'AWS_CONFIG' in secret_config:
     AWS_CONFIG = secret_config['AWS_CONFIG']
-AWS_DEFAULT_ACL = None # Avoid insecure behaviour
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
