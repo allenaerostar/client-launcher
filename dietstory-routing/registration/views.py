@@ -1,7 +1,6 @@
 from django.http import JsonResponse
 from django.contrib.auth import authenticate, login, logout
-from rest_framework import views
-from rest_framework import permissions
+from rest_framework import views, permissions, status
 from .models import Accounts
 from .validate_forms import *
 from .email import send_verification_email
@@ -26,7 +25,9 @@ class SignupView(views.APIView):
                         schema:
                             type: string
         """
-        return JsonResponse({'message': "Welcome to signup page. Please enter username, email, password, and birthday."}, status=200)
+        return JsonResponse(
+            {'message': "Welcome to signup page. Please enter username, email, password, and birthday."}, 
+            status=status.HTTP_200_OK)
 
     def post(self, request, *args, **kwargs):
         """
@@ -124,17 +125,25 @@ class SignupView(views.APIView):
                     try:
                         send_verification_email(account.email, account_activation_token.make_token(account))
                     except IOError:
-                        print("Failed to send email.")
+                        print("Failed to send email.") #TODO: Logging
 
-                    return JsonResponse({'message': "Successful creation."}, status=201)
+                    return JsonResponse(
+                        {'message': "Successful creation."}, 
+                        status=status.HTTP_201_CREATED)
 
                 except IOError:
-                    return JsonResponse({'message': "Account creation was not successful."}, status=500)
+                    return JsonResponse(
+                        {'message': "Account creation was not successful."}, 
+                        status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
             else:
-                return JsonResponse({'message': "That account already exists."}, status=400)
+                return JsonResponse(
+                    {'message': "That account already exists."}, 
+                    status=status.HTTP_400_BAD_REQUEST)
         else:
-            return JsonResponse({'message': "Inputs have invalid format."}, status=400)
+            return JsonResponse(
+                {'message': "Inputs have invalid format."}, 
+                status=status.HTTP_400_BAD_REQUEST)
 
 
 # This view verifies token give by user to verify their dietstory account.
@@ -203,7 +212,9 @@ class VerifyView(views.APIView):
         params = VerifyForm(request.data)
 
         if not params.is_valid():
-            return JsonResponse({'message': "Inputs have invalid format."}, status=400)
+            return JsonResponse(
+                {'message': "Inputs have invalid format."}, 
+                status=status.HTTP_400_BAD_REQUEST)
 
         email = params.cleaned_data.get('email')
         verify_token = params.cleaned_data.get('verify_token')
@@ -218,12 +229,18 @@ class VerifyView(views.APIView):
                 user.verified = 1
                 user.save()
 
-                return JsonResponse({'message': "Your account has been verified."}, status=200)
+                return JsonResponse(
+                    {'message': "Your account has been verified."}, 
+                    status=status.HTTP_200_OK)
             except IOError:
-                return JsonResponse({'message': "Account verification was not successful."}, status=500)
+                return JsonResponse(
+                    {'message': "Account verification was not successful."}, 
+                    status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         else:
 
-            return JsonResponse({'message': "Verification code is invalid."}, status=400)
+            return JsonResponse(
+                {'message': "Verification code is invalid."}, 
+                status=status.HTTP_400_BAD_REQUEST)
 
 
 class SendVerificationView(views.APIView):
@@ -295,15 +312,18 @@ class SendVerificationView(views.APIView):
             if user:
                 try:
                     send_verification_email(email, account_activation_token.make_token(user))
-                    return JsonResponse({'message': "Verification code has been resent to the valid email address."},
-                                        status=200)
+                    return JsonResponse(
+                        {'message': "Verification code has been resent to the valid email address."},
+                        status=status.HTTP_200_OK)
                 except IOError:
-                    return JsonResponse({'message': "Failed to send confirmation email."}, status=500)
+                    return JsonResponse(
+                        {'message': "Failed to send confirmation email."}, 
+                        status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-            return JsonResponse({'message': "No Email has been sent."}, status=400)
+            return JsonResponse({'message': "No Email has been sent."}, status=status.HTTP_400_BAD_REQUEST)
 
         else:
-            return JsonResponse({'message': "Inputs have invalid format."}, status=400)
+            return JsonResponse({'message': "Inputs have invalid format."}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class LoginView(views.APIView):
@@ -399,11 +419,11 @@ class LoginView(views.APIView):
             account = authenticate(username=username, password=password)
             if account is not None:
                 login(request, account)
-                return JsonResponse(AccountSerializer(account).data, status=200)
+                return JsonResponse(AccountSerializer(account).data, status=status.HTTP_200_OK)
             else:
-                return JsonResponse({'message': "Failed to login."}, status=400)
+                return JsonResponse({'message': "Failed to login."}, status=status.HTTP_400_BAD_REQUEST)
         else:
-            return JsonResponse({'message': "Inputs have invalid format."}, status=400)
+            return JsonResponse({'message': "Inputs have invalid format."}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class LogoutView(views.APIView):
@@ -434,5 +454,5 @@ class LogoutView(views.APIView):
                                     description: Successfully logged out.
         """
         logout(request)
-        return JsonResponse({'message': "Successfully logged out."}, status=200)
+        return JsonResponse({'message': "Successfully logged out."}, status=status.HTTP_200_OK)
 
