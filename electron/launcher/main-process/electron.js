@@ -6,9 +6,15 @@ const isDev = require("electron-is-dev");
 const path = require("path");
 const onAppLoad = require("helpers/on-app-load");
 
-// SETTING APP PATH
+// SETTING DIETSTORY GAME INSTALLATION PATH
 if(process.platform === 'win32'){
-    global.installationPath = path.join(app.getPath('appData'), '../Local', app.name);
+    // WINDOWS  ---  C:\Users\<Username>\AppData\Local\Dietstory\Game
+    global.gameInstallationPath = path.join(app.getPath('appData'), '../Local', app.name, 'Game');
+}
+else{
+    // MAC OS   ---  ~/Library/Application Support/Dietstory/Game
+    // LINUX    ---  ~/.config/Dietstory/Game
+    global.gameInstallationPath = path.join(app.getPath('userData'), 'Game');
 }
 
 // SCRIPTS WHEN APPLICATION STARTS UP
