@@ -1,61 +1,102 @@
+// Klavika font faces
 @font-face {
   font-family: 'Klavika';
-  src: url('./assets/fonts/KlavikaRegular-TF.otf') format('opentype');
+  src: url('./assets/fonts/klavika/KlavikaRegular-TF.otf') format('opentype');
   font-weight: normal;
   font-style: normal;
 }
 @font-face {
   font-family: 'Klavika';
-  src: url('./assets/fonts/KlavikaMedium-Italic.otf') format('opentype');
+  src: url('./assets/fonts/klavika/KlavikaMedium-Italic.otf') format('opentype');
   font-style: italic;
   font-weight: 500;
 }
 @font-face {
   font-family: 'Klavika';
-  src: url('./assets/fonts/KlavikaMedium.otf') format('opentype');
+  src: url('./assets/fonts/klavika/KlavikaMedium.otf') format('opentype');
   font-style: normal;
   font-weight: 500;
 }
 @font-face {
   font-family: 'Klavika';
-  src: url('./assets/fonts/KlavikaLight-Italic.otf') format('opentype');
+  src: url('./assets/fonts/klavika/KlavikaLight-Italic.otf') format('opentype');
   font-style: italic;
   font-weight: 200;
 }
 @font-face {
   font-family: 'Klavika';
-  src: url('./assets/fonts/KlavikaLight.otf') format('opentype');
+  src: url('./assets/fonts/klavika/KlavikaLight.otf') format('opentype');
   font-style: normal;
   font-weight: 200;
 }
 @font-face {
   font-family: 'Klavika';
-  src: url('./assets/fonts/KlavikaBold.otf') format('opentype');
+  src: url('./assets/fonts/klavika/KlavikaBold.otf') format('opentype');
   font-style: normal;
   font-weight: 700;
 }
 @font-face {
   font-family: 'Klavika';
-  src: url('./assets/fonts/KlavikaBold-Italic.otf') format('opentype');
+  src: url('./assets/fonts/klavika/KlavikaBold-Italic.otf') format('opentype');
   font-style: italic;
   font-weight: 700;
 }
 
+// Avenir Next font faces
+@font-face {
+  font-family: 'Avenir Next';
+  src: url('./assets/fonts/avenir/AvenirNext-Regular-08.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
 
+@font-face {
+  font-family: 'Avenir Next';
+  src: url('./assets/fonts/avenir/AvenirNext-DemiBold-03.ttf') format('truetype');
+  font-weight: 300;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Avenir Next';
+  src: url('./assets/fonts/avenir/AvenirNext-Bold-01.ttf') format('truetype');
+  font-weight: bold;
+  font-style: normal;
+}
 
 *{
   box-sizing: border-box;
+  font-family: 'Avenir Next', Helvetica, sans-serif;
 }
 html, body {
   font-size: 16px;
-  font-family: Arial, Helvetica, sans-serif;
+  color: #232323;
 }
 body{
-  background: url('../src/assets/maplestory-background.png') no-repeat fixed center;
   margin: 0;
 }
-.container {
-  text-align: center;
+h1{
+  
+  font-size: 2.25rem;
+  font-weight: bold;
+  font-style: normal;
+}
+
+.form__container{
+  border-left: 3px solid #F7943A;
+  padding: 4rem 2rem 0 2rem !important;
+  form{
+    margin: 2.5rem 0;
+    button{
+      font-weight: bold;
+    }
+  }
+}
+.hero-image{
+  background: url('../src/assets/dietstory_login_background.png') no-repeat center;
+  background-size: cover;
+  min-height: 578px;
+  padding: 1.5rem 3rem !important;
 }
 
 
