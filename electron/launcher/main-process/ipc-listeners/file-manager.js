@@ -48,26 +48,28 @@ calculateHashes = masterList =>{
 }
 
 // REQUEST FOR A SPECIFIC VERSION OF HASHES
-// getHashList = version => {
-//   let options = {
-//     method: 'GET',
-//     uri: djangoUrl + '/game-files/hashes',
-//     json: true
-//   }
+getHashList = version => {
+  let options = {
+    method: 'GET',
+    uri: djangoUrl + '/game-files/hashes',
+    json: true
+  }
 
-//   if(version === 'latest'){
-//     options = {...options, qs: {version_id: version}};
-//   }
+  if(version === 'latest'){
+    options = {...options, qs: {version_id: version}};
+  }
 
-//   return new Promise((resolve, reject) => {
-//     request(options).then(response => {
-//       resolve(response);
-//     }).catch(error => {
-//       reject(error);
-//     });
-//   });
-// }
+  return new Promise((resolve, reject) => {
+    request(options).then(response => {
+      resolve(response);
+    }).catch(error => {
+      reject(error);
+    });
+  });
+}
 
+/*
+// FOR TESTING W/O DJANGO BACK END
 getHashList = version => {
   let serverResponse = [
     ['amazing.wz', 'a9fa02b775551cc4bfc7737496db2ce6'],
@@ -76,7 +78,7 @@ getHashList = version => {
   ];
   return Promise.resolve(serverResponse);
 }
-
+*/
 
 
 
