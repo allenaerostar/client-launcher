@@ -15,16 +15,26 @@ import { connect } from 'react-redux';
 import 'App.scss';
   
 const App = props => {
-  return (
-    <Router history={history}>
-        {/* <Header /> */}
-        <Switch>
-          <PrivateRoute exact path="/" Component={Root} isAuthenticated={props.auth.isAuthenticated}/>
-          <Route path="/login" component={Login}/>
-          <Route path="/registration" component={Registration} />
-          <Route path="/verify-email" component={VerifyEmail} />
-        </Switch>
-    </Router>
+  return ( 
+    <div className="app-container--loggedin">
+     {/* <div className={props.auth.isAuthenticated ? "app-container--loggedin" : ""}> */}
+      <Router history={history}>
+        {
+          props.auth.isAuthenticated ? 
+            <Header />
+            :
+            null
+        }
+        <Header />
+          <Switch>
+            <Route path="/" component={Root} />
+            {/* <PrivateRoute exact path="/" Component={Root} isAuthenticated={props.auth.isAuthenticated}/> */}
+            {/* <Route path="/login" component={Login}/> */}
+            <Route path="/registration" component={Registration} />
+            <Route path="/verify-email" component={VerifyEmail} />
+          </Switch>
+      </Router>
+    </div>
   );
 }
 

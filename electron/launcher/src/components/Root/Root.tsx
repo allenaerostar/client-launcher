@@ -9,10 +9,10 @@ const Root = (props) => {
   }
   
   return (
-    <>
+    <section>
       <h1>Logged In</h1>
       <button onClick={logout}>logout</button>
-    </>
+    </section>
   )
 }
 
