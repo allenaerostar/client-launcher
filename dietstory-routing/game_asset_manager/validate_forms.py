@@ -11,10 +11,11 @@ class VersionIdValidator(BaseValidator):
 	compare = lambda self, a, b: not VersionIdValidator.check_version_format(a)
 	message = "Version must follow the form: ({})".format(VERSION_FORMAT)
 
-
-class RequestGameAssetForm(forms.Form):
-	filename = forms.CharField(max_length=128)
+class GameMetadataForm(forms.Form):
 	versionid = forms.CharField(max_length=16, required=False, validators=[VersionIdValidator(True)])
+
+class RequestGameAssetForm(GameMetadataForm):
+	filename = forms.CharField(max_length=128)
 
 	def get_version_values(self):
 		if self.cleaned_data.get('versionid'):
