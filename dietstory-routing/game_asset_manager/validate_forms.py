@@ -14,9 +14,6 @@ class VersionIdValidator(BaseValidator):
 class GameMetadataForm(forms.Form):
 	versionid = forms.CharField(max_length=16, required=False, validators=[VersionIdValidator(True)])
 
-class RequestGameAssetForm(GameMetadataForm):
-	filename = forms.CharField(max_length=128)
-
 	def get_version_values(self):
 		if self.cleaned_data.get('versionid'):
 			search = re.search(VERSION_FORMAT, self.cleaned_data.get('versionid'))
@@ -26,4 +23,7 @@ class RequestGameAssetForm(GameMetadataForm):
 				return major, minor
 
 		return None, None
+
+class RequestGameAssetForm(GameMetadataForm):
+	filename = forms.CharField(max_length=128)
 
