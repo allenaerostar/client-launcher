@@ -14,3 +14,15 @@ class GameFiles(models.Model):
 		managed = True
 		db_table = 'game_files'
 		unique_together=(('version_id_major', 'version_id_minor', 'file_name'))
+
+
+class GameVersions(models.Model):
+	major_ver = models.IntegerField(validators=[MinValueValidator(0)])
+	minor_ver = models.IntegerField(validators=[MinValueValidator(0)])
+	live_by = models.DateTimeField()
+	is_live = models.SmallIntegerField(default=0, null=True, blank=True, validators=[MinValueValidator(0), MaxValueValidator(250)])
+
+	class Meta:
+		managed = True
+		db_table = 'game_versions'
+		models.UniqueConstraint(fields= ['major_ver', 'minor_ver'], name='version')
