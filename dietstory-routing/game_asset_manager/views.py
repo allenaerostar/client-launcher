@@ -1,8 +1,9 @@
 from django.http import HttpResponse, JsonResponse
 from rest_framework import views, permissions, status
 from .s3boto3 import S3Boto3Factory
-from .models import GameFiles
+from .models import GameFiles, GameVersions
 from.validate_forms import RequestGameAssetForm
+from .serializers import GameVersionSerializer
 
 # Create your views here.
 class DownloadView(views.APIView):
@@ -70,3 +71,31 @@ class DownloadView(views.APIView):
 			return JsonResponse(
 				{'message': 'File not found.'},
 				status=status.HTTP_404_NOT_FOUND)
+
+
+class GameVersionView(views.APIView):
+	def has_permissions(self, request, view):
+
+		if self.request.method == "GET":
+			return (permissions.AllowAny,)
+
+		elif self.request.method == "POST":
+			return (permissions.IsAdminUser(),)
+
+	def get(self, request, *args, **kwargs):
+
+		try:
+			game_version = GameVersions.objects.get(is_live=True)
+		except GameVersions.DoesNotExist:
+			game_version = None
+
+		if game_version:
+			return JsonResponse(
+				{'game_version': GameVersionSerializer(game_version).data},
+				status=status.HTTP_200_OK)
+		else:
+			return JsonResponse(
+				{'message': 'No version of the game exists.'},
+				status=status.HTTP_404_NOT_FOUND)
+
+
