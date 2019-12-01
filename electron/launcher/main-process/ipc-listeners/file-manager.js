@@ -61,24 +61,12 @@ getHashList = version => {
 
   return new Promise((resolve, reject) => {
     request(options).then(response => {
-      resolve(response);
+      resolve(response.hash_values);
     }).catch(error => {
       reject(error);
     });
   });
 }
-
-/*
-// FOR TESTING W/O DJANGO BACK END
-getHashList = version => {
-  let serverResponse = [
-    ['amazing.wz', 'a9fa02b775551cc4bfc7737496db2ce6'],
-    ['kappa.wz', '8b33a08c971005449a5d625651c840dd'],
-    ['wow.wz', 'eb964c41b6e2615580f020d551545ae6']
-  ];
-  return Promise.resolve(serverResponse);
-}
-*/
 
 
 
