@@ -3,7 +3,7 @@ const path = require('path');
 const exec = require('child_process').exec;
 
 // CHECKS WINDOWS DEFENDER'S EXCLUSION PATH
-async function checkWinDefender(){
+checkWinDefender = () => {
   return new Promise((resolve, reject) => {
     let command = '$pref = Get-MpPreference; $pref.ExclusionPath';
     let options = {
@@ -21,7 +21,7 @@ async function checkWinDefender(){
 }
 
 // ADDS GAME FOLDER INTO WINDOWS DEFENDER EXCLUSION PATH
-async function addExclusionPath(){
+addExclusionPath = () => {
   return new Promise((resolve, reject) => {
     let command = `Start-Process powershell -Verb RunAs -WindowStyle Hidden -ArgumentList 'Add-MpPreference -ExclusionPath "${gameInstallationPath}"'`;
     let options = {
