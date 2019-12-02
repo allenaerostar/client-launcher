@@ -1,5 +1,6 @@
 from django.test import TestCase
 from django.urls import reverse
+from rest_framework import status
 import registration.models as models
 import registration.verification as verification
 
@@ -10,7 +11,7 @@ class SignupViewTest(TestCase):
 	# Test bad submission
 	def test_empty_form(self):
 		response = self.client.post(SignupViewTest.SIGNUP_VIEW_URL)
-		self.assertEqual(response.status_code, 400)
+		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
 	# Test valid submission
 	def test_regular_form(self):
@@ -23,7 +24,7 @@ class SignupViewTest(TestCase):
 				'birthday': '1990-01-01',
 				'Content-Type': 'application/x-www-form-urlencoded'
 			})
-		self.assertEqual(response.status_code, 201)
+		self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
 	# Test Non Matching Passwords
 	def test_non_matching_passwords(self):
@@ -36,7 +37,7 @@ class SignupViewTest(TestCase):
 				'birthday': '1990-01-01',
 				'Content-Type': 'application/x-www-form-urlencoded'
 			})
-		self.assertEqual(response.status_code, 400)
+		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
 	# Test Invalid Input Fields
 	def test_invalid_input_fields(self):
@@ -49,7 +50,7 @@ class SignupViewTest(TestCase):
 				'birthday': '01-01-1995',
 				'Content-Type': 'application/x-www-form-urlencoded'
 			})
-		self.assertEqual(response.status_code, 400)
+		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
 	# Test Dangerous Inputs
 	def test_dangerous_input(self):
@@ -62,7 +63,7 @@ class SignupViewTest(TestCase):
 				'birthday': '1995-02-02',
 				'Content-Type': 'application/x-www-form-urlencoded'
 			})
-		self.assertEqual(response.status_code, 400)
+		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
 	# Test Creating An Already Existing User
 	#def test_create_an_existing_user(self):
@@ -84,8 +85,8 @@ class SignupViewTest(TestCase):
 	#			'birthday': '1995-02-02',
 	#			'Content-Type': 'application/x-www-form-urlencoded'
 	#		})
-	#	self.assertEqual(response1.status_code, 201)
-	#	self.assertEqual(response2.status_code, 400)
+	#	self.assertEqual(response1.status_code, status.HTTP_201_CREATED)
+	#	self.assertEqual(response2.status_code, status.HTTP_400_BAD_REQUEST)
 
 
 class VerifyViewTest(TestCase):
@@ -93,7 +94,7 @@ class VerifyViewTest(TestCase):
 
 	def test_empty_form(self):
 		response = self.client.post(VerifyViewTest.VERIFY_VIEW_URL)
-		self.assertEqual(response.status_code, 400)
+		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
 	def test_invalid_email_format(self):
 		response = self.client.post(VerifyViewTest.VERIFY_VIEW_URL,
@@ -101,7 +102,7 @@ class VerifyViewTest(TestCase):
 				'email': '123123',
 				'verify_token': '1231231232'
 			})
-		self.assertEqual(response.status_code, 400)
+		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
 	def test_regular_form_for_unverified_account(self):
 		models.Accounts.objects.create(name='username', password='password', email='pokemon@domain.com',birthday='1990-01-01', tempban='0001-01-01 00:00:01')
@@ -112,7 +113,7 @@ class VerifyViewTest(TestCase):
 				'email': 'pokemon@domain.com',
 				'verify_token': str(token)
 			})
-		self.assertEqual(response.status_code, 200)
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 	def test_regular_form_for_nonexistent_account(self):
 		response = self.client.post(VerifyViewTest.VERIFY_VIEW_URL,
@@ -120,7 +121,7 @@ class VerifyViewTest(TestCase):
 				'email': 'pokemon@hotmail.com',
 				'verify_token': '1232131233123123'
 			})
-		self.assertEqual(response.status_code, 400)
+		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
 	def test_invalid_token(self):
 		models.Accounts.objects.create(name='username', password='password', email='pokemon@domain.com',birthday='1990-01-01', tempban='0001-01-01 00:00:01')
@@ -130,7 +131,7 @@ class VerifyViewTest(TestCase):
 				'email': 'pokemon@domain.com',
 				'verify_token': '12312321321321321'
 			})
-		self.assertEqual(response.status_code, 400)
+		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
 
 class SendVerificationViewTest(TestCase):
@@ -138,7 +139,7 @@ class SendVerificationViewTest(TestCase):
 
 	def test_empty_form(self):
 		response = self.client.post(SendVerificationViewTest.SEND_VERIFY_VIEW_URL)
-		self.assertEqual(response.status_code, 400)
+		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
 	def test_regular_form_for_existing_email(self):
 		models.Accounts.objects.create(name='username', password='password', email='pokemon@domain.com',birthday='1990-01-01', tempban='0001-01-01 00:00:01')
@@ -146,21 +147,21 @@ class SendVerificationViewTest(TestCase):
 			{
 				'email': 'pokemon@domain.com'
 			})
-		self.assertEqual(response.status_code, 200)
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 	def test_regular_form_for_nonexisting_email(self):
 		response = self.client.post(SendVerificationViewTest.SEND_VERIFY_VIEW_URL,
 			{
 				'email': 'pokemon@domain.com'
 			})
-		self.assertEqual(response.status_code, 400)
+		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
 	def test_invalid_email_format(self):
 		response = self.client.post(SendVerificationViewTest.SEND_VERIFY_VIEW_URL,
 			{
 				'email': 'pokemondomain.com'
 			})
-		self.assertEqual(response.status_code, 400)
+		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
 
 class LoginViewTest(TestCase):
@@ -168,11 +169,11 @@ class LoginViewTest(TestCase):
 
 	def test_empty_form(self):
 		response = self.client.post(LoginViewTest.LOGIN_VIEW_URL)
-		self.assertEqual(response.status_code, 400)
+		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
 	def test_invalid_parameters(self):
 		response = self.client.post(LoginViewTest.LOGIN_VIEW_URL, {'test': 'test', 'domain': 'domain'})
-		self.assertEqual(response.status_code, 400)
+		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
 	def test_incorrect_username(self):
 		models.Accounts.objects.create(name='username', password='password', email='pokemon@domain.com',birthday='1990-01-01', tempban='0001-01-01 00:00:01', verified = 1)
@@ -181,7 +182,7 @@ class LoginViewTest(TestCase):
 				'username': 'username1',
 				'password': 'password'
 			})
-		self.assertEqual(response.status_code, 400)
+		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
 	def test_incorrect_password(self):
 		models.Accounts.objects.create(name='username', password='password', email='pokemon@domain.com',birthday='1990-01-01', tempban='0001-01-01 00:00:01', verified = 1)
@@ -190,7 +191,7 @@ class LoginViewTest(TestCase):
 				'username': 'username',
 				'password': 'password1'
 			})
-		self.assertEqual(response.status_code, 400)
+		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
 	def test_correct_credentials(self):
 		models.Accounts.objects.create(name='username', password='password', email='pokemon@domain.com',birthday='1990-01-01', tempban='0001-01-01 00:00:01', verified = 1)
@@ -199,11 +200,11 @@ class LoginViewTest(TestCase):
 				'username': 'username',
 				'password': 'password'
 			})
-		self.assertEqual(response.status_code, 200)
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 	def test_get_login(self):
 		response = self.client.get(LoginViewTest.LOGIN_VIEW_URL)
-		self.assertEqual(response.status_code, 200)
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 
 class LogoutViewTest(TestCase):
@@ -212,7 +213,7 @@ class LogoutViewTest(TestCase):
 	def test_logout(self):
 
 		response = self.client.post(LogoutViewTest.LOGOUT_VIEW_URL)
-		self.assertEqual(response.status_code, 200)
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 
 

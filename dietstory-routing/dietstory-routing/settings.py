@@ -39,12 +39,14 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'registration.apps.RegistrationConfig',
     'swagger-ui',
+    'game_asset_manager',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'storages',
 ]
 
 
@@ -122,6 +124,9 @@ USE_L10N = True
 
 USE_TZ = False
 
+# AWS Settings
+if not 'test' in sys.argv and 'AWS_CONFIG' in secret_config:
+    AWS_CONFIG = secret_config['AWS_CONFIG']
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
