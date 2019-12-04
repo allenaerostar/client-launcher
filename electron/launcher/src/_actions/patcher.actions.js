@@ -23,6 +23,15 @@ const checkForUpdate = () => {
   }
 }
 
+const downloadFiles = () => {
+  return (dispatch) => {
+    dispatch({type: patcherTypes.DOWNLOAD_FILES_START});
+
+    ipc.send('fm-download-difference');
+  }
+}
+
 export const patcherActions = {
-  checkForUpdate
+  checkForUpdate,
+  downloadFiles
 };
