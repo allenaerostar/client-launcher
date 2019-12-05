@@ -39,8 +39,7 @@ class DownloadView(views.APIView):
                                     type: string
                                     description: URL link to temporary download file.
         """
-        params = RequestGameAssetForm(request.data)
-
+        params = RequestGameAssetForm(request.GET)
         # Check for valid parameters
         if not params.is_valid():
             return JsonResponse(
@@ -66,24 +65,29 @@ class DownloadView(views.APIView):
                 game_version = None
 
         # Get file data
-        filename = params.cleaned_data.get('filename')
+        file_names = params.cleaned_data.get('filenames')
         if game_version:
             try:
-                gamefile = GameFiles.objects.get(version_ref=game_version.id, file_name=filename)
+                game_files = GameFiles.objects.filter(version_ref=game_version.id, file_name__in=file_names)
             except (TypeError, ValueError, OverflowError, GameFiles.DoesNotExist):
-                gamefile = None
+                game_files = None
         else:
             return JsonResponse(
                 {'message': 'No version of the game exists.'},
                 status=status.HTTP_404_NOT_FOUND)
 
         # Obtain S3 URL
-        if gamefile:
+        if game_files:
+            res = {}
             s3_client = S3Boto3Factory.get_s3_client()
-            res = s3_client.get_object_presigned_url(key=gamefile.s3_path, expires=300)
+            for file in game_files:
+                res[file.file_name] = {
+                        'download_link': s3_client.get_object_presigned_url(key=file.s3_path, expires=300),
+                        'hash': file.hash_value
+                    }
+
             return JsonResponse(
-                {'download_link': res,
-                 'hash': gamefile.hash_value },
+                res,
                 status=status.HTTP_200_OK)
         else:
             return JsonResponse(
