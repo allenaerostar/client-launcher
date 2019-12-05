@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { userActions } from '_actions';
 import FormBuilder from 'components/FormBuilder';
+import logo from 'assets/dietstory_logo.png';
 
 // Future iterations will an action pulled from redux instead of from App
 const Login = props => {
@@ -45,16 +46,26 @@ const Login = props => {
   ];
 
   return (
-    <>
-      <h1>Login Here</h1>
-      <FormBuilder
-        formFields={formFields}
-        submitFunction={props.login}
-        errorMessageGenerator={false}
-        submitText={"Login"}
-      />
-      <p>First time? <Link to="/registration">Register Here!</Link></p>
-    </>
+      <div className="row no-gutters">
+        <section className="hero-image col-8">
+          <img src={logo} className="img-fluid" width="228" height="96"/>
+        </section>
+        <section className="col-4 form__container">
+          <h1>Sign In</h1>
+          <FormBuilder
+            formFields={formFields}
+            submitFunction={props.login}
+            errorMessageGenerator={false}
+            submitText={"Login"}
+          />
+          <Link to="/registration">
+            > Create an account
+          </Link>
+          <Link to="/">
+            > Forgot your password?
+          </Link>
+        </section>
+      </div>
   );
 };
 
