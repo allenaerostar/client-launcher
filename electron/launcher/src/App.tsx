@@ -4,7 +4,7 @@ import { Router, Route, Switch } from 'react-router-dom';
 
 import Root from 'components/Root/Root';
 import Login from 'components/Login/Login';
-import Header from './components/Header/Header';
+import Header from 'components/Header/Header';
 import Registration from 'components/Registration/Registration';
 import VerifyEmail from 'components/Registration/VerifyEmail';
 import PrivateRoute from 'components/PrivateRoute';

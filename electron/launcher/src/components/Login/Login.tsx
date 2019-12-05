@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { userActions } from '_actions';
 import FormBuilder from 'components/FormBuilder';
-import logo from '../../assets/dietstory_logo.png';
+import logo from 'assets/dietstory_logo.png';
 
 // Future iterations will an action pulled from redux instead of from App
 const Login = props => {
