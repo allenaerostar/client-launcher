@@ -4,6 +4,7 @@ const crypto = require('crypto');
 const path = require('path');
 const async = require('async');
 const fs = require('fs-extra');
+const qs = require('qs');
 const ipc = require('electron').ipcMain;
 const app = require('electron').app;
 
@@ -46,30 +47,30 @@ calculateHashes = masterList => {
   });
 }
 
-// // REQUEST FOR S3 DOWNLOAD LINK OF A FILE
-// getDownloadUrls = files => {
-//   let options = {
-//     method: 'GET',
-//     uri: djangoUrl + '/game-files/download',
-//     qs: {filenames: files},
-//     qsStringifyOptions: {arrayFormat: 'comma', encode: false},
-//     json: true
-//   }
+// REQUEST FOR S3 DOWNLOAD LINK OF A FILE
+getDownloadUrls = files => {
+  let query = qs.stringify({filenames: files}, {arrayFormat:'comma'});
+  let options = {
+    method: 'GET',
+    uri: djangoUrl + `/game-files/download?${query}`,
+    json: true
+  }
 
-//   return new Promise((resolve, reject) => {
-//     request(options).then(response => {
-//       // resolve(response.download_link)
-//     }).catch(error => {
-//       reject(error);
-//     });
-//   });
-// }
+  return new Promise((resolve, reject) => {
+    request(options).then(response => {
+      resolve(response)
+    }).catch(error => {
+      reject(error);
+    });
+  });
+}
 
-// HEAD REQUEST TO AMAZON S3 TO MAKE GET THE SIZE OF THE FILE
-getFileSize = downloadUrl => {
+// HEAD REQUEST TO AMAZON S3 TO GET THE SIZE OF THE FILE
+getFileSize = url => {
   let options = {
     method: 'HEAD',
-    uri: downloadUrl
+    uri: url,
+    json: true
   }
 
   return new Promise((resolve, reject) => {
@@ -83,68 +84,23 @@ getFileSize = downloadUrl => {
 
 
 getHashList = version => {
-  //["150mb.test", "3d3be108b6b902c41404da7adff4a8da"],
-  return Promise.resolve([
-    ["10kb.test", "1276481102f218c981e0324180bafd9f"],
-    ["10mb.test", "f1c9645dbc14efddc7d8a322685f26eb"],
-    ["1kb.test", "0f343b0931126a20f133d67c2b018a3b"],
-    ["500kb.test", "816df6f64deba63b029ca19d880ee10a"],
-    ["50kb.test", "bf235f22df3e004ede21041978c24f2e"]
-  ]);
-}
-
-// getHashList = version => {
-//   let options = {
-//     method: 'GET',
-//     uri: djangoUrl + '/game-files/hashes',
-//     json: true
-//   }
-
-//   if(version === 'latest'){
-//     options = {...options, qs: {version_id: version}};
-//   }
-
-//   return new Promise((resolve, reject) => {
-//     request(options).then(response => {
-//       resolve(response);
-//     }).catch(error => {
-//       reject(error);
-//     });
-//   });
-// }
-
-getDownloadUrls = files => {
-  
-  /*
-  "150mb.test": {
-    download_link: 'https://diestory-api-server-assets.s3.us-east-2.amazonaws.com/test_files/150mb.test',
-    hash: '3d3be108b6b902c41404da7adff4a8da'
-    },
-  */
-  let urlList = {
-    "10kb.test": {
-      download_link: 'https://diestory-api-server-assets.s3.us-east-2.amazonaws.com/test_files/10kb.test',
-      hash: '1276481102f218c981e0324180bafd9f'
-    },
-    "10mb.test": {
-      download_link: 'https://diestory-api-server-assets.s3.us-east-2.amazonaws.com/test_files/10mb.test',
-      hash: 'f1c9645dbc14efddc7d8a322685f26eb'
-    },
-    "1kb.test": {
-      download_link: 'https://diestory-api-server-assets.s3.us-east-2.amazonaws.com/test_files/1kb.test',
-      hash: '0f343b0931126a20f133d67c2b018a3b'
-    },
-    "500kb.test": {
-      download_link: 'https://diestory-api-server-assets.s3.us-east-2.amazonaws.com/test_files/500kb.test',
-      hash: '816df6f64deba63b029ca19d880ee10a'
-    },
-    "50kb.test": {
-      download_link: 'https://diestory-api-server-assets.s3.us-east-2.amazonaws.com/test_files/50kb.test',
-      hash: 'bf235f22df3e004ede21041978c24f2e'
-    }
+  let options = {
+    method: 'GET',
+    uri: djangoUrl + '/game-files/hashes',
+    json: true
   }
 
-  return Promise.resolve(urlList);
+  if(version !== 'latest'){
+    options = {...options, qs: {version_id: version}};
+  }
+
+  return new Promise((resolve, reject) => {
+    request(options).then(response => {
+      resolve(response.hash_values);
+    }).catch(error => {
+      reject(error);
+    });
+  });
 }
 
 // DOWNLOADS ALL FILES IN fileDifference TO tmp DIRECTORY, RETURNS A MAP OF THE NEW FILES HASHES
@@ -162,6 +118,7 @@ downloadFiles = (fileObjectList, totalSize, event) => {
         let ws = fs.createWriteStream(fileObject.tempPath, 'binary');
         let hash = crypto.createHash('md5');
         let currentDownloadedSize = 0;
+        let timeSinceLastUpdate = 0;
 
         // START STREAMING DATA FROM S3
         let stream = _request({method: 'GET', uri: fileObject.downloadUrl});
@@ -185,16 +142,20 @@ downloadFiles = (fileObjectList, totalSize, event) => {
         stream.on('data', chunk => {
           currentDownloadedSize += chunk.length;
           hash.update(chunk);
-          event.reply('fm-download-status-update', {
-            status: 'downloading',
-            currentFile: path.basename(fileObject.path),
-            currentFileProgress: currentDownloadedSize,
-            currentFileSize: fileObject.size,
-            totalProgress: totalDownloadedSize + currentDownloadedSize,
-            totalSize: totalSize,
-            retryTime: 0,
-            error: null
-          });
+
+          if(Date.now() - timeSinceLastUpdate > 1000){
+            event.reply('fm-download-status-update', {
+              status: 'downloading',
+              currentFile: path.basename(fileObject.path),
+              currentFileProgress: currentDownloadedSize,
+              currentFileSize: fileObject.size,
+              totalProgress: totalDownloadedSize + currentDownloadedSize,
+              totalSize: totalSize,
+              retryTime: 0,
+              error: null
+            });
+            timeSinceLastUpdate = Date.now();
+          }
         });
 
         stream.on('end', () => {
@@ -276,14 +237,15 @@ ipc.on('fm-is-latest', event => {
     }
   })
   // COMPARE LOCAL HASHES WITH SERVER HASHES, FILENAME INTO ARRAY
-  .then(() => {
-    let diff = []
-    for(let [filename, hash] of serverHashes){
-      if(!localHashes.has(filename) || localHashes.get(filename) !== hash){
-        diff.push[filename];
+  .then(() => {    
+    return async.filter(serverHashes.keys(), (key, callback) => {
+      if(!localHashes.has(key) || localHashes.get(key) !== serverHashes.get(key)){
+        callback(null, true);
       }
-    }
-    return diff;
+      else{
+        callback(null, false);
+      }
+    }).then(result => { return result; });
   })
   // MAKE REQUEST TO SERVER FOR S3 LINKS FOR EVERY FILES IN diff ARRAY
   .then(diff => {
@@ -294,16 +256,16 @@ ipc.on('fm-is-latest', event => {
     })
   })
   // POPULATE fileDifference MAP TO BE USED BY FILE DOWNLOAD FUNCTION
-  .then(downloadLinks => {
+  .then(links => {
     let promises = []
 
-    for(const [key, value] of downloadLinks){
-      promises.push(getFileSize(value.download_link));
+    for(const [key, value] of links){
+      promises.push(getFileSize(value.http_head_link));
     }
 
     return Promise.all(promises).then(sizesArray => {
       let index = 0;
-      for(const [key, value] of downloadLinks){
+      for(const [key, value] of links){
         let fileObject = {
           name: key,
           path: path.join(gameInstallationPath, key),
