@@ -58,7 +58,6 @@ calculateHashes = masterList => {
 
 //   return new Promise((resolve, reject) => {
 //     request(options).then(response => {
-//       console.log(response);
 //       // resolve(response.download_link)
 //     }).catch(error => {
 //       reject(error);
@@ -84,10 +83,10 @@ getFileSize = downloadUrl => {
 
 
 getHashList = version => {
+  //["150mb.test", "3d3be108b6b902c41404da7adff4a8da"],
   return Promise.resolve([
     ["10kb.test", "1276481102f218c981e0324180bafd9f"],
     ["10mb.test", "f1c9645dbc14efddc7d8a322685f26eb"],
-    ["150mb.test", "3d3be108b6b902c41404da7adff4a8da"],
     ["1kb.test", "0f343b0931126a20f133d67c2b018a3b"],
     ["500kb.test", "816df6f64deba63b029ca19d880ee10a"],
     ["50kb.test", "bf235f22df3e004ede21041978c24f2e"]
@@ -115,6 +114,13 @@ getHashList = version => {
 // }
 
 getDownloadUrls = files => {
+  
+  /*
+  "150mb.test": {
+    download_link: 'https://diestory-api-server-assets.s3.us-east-2.amazonaws.com/test_files/150mb.test',
+    hash: '3d3be108b6b902c41404da7adff4a8da'
+    },
+  */
   let urlList = {
     "10kb.test": {
       download_link: 'https://diestory-api-server-assets.s3.us-east-2.amazonaws.com/test_files/10kb.test',
@@ -123,10 +129,6 @@ getDownloadUrls = files => {
     "10mb.test": {
       download_link: 'https://diestory-api-server-assets.s3.us-east-2.amazonaws.com/test_files/10mb.test',
       hash: 'f1c9645dbc14efddc7d8a322685f26eb'
-    },
-    "150mb.test": {
-      download_link: 'https://diestory-api-server-assets.s3.us-east-2.amazonaws.com/test_files/150mb.test',
-      hash: '3d3be108b6b902c41404da7adff4a8da'
     },
     "1kb.test": {
       download_link: 'https://diestory-api-server-assets.s3.us-east-2.amazonaws.com/test_files/1kb.test',
@@ -171,7 +173,7 @@ downloadFiles = (fileObjectList, totalSize, event) => {
             currentFile: path.basename(fileObject.path),
             currentFileProgress: 0,
             currentFileSize: fileObject.size,
-            totalFileProgress: totalDownloadedSize,
+            totalProgress: totalDownloadedSize,
             totalSize: totalSize,
             retryTime: Date.now() + retryDelay[retryDelayIndex],
             error: error
@@ -188,7 +190,7 @@ downloadFiles = (fileObjectList, totalSize, event) => {
             currentFile: path.basename(fileObject.path),
             currentFileProgress: currentDownloadedSize,
             currentFileSize: fileObject.size,
-            totalFileProgress: totalDownloadedSize + currentDownloadedSize,
+            totalProgress: totalDownloadedSize + currentDownloadedSize,
             totalSize: totalSize,
             retryTime: 0,
             error: null
@@ -202,7 +204,7 @@ downloadFiles = (fileObjectList, totalSize, event) => {
             currentFile: path.basename(fileObject.path),
             currentFileProgress: currentDownloadedSize,
             currentFileSize: fileObject.size,
-            totalFileProgress: totalDownloadedSize,
+            totalProgress: totalDownloadedSize,
             totalSize: totalSize,
             retryTime: 0,
             error: null
@@ -268,7 +270,9 @@ ipc.on('fm-is-latest', event => {
       return calculateHashes(serverHashes).then(calculatedList => {
         localHashes = calculatedList;
         fs.writeFileSync(cacheFilePath, JSON.stringify([...localHashes]), 'utf8');
-      }, () => {});
+      }, () => {
+        // DO NOTHING IF FAILED TO WRITE CACHE FILE
+      });
     }
   })
   // COMPARE LOCAL HASHES WITH SERVER HASHES, FILENAME INTO ARRAY
@@ -319,7 +323,6 @@ ipc.on('fm-is-latest', event => {
   })
   // IPC RESPONSE TO REACT FRONT END
   .then(() => {
-    console.log(fileDifference);
     if(fileDifference.size > 0){
       event.reply('fm-is-latest-res', {isLatest: false});
     }
@@ -328,7 +331,6 @@ ipc.on('fm-is-latest', event => {
     }
   })
   .catch(error => {
-    console.log(error);
     event.reply('fm-is-latest-fail', error);
   });
 });
@@ -364,16 +366,21 @@ ipc.on('fm-download-difference', event => {
         localHashes.set(name, hash)
       });
     })
-    // CACHE THE LOCAL HASHMAP TO SAVE CALCULATION TIME
+    // CACHE THE LOCAL HASHMAP TO SAVE CALCULATION TIME IN THE FUTURE
     .then(() => {
       let cacheFilePath = path.join(app.getPath('userData'), 'hash_cache.json');
       fs.writeFileSync(cacheFilePath, JSON.stringify([...localHashes]), 'utf8');
+    })
+    .then(() => {
+      event.reply('fm-download-difference-done');
     })
     .catch(error => {
       event.reply('fm-download-difference-fail', error);
     })
     // CLEANS UP TEMP FOLDER
-    .finally(async function(){
-      await fs.remove(path.join(gameInstallationPath, 'tmp'));
+    .finally(() => {
+      fs.remove(path.join(gameInstallationPath, 'tmp')).catch(err => {
+        // DO NOTHING IF tmp FOLDER WAS NOT REMOVED
+      });
     });
 });
