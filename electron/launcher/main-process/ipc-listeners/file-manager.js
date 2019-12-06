@@ -82,7 +82,7 @@ getFileSize = url => {
   });
 }
 
-
+// GET REQUEST TO DJANGO FOR LIST OF FILE HASHES
 getHashList = version => {
   let options = {
     method: 'GET',
@@ -118,7 +118,7 @@ downloadFiles = (fileObjectList, totalSize, event) => {
         let ws = fs.createWriteStream(fileObject.tempPath, 'binary');
         let hash = crypto.createHash('md5');
         let currentDownloadedSize = 0;
-        let timeSinceLastUpdate = 0;
+        let lastUpdateTime = 0;
 
         // START STREAMING DATA FROM S3
         let stream = _request({method: 'GET', uri: fileObject.downloadUrl});
@@ -143,7 +143,7 @@ downloadFiles = (fileObjectList, totalSize, event) => {
           currentDownloadedSize += chunk.length;
           hash.update(chunk);
 
-          if(Date.now() - timeSinceLastUpdate > 1000){
+          if(Date.now() - lastUpdateTime > 1000){
             event.reply('fm-download-status-update', {
               status: 'downloading',
               currentFile: path.basename(fileObject.path),
@@ -154,7 +154,7 @@ downloadFiles = (fileObjectList, totalSize, event) => {
               retryTime: 0,
               error: null
             });
-            timeSinceLastUpdate = Date.now();
+            lastUpdateTime = Date.now();
           }
         });
 
