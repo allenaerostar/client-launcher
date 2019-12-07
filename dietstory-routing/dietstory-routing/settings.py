@@ -39,13 +39,13 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'registration.apps.RegistrationConfig',
     'swagger-ui',
-    'game_asset_manager',
+    'game_asset_manager.apps.GameAssetManagerConfig',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rest_framework',
+    'rest_framework'
 ]
 
 
@@ -115,13 +115,13 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'EST'
+TIME_ZONE = 'US/Eastern'
 
 USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = False
+USE_TZ = True
 
 # AWS Settings
 if not 'test' in sys.argv and 'AWS_CONFIG' in secret_config:

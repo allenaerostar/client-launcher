@@ -1,6 +1,6 @@
 import re
 from django import forms
-from django.core.validators import validate_email, validate_slug, BaseValidator
+from django.core.validators import validate_email, validate_slug, BaseValidator, MinValueValidator, MaxValueValidator
 
 VERSION_FORMAT = "^[vV]?([0-9]*)[.]([0-9]*)$"
 
@@ -25,4 +25,16 @@ class RequestGameAssetForm(forms.Form):
 				return major, minor
 
 		return None, None
+
+
+class SubmitGameVersionForm(forms.Form):
+	major_ver = forms.IntegerField(validators=[MinValueValidator(0)])
+	minor_ver = forms.IntegerField(validators=[MinValueValidator(0)])
+	live_by = forms.DateTimeField()
+
+
+
+
+
+
 

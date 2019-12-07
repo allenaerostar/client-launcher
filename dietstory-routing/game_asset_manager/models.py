@@ -25,4 +25,6 @@ class GameVersions(models.Model):
 	class Meta:
 		managed = True
 		db_table = 'game_versions'
-		models.UniqueConstraint(fields= ['major_ver', 'minor_ver'], name='version')
+		constraints = [
+			models.UniqueConstraint(fields= ['major_ver', 'minor_ver'], name='version')
+		]

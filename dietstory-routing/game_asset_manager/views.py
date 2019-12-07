@@ -2,8 +2,11 @@ from django.http import HttpResponse, JsonResponse
 from rest_framework import views, permissions, status
 from .s3boto3 import S3Boto3Factory
 from .models import GameFiles, GameVersions
-from.validate_forms import RequestGameAssetForm
+from .validate_forms import RequestGameAssetForm, SubmitGameVersionForm
 from .serializers import GameVersionSerializer
+from django.db import IntegrityError
+from game_version_updater.updater import version_update_scheduler
+from game_version_updater.updateGameVersion import update_game_version
 
 # Create your views here.
 class DownloadView(views.APIView):
@@ -97,5 +100,39 @@ class GameVersionView(views.APIView):
 			return JsonResponse(
 				{'message': 'No version of the game exists.'},
 				status=status.HTTP_404_NOT_FOUND)
+
+	def post(self, request, *args, **kwargs):
+
+		game_version_form = SubmitGameVersionForm(request.data)
+
+		if game_version_form.is_valid():
+
+			try:
+				major_ver = game_version_form.cleaned_data.get('major_ver')
+				minor_ver = game_version_form.cleaned_data.get('minor_ver')
+				live_by = game_version_form.cleaned_data.get('live_by')
+
+				game_version = GameVersions(major_ver=major_ver, minor_ver=minor_ver, live_by=live_by)
+				game_version.save()
+
+				#add this job to the job scheduler
+				version_update_scheduler.add_job(update_game_version, 'date', run_date=game_version.live_by, args=[game_version.major_ver, game_version.minor_ver])
+
+				return JsonResponse(
+					{'message': 'Game version {} has been submitted successfully.'.format(game_version)},
+					status=status.HTTP_200_OK)
+
+			except (IntegrityError, IOError):
+				return JsonResponse(
+					{'message': "Game version submission was not successful."},
+					status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+		print(game_version_form.errors)
+		return JsonResponse(
+			{'message': 'Invalid input parameters'},
+			status=status.HTTP_400_BAD_REQUEST)
+
+
+
 
 
