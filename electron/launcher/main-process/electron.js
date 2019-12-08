@@ -24,23 +24,14 @@ let mainWindow;
 
 function createWindow() {
     mainWindow = new BrowserWindow({ 
-<<<<<<< HEAD
         width: 1008, 
         height: 578,
         minWidth:1008,
         minHeight: 578,
-        // frame: false, 
+        frame: false, 
         webPreferences: {
             nodeIntegration: true
         }
-=======
-        width: 1000, 
-        height: 600,
-        minWidth:1000,
-        minHeight: 600,
-        show: false,
-        webPreferences: { nodeIntegration: true }
->>>>>>> 234d1a1fcea7d1718b496b7b115f0de182970ae4
     });
     mainWindow.loadURL(isDev? "http://localhost:3000": `file://${path.join(__dirname, "../build/index.html")}`);
     mainWindow.on("closed", () => (mainWindow = null));

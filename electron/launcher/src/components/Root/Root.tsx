@@ -13,7 +13,7 @@ const Root = (props) => {
   return (
     <section>
       <Patcher />
-      <button onClick={logout}>logout</button>
+      {/* <button onClick={logout}>logout</button> */}
     </section>
   )
 }
