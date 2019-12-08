@@ -2,6 +2,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { userActions } from '_actions';
 
+import Patcher from 'components/Patcher/Patcher';
+
 const Root = (props) => {
 
   const logout = () => {
@@ -9,10 +11,10 @@ const Root = (props) => {
   }
   
   return (
-    <>
-      <h1>Logged In</h1>
+    <section>
+      <Patcher />
       <button onClick={logout}>logout</button>
-    </>
+    </section>
   )
 }
 

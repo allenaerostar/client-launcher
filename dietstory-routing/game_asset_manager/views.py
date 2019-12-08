@@ -1,8 +1,8 @@
 from django.http import HttpResponse, JsonResponse
 from rest_framework import views, permissions, status
 from .s3boto3 import S3Boto3Factory
+from.validate_forms import GameMetadataForm, RequestGameAssetForm, SubmitGameVersionForm
 from .models import GameFiles, GameVersions
-from .validate_forms import RequestGameAssetForm, SubmitGameVersionForm
 from .serializers import GameVersionSerializer
 from django.db import IntegrityError
 from game_version_updater.updater import version_update_scheduler
@@ -10,10 +10,10 @@ from game_version_updater.updateGameVersion import update_game_version
 
 # Create your views here.
 class DownloadView(views.APIView):
-	permission_classes = (permissions.AllowAny,)
+    permission_classes = (permissions.AllowAny,)
 
-	def get(self, request, *args, **kwargs):
-		"""
+    def get(self, request, *args, **kwargs):
+        """
         summary: Download Game File Assets
         description: Provides users with a temporary s3 download link for a specified version controlled asset file
         parameters:
@@ -29,7 +29,7 @@ class DownloadView(views.APIView):
               description: >
                   Specified version of asset file. If not specified, provide live version. If specified, must require admin authentication.
               required: false
-        tags:
+           tags:
             - DownloadView
         responses:
             200:
@@ -42,39 +42,60 @@ class DownloadView(views.APIView):
                                     type: string
                                     description: URL link to temporary download file.
         """
-		params = RequestGameAssetForm(request.data)
+        params = RequestGameAssetForm(request.GET)
+        # Check for valid parameters
+        if not params.is_valid():
+            return JsonResponse(
+                {'message': 'Inputs have invalid format.'}, 
+                status=status.HTTP_400_BAD_REQUEST)
 
-		# Check for valid parameters
-		if not params.is_valid():
-			return JsonResponse(
-				{'message': 'Inputs have invalid format.'}, 
-				status=status.HTTP_400_BAD_REQUEST)
+        # Get correct file version
+        if params.cleaned_data.get('versionid'):
+            if request.user.is_authenticated and request.user.is_superuser:
+                major, minor = params.get_version_values()
+                try:
+                    game_version = GameVersions.objects.get(major_ver=major, minor_ver=minor)
+                except GameVersions.DoesNotExist:
+                    game_version = None
+            else:
+                return JsonResponse(
+                    {'message': 'Unauthorized.'}, 
+                    status=status.HTTP_401_UNAUTHORIZED)            
+        else:
+            try:
+                game_version = GameVersions.objects.get(is_live=True)
+            except GameVersions.DoesNotExist:
+                game_version = None
 
-		# TODO: Add Authentication
-		if params.cleaned_data.get('versionid'):
-			return JsonResponse(
-				{'message': 'Unauthorized.'}, 
-				status=status.HTTP_401_UNAUTHORIZED)
-		else:
-			major, minor = 1, 0 # TODO: Lookup Live version
+        # Get file data
+        file_names = params.cleaned_data.get('filenames')
+        if game_version:
+            try:
+                game_files = GameFiles.objects.filter(version_ref=game_version.id, file_name__in=file_names)
+            except (TypeError, ValueError, OverflowError, GameFiles.DoesNotExist):
+                game_files = None
+        else:
+            return JsonResponse(
+                {'message': 'No version of the game exists.'},
+                status=status.HTTP_404_NOT_FOUND)
 
-		filename = params.cleaned_data.get('filename')
-		try:
-			gamefile = GameFiles.objects.get(version_id_major=major, version_id_minor=minor, file_name=filename)
-		except (TypeError, ValueError, OverflowError, GameFiles.DoesNotExist):
-			gamefile = None
+        # Obtain S3 URL
+        if game_files:
+            res = {}
+            s3_client = S3Boto3Factory.get_s3_client()
+            for file in game_files:
+                res[file.file_name] = {
+                        'download_link': s3_client.get_object_presigned_url(key=file.s3_path, expires=300),
+                        'hash': file.hash_value
+                    }
 
-		if gamefile:
-			s3_client = S3Boto3Factory.get_s3_client()
-			res = s3_client.get_object_presigned_url(key=gamefile.s3_path, expires=300)
-			return JsonResponse(
-				{'download_link': res},
-				status=status.HTTP_200_OK)
-		else:
-			return JsonResponse(
-				{'message': 'File not found.'},
-				status=status.HTTP_404_NOT_FOUND)
-
+            return JsonResponse(
+                res,
+                status=status.HTTP_200_OK)
+        else:
+            return JsonResponse(
+                {'message': 'File not found.'},
+                status=status.HTTP_404_NOT_FOUND)
 
 class GameVersionView(views.APIView):
 	def has_permissions(self, request, view):
@@ -104,13 +125,6 @@ class GameVersionView(views.APIView):
                                 minor_ver:
                                     type: number
                                     description: Minor version of game version.
-                                live_by:
-                                    type: string
-                                    description: Timestamp of when game goes live.
-                                    format: date-time
-                                is_live:
-                                    type: number
-                                    description: If the version is live, or not.
             404:
                 content:
                     application/json:
@@ -197,6 +211,56 @@ class GameVersionView(views.APIView):
 		return JsonResponse(
 			{'message': 'Invalid input parameters'},
 			status=status.HTTP_400_BAD_REQUEST)
+
+
+class ReturnHashesView(views.APIView):
+    permission_classes = (permissions.AllowAny,)
+
+    def get(self, request, *args, **kwargs):
+        """
+        summary: Provides Hashes of required game files
+        description: Returns a json of corresponding hashes to all assets for a specific game version
+        """
+
+        params = GameMetadataForm(request.data)
+
+        # Check for valid parameters
+        if not params.is_valid():
+            return JsonResponse(
+                {'message': 'Inputs have invalid format.'}, 
+                status=status.HTTP_400_BAD_REQUEST)
+
+        # Get correct file version
+        if params.cleaned_data.get('versionid'):
+            if request.user.is_authenticated and request.user.is_superuser:
+                major, minor = params.get_version_values()
+                try:
+                    game_version = GameVersions.objects.get(major_ver=major, minor_ver=minor)
+                except GameVersions.DoesNotExist:
+                    game_version = None
+
+            else:
+                return JsonResponse(
+                    {'message': 'Unauthorized.'}, 
+                    status=status.HTTP_401_UNAUTHORIZED)
+        else:
+            try:
+                game_version = GameVersions.objects.get(is_live=True)
+            except GameVersions.DoesNotExist:
+                game_version = None
+
+        if game_version:
+            game_files = GameFiles.objects.filter(version_ref=game_version.id)
+            res = [ [file.s3_path, file.hash_value] for file in game_files ]
+            return JsonResponse({
+                    'hash_values': res
+                },
+                status=status.HTTP_200_OK)
+
+        else:
+            return JsonResponse(
+                {'message': 'No version of the game exists.'},
+                status=status.HTTP_404_NOT_FOUND)
 
 
 

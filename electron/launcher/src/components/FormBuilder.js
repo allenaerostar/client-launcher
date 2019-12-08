@@ -60,8 +60,8 @@ const FormBuilder = ({ formFields, submitFunction, errorMessageGenerator, submit
     <form onSubmit={handleSubmit}>
       {
         formFields.map((input, i) => (
-          <React.Fragment key={i}>
-            <label htmlFor={input.name}>{input.label}:</label>
+          <div key={i} className="form-group">
+            {/* <label htmlFor={input.name}>{input.label}:</label> */}
             <input
               id={input.name}
               type={input.type}
@@ -69,6 +69,7 @@ const FormBuilder = ({ formFields, submitFunction, errorMessageGenerator, submit
               placeholder={input.label}
               onChange={handleChange}
               required={input.required}
+              className="form-control"
             >
             </input>
             {
@@ -76,11 +77,10 @@ const FormBuilder = ({ formFields, submitFunction, errorMessageGenerator, submit
                 <p>{formErrors[input.name]}</p>
                 : null
             }
-            <br />
-          </React.Fragment>
+          </div>
         ))
       }
-      <button type="submit">{submitText}</button>
+      <button type="submit" className="btn btn-success btn-block">{submitText}</button>
     </form>
   );
 }

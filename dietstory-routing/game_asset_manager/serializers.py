@@ -4,4 +4,4 @@ from .models import GameVersions
 class GameVersionSerializer(serializers.ModelSerializer):
     class Meta:
         model = GameVersions
-        fields = ('major_ver', 'minor_ver', 'live_by', 'is_live')
+        fields = ('major_ver', 'minor_ver')

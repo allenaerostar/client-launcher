@@ -1,7 +1,9 @@
 import React, {useEffect} from 'react';
 import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
 import { userActions } from '_actions';
 import FormBuilder from 'components/FormBuilder';
+import logo from 'assets/dietstory_logo.png';
 
 const Registration = props => {
 
@@ -76,17 +78,26 @@ const Registration = props => {
   }
 
   return (
-    <>
-      <h1>Registration Form</h1>
-      <FormBuilder 
-        formFields={formFields}
-        submitFunction={props.register}
-        errorMessageGenerator={errorMessageGenerator}
-        submitText={"Register"}
-      />
-    </>
+    <div className="row no-gutters">
+      <section className="hero-image col-8">
+        <img src={logo} className="img-fluid" width="228" height="96" />
+      </section>
+      <section className="col-4 form__container">
+        <h1>Registration</h1>
+        <FormBuilder 
+          formFields={formFields}
+          submitFunction={props.register}
+          errorMessageGenerator={errorMessageGenerator}
+          submitText={"Register"}
+        />
+        <Link to="/login">
+          > Login
+        </Link>
+      </section>
+    </div>
   );
 }
+
 const mapStateToProps = (state) => {
   return state;
 }
