@@ -127,7 +127,6 @@ class GameVersionView(views.APIView):
 					{'message': "Game version submission was not successful."},
 					status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-		print(game_version_form.errors)
 		return JsonResponse(
 			{'message': 'Invalid input parameters'},
 			status=status.HTTP_400_BAD_REQUEST)
