@@ -57,11 +57,16 @@ getDownloadUrls = files => {
   }
 
   return new Promise((resolve, reject) => {
-    request(options).then(response => {
-      resolve(response)
-    }).catch(error => {
-      reject(error);
-    });
+    if(files.length > 0){
+      request(options).then(response => {
+        resolve(response);
+      }).catch(error => {
+        reject(error);
+      });
+    }
+    else{
+      resolve({});
+    }
   });
 }
 
@@ -253,35 +258,37 @@ ipc.on('fm-is-latest', event => {
       return Object.entries(response);
     }).catch(error => {
       throw error;
-    })
+    });
   })
   // POPULATE fileDifference MAP TO BE USED BY FILE DOWNLOAD FUNCTION
   .then(links => {
-    let promises = []
+    if(Object.keys(links).length > 0){
+      let promises = []
 
-    for(const [key, value] of links){
-      promises.push(getFileSize(value.http_head_link));
-    }
-
-    return Promise.all(promises).then(sizesArray => {
-      let index = 0;
       for(const [key, value] of links){
-        let fileObject = {
-          name: key,
-          path: path.join(gameInstallationPath, key),
-          tempPath: path.join(gameInstallationPath, 'tmp', path.basename(key)),
-          hash: value.hash,
-          downloadUrl: value.download_link,
-          size: sizesArray[index]
-        }
-
-        fileDifference.set(key, fileObject);
-        index++;
+        promises.push(getFileSize(value.http_head_link));
       }
-    })
-    .catch(error => {
-      throw error;
-    })
+  
+      return Promise.all(promises).then(sizesArray => {
+        let index = 0;
+        for(const [key, value] of links){
+          let fileObject = {
+            name: key,
+            path: path.join(gameInstallationPath, key),
+            tempPath: path.join(gameInstallationPath, 'tmp', path.basename(key)),
+            hash: value.hash,
+            downloadUrl: value.download_link,
+            size: sizesArray[index]
+          }
+  
+          fileDifference.set(key, fileObject);
+          index++;
+        }
+      })
+      .catch(error => {
+        throw error;
+      });
+    }
   })
   // IPC RESPONSE TO REACT FRONT END
   .then(() => {
