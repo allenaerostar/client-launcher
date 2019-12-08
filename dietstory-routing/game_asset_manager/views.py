@@ -86,7 +86,41 @@ class GameVersionView(views.APIView):
 			return (permissions.IsAdminUser(),)
 
 	def get(self, request, *args, **kwargs):
-
+		"""
+        summary: Get Game Version
+        description: Provides user with current live game version
+        tags:
+            - GameVersionView
+        responses:
+            200:
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                major_ver:
+                                    type: number
+                                    description: Major version of game version.
+                                minor_ver:
+                                    type: number
+                                    description: Minor version of game version.
+                                live_by:
+                                    type: string
+                                    description: Timestamp of when game goes live.
+                                    format: date-time
+                                is_live:
+                                    type: number
+                                    description: If the version is live, or not.
+            404:
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                message:
+                                    type: string
+                                    description: No version of the game exists.
+        """
 		try:
 			game_version = GameVersions.objects.get(is_live=True)
 		except GameVersions.DoesNotExist:
@@ -102,7 +136,40 @@ class GameVersionView(views.APIView):
 				status=status.HTTP_404_NOT_FOUND)
 
 	def post(self, request, *args, **kwargs):
-
+		"""
+        summary: Post Game Version
+        description: Submit game version with live by time.
+        tags:
+            - GameVersionView
+        responses:
+            200:
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                message:
+                                    type: string
+                                    description: Game version has been submitted successfully.
+            400:
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                message:
+                                    type: string
+                                    description: Invalid input parameters.
+            500:
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                message:
+                                    type: string
+                                    description: Game version submission was not successful.
+        """
 		game_version_form = SubmitGameVersionForm(request.data)
 
 		if game_version_form.is_valid():
