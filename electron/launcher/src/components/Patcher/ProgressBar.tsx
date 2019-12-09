@@ -9,8 +9,8 @@ const ProgressBar = props => {
         <div
           className="progress-bar progress-bar-striped progress-bar-animated bg-warning"
           role="progressbar"
-          style={{ width: '75%' }}>
-            75%
+          style={{ width: `${props.percentage}%` }}>
+            {props.percentage}%
         </div>
       </div>
   );

@@ -11,7 +11,7 @@ const Patcher = props => {
         {/* {/* <h1>HI THIS IS PATCHER</h1> */}
         <h3>Update Available? {String(!props.patch.isLatest)}</h3>
         {/* <button type="submit" onClick={props.checkForUpdate}>Check for update</button> */}
-        <ProgressBar />
+        <ProgressBar percentage={"75"}/>
       </div>
   );
 }
