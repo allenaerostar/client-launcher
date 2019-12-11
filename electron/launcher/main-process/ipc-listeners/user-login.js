@@ -22,11 +22,12 @@ ipc.on('http-login-credentials', (e, cred) => {
     method: 'POST',
     uri: djangoUrl +'/accounts/login/',
     header: {'content-type': 'application/x-www-form-urlencoded'},
-    form: cred
+    form: cred,
+    json: true
   }
 
   request(options).then(response => {
-    e.reply('http-login-credentials-success', JSON.parse(response));
+    e.reply('http-login-credentials-success', response);
   }).catch(error => {
     e.reply('http-login-credentials-fail', error);
   });
