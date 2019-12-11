@@ -48,7 +48,7 @@ const Login = props => {
   return (
       <div className="row no-gutters">
         <section className="hero-image col-8">
-          <img src={logo} className="img-fluid" width="228" height="96"/>
+          <img src={logo} className="img-fluid" width="228" height="96" alt="dietstory"/>
         </section>
         <section className="col-4 form__container">
           <h1>Sign In</h1>

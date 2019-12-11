@@ -15,14 +15,22 @@ const Header = props => {
             </button>
             <NavLink
               to="/"
+              className="main-header__link"
               activeClassName="main-header__link--active"
+              exact
             >
               HOME
             </NavLink>
-            <NavLink to="/" className="main-header__link">
+            <NavLink to="/profile"
+              className="main-header__link"
+              activeClassName="main-header__link--active"
+            >
               PROFILE
             </NavLink>
-            <NavLink to="/" className="main-header__link">
+            <NavLink to="/admin"
+              className="main-header__link"
+              activeClassName="main-header__link--active"
+            >
               ADMIN
             </NavLink>
           </nav>

@@ -2,11 +2,13 @@ import * as types from '_constants/patcher.types';
 
 const INITIAL_STATE = {
   updateProgress: {
-    message: '',
+    status: '',
     currentFile: '',
     currentFileProgress: 0,
+    currentFileSize: 0,
     totalProgress: 0,
-    timeToRetry: 0,
+    totalSize: 0,
+    retryTime: 0,
     error: null
   },
   isLatest: false
@@ -18,6 +20,8 @@ export default (state = INITIAL_STATE, action) => {
       return { ...state, isLatest: true };
     case types.UPDATE_AVAILABLE:
       return { ...state, isLatest: false };
+    case types.DOWNLOAD_FILES_STATUS:
+      return { ...state, updateProgress: action.payload}
     default:
       return state;
   }

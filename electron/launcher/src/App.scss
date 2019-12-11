@@ -52,7 +52,7 @@ h1{
 .hero-image{
   background: url('../src/assets/dietstory_login_background.png') no-repeat center;
   background-size: cover;
-  min-height: 567px;
+  min-height: 578px;
   padding: 1.5rem 3rem !important;
 }
 
@@ -60,7 +60,7 @@ h1{
   &--loggedin{
     background: url('../src/assets/main_background.png') no-repeat center;
     background-size: cover;
-    min-height: 567px;
+    min-height: 578px;
   }
 }
 
@@ -70,7 +70,10 @@ h1{
   box-shadow: 0 2px 4px 0 rgba(0,0,0,0.24);
   padding: 1rem 1rem;
   font-size: 1.125rem;
-  align-items: center;
+  nav{
+    display:flex;
+    align-items: center;
+  }
   * {
     margin: 0 0.5rem;
   }
@@ -103,4 +106,11 @@ h1{
   border: 1px solid #979797;
   font-weight: 300;
   font-size: 1.5rem;
+}
+
+.title-bar{
+  position:fixed;
+  width: 100%;
+  display:flex;
+  justify-content: flex-end;
 }

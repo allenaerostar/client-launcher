@@ -6,14 +6,9 @@ import Patcher from 'components/Patcher/Patcher';
 
 const Root = (props) => {
 
-  const logout = () => {
-    props.logout(props.auth.user);
-  }
-  
   return (
     <section>
       <Patcher />
-      {/* <button onClick={logout}>logout</button> */}
     </section>
   )
 }
