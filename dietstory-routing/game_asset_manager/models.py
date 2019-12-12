@@ -26,7 +26,7 @@ class GameFiles(models.Model):
 		managed = True
 		db_table = 'game_files'
 		constraints = [
-			models.UniqueConstraint(fields=['version_ref, file_name'], name='file_version')
+			models.UniqueConstraint(fields=['version_ref', 'file_name'], name='file_version')
 		]
 
 
