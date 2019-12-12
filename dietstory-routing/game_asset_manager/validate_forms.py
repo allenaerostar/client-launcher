@@ -61,7 +61,7 @@ class RequestGameAssetForm(GameMetadataForm):
 class SubmitGameVersionForm(forms.Form):
 	major_ver = forms.IntegerField(validators=[MinValueValidator(0)])
 	minor_ver = forms.IntegerField(validators=[MinValueValidator(0)])
-	live_by = forms.DateTimeField()
+	live_by = forms.DateTimeField(required=False)
 
 
 

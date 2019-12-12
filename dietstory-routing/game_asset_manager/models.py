@@ -5,7 +5,7 @@ from registration.models import Accounts
 class GameVersions(models.Model):
 	major_ver = models.IntegerField(validators=[MinValueValidator(0)])
 	minor_ver = models.IntegerField(validators=[MinValueValidator(0)])
-	live_by = models.DateTimeField()
+	live_by = models.DateTimeField(null=True, blank=True)
 	is_live = models.SmallIntegerField(default=0, null=True, blank=True, validators=[MinValueValidator(0), MaxValueValidator(250)])
 
 	class Meta:
