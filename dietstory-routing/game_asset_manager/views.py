@@ -9,6 +9,7 @@ from game_version_updater.updater import version_update_scheduler
 from game_version_updater.updateGameVersion import update_game_version
 from django.utils import timezone
 
+
 # Create your views here.
 class DownloadView(views.APIView):
     permission_classes = (permissions.AllowAny,)
@@ -195,8 +196,9 @@ class GameVersionView(views.APIView):
                 live_by = game_version_form.cleaned_data.get('live_by')
 
                 game_version = GameVersions(major_ver=major_ver, minor_ver=minor_ver, live_by=live_by)
+
                 if live_by:
-                    if live_by <= timezone.now():
+                    if live_by <= timezone.localtime():
                         return JsonResponse(
                             {'message': 'Invalid input parameters'},
                             status=status.HTTP_400_BAD_REQUEST)
@@ -211,7 +213,7 @@ class GameVersionView(views.APIView):
             except (IntegrityError, IOError):
                 return JsonResponse(
                     {'message': "Game version submission was not successful."},
-                    status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                    status=status.HTTP_400_BAD_REQUEST)
 
         return JsonResponse(
             {'message': 'Invalid input parameters'},

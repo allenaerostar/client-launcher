@@ -8,7 +8,7 @@ def add_all_game_version_update_jobs(job_scheduler):
     try:
         print("Starting initialization of jobs.")
 
-        game_versions = GameVersions.objects.filter(live_by__gt=timezone.now(), is_live=False)
+        game_versions = GameVersions.objects.filter(live_by__gt=timezone.localtime(), is_live=False)
 
         for game_version in game_versions:
             job_scheduler.add_job(update_game_version, 'date', run_date=game_version.live_by,
