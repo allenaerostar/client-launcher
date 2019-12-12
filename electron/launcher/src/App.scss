@@ -109,8 +109,26 @@ h1{
 }
 
 .title-bar{
+  margin-top: 0.5rem;
   position:fixed;
   width: 100%;
   display:flex;
   justify-content: flex-end;
+  -webkit-app-region: drag;
+  & button{
+    -webkit-appearance: none;
+    border: none;
+    &:hover{
+      background-color: #CECECE;
+    }
+    &:focus{
+      outline:none;
+    }
+    &:active{
+      background-color: #BABABA;
+    }
+    & img {
+      vertical-align: bottom;
+    }
+  }
 }

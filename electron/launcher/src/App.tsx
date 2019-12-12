@@ -5,6 +5,7 @@ import { Router, Route, Switch } from 'react-router-dom';
 import Root from 'components/Root/Root';
 import Login from 'components/Login/Login';
 import Header from 'components/Header/Header';
+import TitleBar from 'components/TitleBar';
 import Registration from 'components/Registration/Registration';
 import VerifyEmail from 'components/Registration/VerifyEmail';
 import Uploader from 'components/Uploader/Uploader';
@@ -15,25 +16,14 @@ import { userActions } from '_actions';
 import { connect } from 'react-redux';
 
 import 'App.scss';
-const { remote } = window.require('electron')
+
 const App = props => {
 
-  const minimizeWindow = () => {
-    remote.getCurrentWindow().minimize();
-  }
-
-  const closeWindow = () => {
-    // props.logout(props.auth.user)
-    remote.getCurrentWindow().close();
-    
-  }
+  
   return ( 
     <div className="app-container--loggedin">
      {/* <div className={props.auth.isAuthenticated ? "app-container--loggedin" : ""}> */}
-      <div className="title-bar">
-        <button onClick={minimizeWindow}>-</button>
-        <button onClick={closeWindow}>x</button>
-      </div>
+      <TitleBar />
       <Router history={history}>
         {/* {
           props.auth.isAuthenticated ? 
