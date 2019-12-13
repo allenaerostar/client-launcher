@@ -87,7 +87,8 @@ class DownloadView(views.APIView):
             s3_client = S3Boto3Factory.get_s3_client()
             for file in game_files:
                 res[file.file_name] = {
-                        'download_link': s3_client.get_object_presigned_url(key=file.s3_path, expires=300),
+                        'download_link': s3_client.create_presigned_url(key=file.s3_path, http_method='get_object', expires=300),
+                        'http_head_link': s3_client.create_presigned_url(key=file.s3_path, http_method='head_object', expires=300),
                         'hash': file.hash_value
                     }
 
@@ -258,7 +259,7 @@ class ReturnHashesView(views.APIView):
 
         if game_version:
             game_files = GameFiles.objects.filter(version_ref=game_version.id)
-            res = [ [file.s3_path, file.hash_value] for file in game_files ]
+            res = [ [file.file_name, file.hash_value] for file in game_files ]
             return JsonResponse({
                     'hash_values': res
                 },

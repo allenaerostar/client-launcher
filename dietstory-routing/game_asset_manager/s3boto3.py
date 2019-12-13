@@ -35,15 +35,15 @@ class S3Client:
 			self.__stubber = Stubber(self.__s3_client)
 			# Wrap or override methods in stubs
 			response = stubbed_response['generate_presigned_url'] if 'generate_presigned_url' in stubbed_response else None
-			self.get_object_presigned_url = self.stub_get_object_presigned_url(self.get_object_presigned_url, response)
+			self.create_presigned_url = self.stub_create_presigned_url(self.create_presigned_url, response)
 			# Activate stubber
 			self.__stubber.activate()
 
 	# Get object URL
-	def get_object_presigned_url(self, key, expires=300):
+	def create_presigned_url(self, key, http_method, expires=300):
 		try:
 			res = self.__s3_client.generate_presigned_url(
-				'get_object',
+				http_method,
 				Params={
 					'Bucket': self.__bucket,
 					'Key': key },
@@ -55,7 +55,7 @@ class S3Client:
 		return res;
 
 	# Get object URL stub decorator
-	def stub_get_object_presigned_url(self, function, response):
+	def stub_create_presigned_url(self, function, response):
 		# Override function
 		def override(*args, **kwargs):
 			return response

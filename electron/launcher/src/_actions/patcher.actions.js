@@ -23,6 +23,34 @@ const checkForUpdate = () => {
   }
 }
 
+const downloadFiles = () => {
+  return (dispatch) => {
+    // START THE DOWNLOAD PROCESS
+    dispatch({type: patcherTypes.DOWNLOAD_FILES_START});
+    ipc.send('fm-download-difference');
+
+    // STATUS UPDATES FROM ELECTRON
+    ipc.on('fm-download-status-update', (e, update) => {
+      dispatch({
+        type: patcherTypes.DOWNLOAD_FILES_STATUS,
+        payload: update
+      });
+    });
+
+    // // ERROR FROM DOWNLOAD ATTEMPT
+    // ipc.on('fm-download-difference-fail', (e, error) => {
+    //   console.log(error);
+    //   dispatch({type: patcherTypes.DOWNLOAD_FILES_FAIL});
+    // });
+
+    // // DONWLOAD DONE
+    // ipc.on('fm-download-difference-fail', e => {
+    //   dispatch({type: patcherTypes.DOWNLOAD_FILES_DONE});
+    // });
+  }
+}
+
 export const patcherActions = {
-  checkForUpdate
+  checkForUpdate,
+  downloadFiles
 };
