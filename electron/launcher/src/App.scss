@@ -41,6 +41,9 @@ h1{
 .form__container{
   border-left: 3px solid #F7943A;
   padding: 4rem 2rem 0 2rem !important;
+  a{
+    display: block;
+  }
   form{
     margin: 2.5rem 0;
     button{
@@ -115,6 +118,7 @@ h1{
   display:flex;
   justify-content: flex-end;
   -webkit-app-region: drag;
+  z-index: 999;
   & button{
     -webkit-appearance: none;
     border: none;

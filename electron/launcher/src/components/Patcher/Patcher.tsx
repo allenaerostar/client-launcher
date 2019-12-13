@@ -18,7 +18,7 @@ const Patcher = props => {
         <p>RETRY AT: {props.patch.updateProgress.retryTime}</p>
         {
           !isNaN(updatePercentage) ?
-          <ProgressBar percentage={updatePercentage}/>
+          <ProgressBar percentage={100}/>
           : null
         }
       </div>
