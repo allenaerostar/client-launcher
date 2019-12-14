@@ -1,9 +1,14 @@
 from django.http import HttpResponse, JsonResponse
 from rest_framework import views, permissions, status
 from .s3boto3 import S3Boto3Factory
-from.validate_forms import GameMetadataForm, RequestGameAssetForm
+from.validate_forms import GameMetadataForm, RequestGameAssetForm, SubmitGameVersionForm
 from .models import GameFiles, GameVersions
 from .serializers import GameVersionSerializer
+from django.db import IntegrityError
+from game_version_updater.updater import version_update_scheduler
+from game_version_updater.updateGameVersion import update_game_version
+from django.utils import timezone
+
 
 # Create your views here.
 class DownloadView(views.APIView):
@@ -43,7 +48,7 @@ class DownloadView(views.APIView):
         # Check for valid parameters
         if not params.is_valid():
             return JsonResponse(
-                {'message': 'Inputs have invalid format.'}, 
+                {'message': 'Inputs have invalid format.'},
                 status=status.HTTP_400_BAD_REQUEST)
 
         # Get correct file version
@@ -56,8 +61,8 @@ class DownloadView(views.APIView):
                     game_version = None
             else:
                 return JsonResponse(
-                    {'message': 'Unauthorized.'}, 
-                    status=status.HTTP_401_UNAUTHORIZED)            
+                    {'message': 'Unauthorized.'},
+                    status=status.HTTP_401_UNAUTHORIZED)
         else:
             try:
                 game_version = GameVersions.objects.get(is_live=True)
@@ -95,8 +100,6 @@ class DownloadView(views.APIView):
                 {'message': 'File not found.'},
                 status=status.HTTP_404_NOT_FOUND)
 
-
-
 class GameVersionView(views.APIView):
     def has_permissions(self, request, view):
 
@@ -107,7 +110,34 @@ class GameVersionView(views.APIView):
             return (permissions.IsAdminUser(),)
 
     def get(self, request, *args, **kwargs):
-
+        """
+        summary: Get Game Version
+        description: Provides user with current live game version
+        tags:
+            - GameVersionView
+        responses:
+            200:
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                major_ver:
+                                    type: number
+                                    description: Major version of game version.
+                                minor_ver:
+                                    type: number
+                                    description: Minor version of game version.
+            404:
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                message:
+                                    type: string
+                                    description: No version of the game exists.
+        """
         try:
             game_version = GameVersions.objects.get(is_live=True)
         except GameVersions.DoesNotExist:
@@ -122,6 +152,73 @@ class GameVersionView(views.APIView):
                 {'message': 'No version of the game exists.'},
                 status=status.HTTP_404_NOT_FOUND)
 
+    def post(self, request, *args, **kwargs):
+        """
+        summary: Post Game Version
+        description: Submit game version with live by time.
+        tags:
+            - GameVersionView
+        responses:
+            200:
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                message:
+                                    type: string
+                                    description: Game version has been submitted successfully.
+            400:
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                message:
+                                    type: string
+                                    description: Invalid input parameters.
+            500:
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                message:
+                                    type: string
+                                    description: Game version submission was not successful.
+        """
+        game_version_form = SubmitGameVersionForm(request.data)
+
+        if game_version_form.is_valid():
+
+            try:
+                major_ver = game_version_form.cleaned_data.get('major_ver')
+                minor_ver = game_version_form.cleaned_data.get('minor_ver')
+                live_by = game_version_form.cleaned_data.get('live_by')
+
+                game_version = GameVersions(major_ver=major_ver, minor_ver=minor_ver, live_by=live_by)
+
+                if live_by:
+                    if live_by <= timezone.localtime():
+                        return JsonResponse(
+                            {'message': 'Invalid input parameters'},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+                    version_update_scheduler.add_job(update_game_version, 'date', run_date=game_version.live_by, args=[game_version.major_ver, game_version.minor_ver])
+
+                game_version.save()
+                return JsonResponse(
+                    {'message': 'Game version {} has been submitted successfully.'.format(game_version)},
+                    status=status.HTTP_200_OK)
+
+            except (IntegrityError, IOError):
+                return JsonResponse(
+                    {'message': "Game version submission was not successful."},
+                    status=status.HTTP_400_BAD_REQUEST)
+
+        return JsonResponse(
+            {'message': 'Invalid input parameters'},
+            status=status.HTTP_400_BAD_REQUEST)
 
 
 class ReturnHashesView(views.APIView):
@@ -138,7 +235,7 @@ class ReturnHashesView(views.APIView):
         # Check for valid parameters
         if not params.is_valid():
             return JsonResponse(
-                {'message': 'Inputs have invalid format.'}, 
+                {'message': 'Inputs have invalid format.'},
                 status=status.HTTP_400_BAD_REQUEST)
 
         # Get correct file version
@@ -152,7 +249,7 @@ class ReturnHashesView(views.APIView):
 
             else:
                 return JsonResponse(
-                    {'message': 'Unauthorized.'}, 
+                    {'message': 'Unauthorized.'},
                     status=status.HTTP_401_UNAUTHORIZED)
         else:
             try:
