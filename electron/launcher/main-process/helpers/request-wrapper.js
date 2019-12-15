@@ -1,5 +1,5 @@
 const rq = require('request-promise');
-const autoLogin = require('login').autoLogin;
+const autoLogin = require('helpers/login').autoLogin;
 
 const config = require('config.json');
 const djangoUrl = config.DJANGO_SERVER.HOST +":" +config.DJANGO_SERVER.PORT;
@@ -8,10 +8,10 @@ const djangoUrl = config.DJANGO_SERVER.HOST +":" +config.DJANGO_SERVER.PORT;
 const checkSession = () => {
   return new Promise((resolve, reject) => {
     if(Date.now() > sessionExpiry){
-      resolve(true);
+      resolve(false);
     }
     else{
-      resolve(false);
+      resolve(true);
     }
   });
 }
@@ -35,9 +35,9 @@ const request = options => {
       }
     })
     // MODIFY REQUEST HEADER
-    .then(() => {
+    .then(val => {
       // ONLY ADD CSRF AND SESSION TOKEN TO REQUESTS TO DJANGO SERVER
-      if(options.uri.contains(djangoUrl)){
+      if(options.uri.includes(djangoUrl)){
         // ALREADY HAS A HEADER, WE WILL KEEP THE ORIGINAL AND ADDED CSRF AND SESSION INFO
         if(options.hasOwnProperty('header')){
           return {...options, header: {...options.header, 'X-CSRFToken': csrfToken, 'Cookie': `sessionid:${sessionKey}`}};
@@ -52,12 +52,15 @@ const request = options => {
     })
     // MAKE REQUEST WITH MODIFIED OPTIONS
     .then(newOptions => {
-      rq.request(newOptions).then(response => {
-        resolve(response);
+      return rq(newOptions).then(response => {
+        return response;
       })
       .catch(error => {
         throw error;
       })
+    })
+    .then(response => {
+      resolve(response);
     })
     .catch(error => {
       reject(error);
@@ -65,4 +68,4 @@ const request = options => {
   });
 }
 
-modules.export.request = request;
+module.exports.request = request;

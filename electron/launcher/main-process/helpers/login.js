@@ -112,7 +112,7 @@ const autoLogin = () => {
     fs.readFile(path.join(app.getPath('userData'), 'user_info'), 'utf-8').then(encryptedData => {
       let decrypt = data => {
         return new Promise((resolve, reject) => {
-          let encrypted = Buffer.from(data, 'hex')
+          let encrypted = Buffer.from(data, 'hex');
           let decipher = crypto.createDecipheriv(secret.algorithm, Buffer.from(secret.key, 'hex'), Buffer.from(secret.iv, 'hex'));
           let decrypted = decipher.update(encrypted);
           decrypted = Buffer.concat([decrypted, decipher.final()]);
