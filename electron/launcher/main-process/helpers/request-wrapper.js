@@ -43,7 +43,7 @@ const request = options => {
           return {...options, header: {...options.header, 'X-CSRFToken': csrfToken, 'Cookie': `sessionid:${sessionKey}`}};
         }
         else{
-          return {...options, header: {'X-CSRFToken': csrfToken, 'Cookie': `sessionid:${sessionKey}`}};
+          return {...options, header: {'X-CSRFToken': csrfToken, 'Cookie': `sessionid=${sessionKey}`}};
         }
       }
       else{
