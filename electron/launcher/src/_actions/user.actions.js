@@ -119,7 +119,40 @@ const resetError = (dispatch) => {
   }
 }
 
+const autoLogin = () => {
+  return (dispatch) => {
+    dispatch({type: actionTypes.LOGIN_START});
+    ipc.send('auto-login');
+
+    ipc.on('auto-login-success', (e, res) => {
+      dispatch({
+        type: actionTypes.LOGIN_SUCCESS,
+        payload: {
+          user: {
+            username: res.username,
+            email: res.email,
+            isActive: res.is_active,
+            isAdmin: res.is_superuser
+          }
+        }
+      });
+
+      if(res.is_active){
+        history.push('/');
+      }
+      else{
+        history.push('/verify-email');
+      }
+    });
+
+    ipc.on('auto-login-fail', (e, err) => {
+      // DO NOTHING IF AUTO LOGIN FAILS?
+    });
+  }
+}
+
 export const userActions = {
+  autoLogin,
   login,
   logout,
   register,

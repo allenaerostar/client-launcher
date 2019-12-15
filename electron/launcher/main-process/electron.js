@@ -4,21 +4,10 @@ const app = electron.app;
 const BrowserWindow = electron.BrowserWindow;
 const isDev = require("electron-is-dev");
 const path = require("path");
-const onAppLoad = require("helpers/on-app-load");
-
-// SETTING DIETSTORY GAME INSTALLATION PATH
-if(process.platform === 'win32'){
-    // WINDOWS  ---  C:\Users\<Username>\AppData\Local\Dietstory\Game
-    global.gameInstallationPath = path.join(app.getPath('appData'), '../Local', app.name, 'Game');
-}
-else{
-    // MAC OS   ---  ~/Library/Application Support/Dietstory/Game
-    // LINUX    ---  ~/.config/Dietstory/Game
-    global.gameInstallationPath = path.join(app.getPath('userData'), 'Game');
-}
+const initialize = require("helpers/on-app-load").load;
 
 // SCRIPTS WHEN APPLICATION STARTS UP
-onAppLoad.load();
+initialize();
 
 let mainWindow;
 
