@@ -1,8 +1,5 @@
-const request = require('request-promise');
 const ipc = require('electron').ipcMain;
-
-const config = require('config.json').DJANGO_SERVER;
-const djangoUrl = config.HOST +":" +config.PORT;
+const login = require('helpers/login');
 
 /***
 LOGIN (CREDENTIALS)
@@ -18,17 +15,19 @@ THIS METHOD OF LOGGING IN USES USER'S INPUT (USERNAME & PASSWORD).
 ***/
 
 ipc.on('http-login-credentials', (e, cred) => {
-  let options = {
-    method: 'POST',
-    uri: djangoUrl +'/accounts/login/',
-    header: {'content-type': 'application/x-www-form-urlencoded'},
-    form: cred,
-    json: true
-  }
-
-  request(options).then(response => {
-    e.reply('http-login-credentials-success', response);
-  }).catch(error => {
+  login.login(cred).then(response => {
+    e.reply('http-login-credentials-success', response.body);
+  })
+  .catch(error => {
     e.reply('http-login-credentials-fail', error);
   });
+});
+
+ipc.on('auto-login', e => {
+  login.autoLogin().then(response => {
+    e.reply('auto-login-success', response);
+  })
+  .catch(error => {
+    e.reply('auto-login-fail', error);
+  })
 });
