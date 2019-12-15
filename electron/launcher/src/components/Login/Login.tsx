@@ -10,12 +10,7 @@ const Login = props => {
 
   // Attempts to login automatically from stored session or credentials
   useEffect(() => {
-    if(props.auth.user.password !== ''){
-      props.login({
-        username: props.auth.user.username,
-        password: props.auth.user.password
-      });
-    }
+    props.autoLogin();
     // eslint-disable-next-line
   });
 

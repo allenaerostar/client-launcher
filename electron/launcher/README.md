@@ -1,5 +1,12 @@
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## Building Dependencies
+Some of our dependency modules includes some C++ code, for example [node-keytar](https://github.com/atom/node-keytar). While the developers try their best to provide prebuilt binaries, sometimes the wrong version is installed by node package manager. If this is the case, you must compile the dependencies for your specific OS and architecture.
+
+1. Run `npm install` to download all the dependencies.
+2. We will use [node-gyp](https://github.com/nodejs/node-gyp#installation) to compile C++. Click the link and follow the provided installation instruction for your operating system.
+3. Type `npm run rebuild` into your local repository console. This will invoke [electron-rebuild](https://github.com/electron/electron-rebuild) to recompile for your specific operating system.
+
 ## Available Scripts
 
 In the project directory, you can run:
