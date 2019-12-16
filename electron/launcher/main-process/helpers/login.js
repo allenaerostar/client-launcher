@@ -5,6 +5,7 @@ const fs = require('fs-extra');
 const path = require('path');
 const keytar = require('keytar');
 const app = require('electron').app;
+const aes256 = require('helpers/aes256');
 
 const config = require('config.json');
 const secret = config.SECRET;
@@ -23,11 +24,20 @@ const login = cred => {
     }
     
     let body;
+    let encryptedPassword;
 
+    aes256.encrypt(cred.password).then(encrypted => {
+      encryptedPassword = encrypted;
+    })
     // SEND POST REQUEST TO LOGIN
-    request(options).then(response => {
-      body = response.body;
-      return response.headers['set-cookie'];
+    .then(() => {
+      return request(options).then(response => {
+        body = response.body;
+        return response.headers['set-cookie'];
+      })
+      .catch(error => {
+        throw error;
+      });
     })
     // PARSE Set-Cookie HEADER INTO COOKIE OBJECTS
     .then(cookieStrings => {
@@ -48,7 +58,7 @@ const login = cred => {
       let promises = [];
       let expiry = 0;
 
-      promises.push(keytar.setPassword('Dietstory', body.name, cred.password));
+      promises.push(keytar.setPassword('Dietstory', body.name, encryptedPassword));
       for(cookieObject of cookies){
         if(cookieObject.hasOwnProperty('csrftoken')){
           csrfToken = cookieObject.csrftoken;   // GLOBAL VARIABLE
@@ -127,7 +137,9 @@ const autoLogin = () => {
     // GET USER'S PASSWORD
     .then(userInfo => {
       return keytar.getPassword('Dietstory', userInfo.name).then(password => {
-        return {...userInfo, password: password};
+        return aes256.decrypt(password).then(decryptedPassword => {
+          return {...userInfo, password: decryptedPassword};
+        })
       })
       .catch(error => {
         throw error;
