@@ -1,0 +1,17 @@
+  
+version: 2
+jobs:
+  build:
+    machine: true # Build using our custom docker build image
+    working_directory: ~/dietstory-routing
+    
+    steps:
+      - checkout # check out the code in the project directory
+      - run: # Run Dietstory Django Server
+          name: Run Dietstory Django Server
+          command: |
+            docker run -v $(pwd):/mnt -p 8000:8000 dietstory-django
+            
+      - store_artifacts:
+          path: dietstory-routing
+          
