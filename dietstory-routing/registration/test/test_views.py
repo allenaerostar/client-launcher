@@ -1,8 +1,10 @@
 from django.test import TestCase
 from django.urls import reverse
 from rest_framework import status
+from django.utils import timezone 
 import registration.models as models
 import registration.verification as verification
+
 
 
 class SignupViewTest(TestCase):
@@ -105,7 +107,7 @@ class VerifyViewTest(TestCase):
 		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
 	def test_regular_form_for_unverified_account(self):
-		models.Accounts.objects.create(name='username', password='password', email='pokemon@domain.com',birthday='1990-01-01', tempban='0001-01-01 00:00:01')
+		models.Accounts.objects.create(name='username', password='password', email='pokemon@domain.com',birthday='1990-01-01', tempban=timezone.localtime())
 		account = models.Accounts.objects.get(name='username')
 		token = verification.account_activation_token.make_token(account)
 		response = self.client.post(VerifyViewTest.VERIFY_VIEW_URL,
@@ -124,7 +126,7 @@ class VerifyViewTest(TestCase):
 		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
 	def test_invalid_token(self):
-		models.Accounts.objects.create(name='username', password='password', email='pokemon@domain.com',birthday='1990-01-01', tempban='0001-01-01 00:00:01')
+		models.Accounts.objects.create(name='username', password='password', email='pokemon@domain.com',birthday='1990-01-01', tempban=timezone.localtime())
 		account = models.Accounts.objects.get(name='username')
 		response = self.client.post(VerifyViewTest.VERIFY_VIEW_URL,
 			{
@@ -142,7 +144,7 @@ class SendVerificationViewTest(TestCase):
 		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
 	def test_regular_form_for_existing_email(self):
-		models.Accounts.objects.create(name='username', password='password', email='pokemon@domain.com',birthday='1990-01-01', tempban='0001-01-01 00:00:01')
+		models.Accounts.objects.create(name='username', password='password', email='pokemon@domain.com',birthday='1990-01-01', tempban=timezone.localtime())
 		response = self.client.post(SendVerificationViewTest.SEND_VERIFY_VIEW_URL,
 			{
 				'email': 'pokemon@domain.com'
@@ -176,7 +178,7 @@ class LoginViewTest(TestCase):
 		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
 	def test_incorrect_username(self):
-		models.Accounts.objects.create(name='username', password='password', email='pokemon@domain.com',birthday='1990-01-01', tempban='0001-01-01 00:00:01', verified = 1)
+		models.Accounts.objects.create(name='username', password='password', email='pokemon@domain.com',birthday='1990-01-01', tempban=timezone.localtime(), verified = 1)
 		response = self.client.post(LoginViewTest.LOGIN_VIEW_URL,
 			{
 				'username': 'username1',
@@ -185,7 +187,7 @@ class LoginViewTest(TestCase):
 		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
 	def test_incorrect_password(self):
-		models.Accounts.objects.create(name='username', password='password', email='pokemon@domain.com',birthday='1990-01-01', tempban='0001-01-01 00:00:01', verified = 1)
+		models.Accounts.objects.create(name='username', password='password', email='pokemon@domain.com',birthday='1990-01-01', tempban=timezone.localtime(), verified = 1)
 		response = self.client.post(LoginViewTest.LOGIN_VIEW_URL,
 			{
 				'username': 'username',
@@ -194,7 +196,7 @@ class LoginViewTest(TestCase):
 		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
 	def test_correct_credentials(self):
-		models.Accounts.objects.create(name='username', password='password', email='pokemon@domain.com',birthday='1990-01-01', tempban='0001-01-01 00:00:01', verified = 1)
+		models.Accounts.objects.create(name='username', password='password', email='pokemon@domain.com',birthday='1990-01-01', tempban=timezone.localtime(), verified = 1)
 		response = self.client.post(LoginViewTest.LOGIN_VIEW_URL,
 			{
 				'username': 'username',
