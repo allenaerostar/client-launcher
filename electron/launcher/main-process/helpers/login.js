@@ -120,7 +120,11 @@ const autoLogin = () => {
       return keytar.getPassword('Dietstory', userInfo.name).then(password => {
         return aes256.decrypt(password).then(decryptedPassword => {
           return {...userInfo, password: decryptedPassword};
+<<<<<<< HEAD
         });
+=======
+        })
+>>>>>>> created new helper file for encrypt/decrypt. Added encryption to password before storing in Credential manager.
       })
       .catch(error => {
         throw error;
