@@ -10,7 +10,7 @@ jobs:
       - run: # Run Dietstory Django Server Tests
           name: Run Dietstory Django Server Tests
           command: |
-            docker run --rm --env BUILD_SOURCE=local -v $(pwd):/mnt benjixd/dietstory-django-tests
+            docker run -v $(pwd):/mnt benjixd/dietstory-django-tests
       - store_artifacts:
           path: dietstory-routing
           
