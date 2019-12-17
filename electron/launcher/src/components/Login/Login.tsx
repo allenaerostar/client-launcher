@@ -17,9 +17,7 @@ const Login = props => {
   // Error handling 
   useEffect(() => {
     if(props.auth.error !== null){
-      console.log(props.auth.error);
-      let error = JSON.parse(props.auth.error.error);
-      alert(error.message);
+      alert(props.auth.error.message);
       props.resetError();
     }
     // eslint-disable-next-line

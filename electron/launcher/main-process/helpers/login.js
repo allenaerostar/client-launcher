@@ -36,7 +36,7 @@ const login = cred => {
         return response.headers['set-cookie'];
       })
       .catch(error => {
-        throw error;
+        throw error.error;
       });
     })
     // PARSE Set-Cookie HEADER INTO COOKIE OBJECTS
