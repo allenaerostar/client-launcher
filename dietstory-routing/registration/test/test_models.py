@@ -5,7 +5,7 @@ from django.utils import timezone
 # Create your tests here.
 class AccountsModelTest(TestCase):
 	def setUp(self):
-		models.Accounts.objects.create(name='username', password='password', email='email@domain.com', birthday='1990-01-01', tempban='0001-01-01 00:00:01', adminlevel=0)
+		models.Accounts.objects.create(name='username', password='password', email='email@domain.com', birthday='1990-01-01', tempban=timezone.localtime(), adminlevel=0)
 
 	# Test Account
 	def test_account_creation(self):
