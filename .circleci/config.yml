@@ -6,7 +6,11 @@ jobs:
     working_directory: ~/dietstory-routing
     
     steps:
-      - checkout # check out the code in the project directory            
+      - checkout # check out the code in the project directory
+      - run: # Run Dietstory Django Server Tests
+          name: Run Dietstory Django Server Tests
+          command: |
+            docker run -v $(pwd):/mnt -p 8000:8000 benjixd/dietstory-django-tests 
       - store_artifacts:
           path: dietstory-routing
           
