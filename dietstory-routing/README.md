@@ -56,21 +56,21 @@ coverage html
 ## Using Docker
 Build the docker image specified under `docker/` with the following command:
 ```
-docker build -t dietstory-django -f run_server .```
-
+docker build -t dietstory-django -f run_server .
+```
 Run the docker image by mounting the project and exposing port 8000:
 ```
 docker run -v $(pwd):/mnt -p 8000:8000 dietstory-django
-```
+```  
 ## Using Docker For Tests
 Build the docker image specified under `docker/` with the following command:
 ```
-docker build -t dietstory-django-tests -f run_tests .```
-
+docker build -t dietstory-django-tests -f run_tests .
+```
 Run the docker image by mounting the project and exposing port 8000:
 ```
 docker run -v $(pwd):/mnt -p 8000:8000 dietstory-django-tests
-
+```
 > Note: Ensure that you have setup a MySQL database for the Django server to connect to. Modify `settings.py` to ensure correct configurations.
 
 
