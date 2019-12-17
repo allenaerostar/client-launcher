@@ -3,7 +3,7 @@ version: 2
 jobs:
   build:
     machine: true # Build using our custom docker build image
-    working_directory: ~/client-launcher/dietstory-routing
+    working_directory: dietstory-routing
     
     steps:
       - checkout # check out the code in the project directory
