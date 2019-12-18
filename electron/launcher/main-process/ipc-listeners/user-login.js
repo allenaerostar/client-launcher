@@ -25,7 +25,7 @@ ipc.on('http-login-credentials', (e, cred) => {
 
 ipc.on('auto-login', e => {
   login.autoLogin().then(response => {
-    e.reply('auto-login-success', response);
+    e.reply('auto-login-success', response.body);
   })
   .catch(error => {
     e.reply('auto-login-fail', error);

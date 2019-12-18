@@ -168,10 +168,13 @@ const autoLogin = () => {
       csrfToken = userInfo.csrf_token;          // GLOBAL VARIABLE
 
       resolve({
-        name: userInfo.name,
-        email: userInfo.email,
-        is_active: userInfo.is_active,
-        is_superuser: userInfo.is_superuser
+        body: {
+          name: userInfo.name,
+          email: userInfo.email,
+          is_active: userInfo.is_active,
+          is_superuser: userInfo.is_superuser
+        },
+        userInfo: userInfo
       });
     })
     .catch(error => {
