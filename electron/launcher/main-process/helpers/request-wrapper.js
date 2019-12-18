@@ -53,9 +53,6 @@ const request = options => {
     .then(response => {
       resolve(response);
     })
-    .then(response => {
-      resolve(response);
-    })
     .catch(error => {
       reject(error);
     })
