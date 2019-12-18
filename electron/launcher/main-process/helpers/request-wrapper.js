@@ -8,7 +8,6 @@ const djangoUrl = config.DJANGO_SERVER.HOST +":" +config.DJANGO_SERVER.PORT;
 const checkSession = () => {
   return new Promise((resolve, reject) => {
     if(Date.now() > sessionExpiry){
-      console.log(sessionExpiry);
       autoLogin().then(response => {
         resolve(null);
       })
