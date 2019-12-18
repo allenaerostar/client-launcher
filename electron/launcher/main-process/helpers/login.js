@@ -83,8 +83,8 @@ const login = cred => {
       sessionExpiry = expiry;   // GLOBAL VARIABLE
       let userInfo = {...body, session_expiry: expiry};
 
-      return aes256.encrypt(JSON.stringify(userInfo)).then(encyrptedData => {
-        fs.writeFileSync(path.join(app.getPath('userData'), 'user_info'), encyrptedData, 'utf-8');
+      return aes256.encrypt(JSON.stringify(userInfo)).then(encryptedData => {
+        fs.writeFileSync(path.join(app.getPath('userData'), 'user_info'), encryptedData, 'utf-8');
         return userInfo;
       })
       .catch(error => {
@@ -120,7 +120,7 @@ const autoLogin = () => {
       return keytar.getPassword('Dietstory', userInfo.name).then(password => {
         return aes256.decrypt(password).then(decryptedPassword => {
           return {...userInfo, password: decryptedPassword};
-        })
+        });
       })
       .catch(error => {
         throw error;
