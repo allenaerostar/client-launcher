@@ -8,10 +8,16 @@ const djangoUrl = config.DJANGO_SERVER.HOST +":" +config.DJANGO_SERVER.PORT;
 const checkSession = () => {
   return new Promise((resolve, reject) => {
     if(Date.now() > sessionExpiry){
-      resolve(false);
+      console.log(sessionExpiry);
+      autoLogin().then(response => {
+        resolve(null);
+      })
+      .catch(error => {
+        reject(error);
+      })
     }
     else{
-      resolve(true);
+      resolve(null);
     }
   });
 }
@@ -20,22 +26,8 @@ const checkSession = () => {
 // THIS WRAPPERS INJECTS SENDS CSRF AND SESSION IN THE HEADER
 const request = options => {
   return new Promise((resolve, reject) => {
-    // CHECK SESSION
-    checkSession().then(isFresh => {
-      if(isFresh){
-        return null;
-      }
-      else{
-        return autoLogin().then(response => {
-          return null;
-        })
-        .catch(error => {
-          throw error;
-        })
-      }
-    })
-    // MODIFY REQUEST HEADER
-    .then(val => {
+    // CHECK SESSION IF EXPIRED THEN AUTO LOGIN
+    checkSession().then(() => {
       // ONLY ADD CSRF AND SESSION TOKEN TO REQUESTS TO DJANGO SERVER
       if(options.uri.includes(djangoUrl)){
         // ALREADY HAS A HEADER, WE WILL KEEP THE ORIGINAL AND ADDED CSRF AND SESSION INFO
@@ -57,7 +49,7 @@ const request = options => {
       })
       .catch(error => {
         throw error;
-      })
+      });
     })
     .then(response => {
       resolve(response);

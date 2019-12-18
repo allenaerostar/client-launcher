@@ -73,10 +73,10 @@ ipc.on('http-logout', (e, postData) => {
       return response.server_response;
     });
   })
-  .then(response => {
+  .catch(error => {
+    // DO NOTHING ON ERROR
+  })
+  .finally(response => {
     e.reply('http-logout-success', response);
   })
-  .catch(error => {
-    e.reply('http-logout-fail', error);
-  });
 });
