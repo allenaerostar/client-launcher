@@ -80,19 +80,10 @@ const login = cred => {
     })
     // SAVE USER INFO FOR FUTURE AUTO-LOGIN TO USE (ENCRYPTED)
     .then(expiry => {
-      let encrypt = string => {
-        return new Promise((resolve, reject) => {
-          let cipher = crypto.createCipheriv(secret.algorithm, Buffer.from(secret.key, 'hex'), Buffer.from(secret.iv, 'hex'));
-          let encrypted = cipher.update(string, 'utf8', 'hex');
-          encrypted += cipher.final('hex');
-          resolve(encrypted);
-        });
-      }
-
       sessionExpiry = expiry;   // GLOBAL VARIABLE
       let userInfo = {...body, session_expiry: expiry};
 
-      return encrypt(JSON.stringify(userInfo)).then(encyrptedData => {
+      return aes256.encrypt(JSON.stringify(userInfo)).then(encyrptedData => {
         fs.writeFileSync(path.join(app.getPath('userData'), 'user_info'), encyrptedData, 'utf-8');
         return userInfo;
       })
@@ -120,19 +111,9 @@ const autoLogin = () => {
   return new Promise((resolve, reject) => {
     // READ AND DECRYPT user_info FILE
     fs.readFile(path.join(app.getPath('userData'), 'user_info'), 'utf-8').then(encryptedData => {
-      let decrypt = data => {
-        return new Promise((resolve, reject) => {
-          let encrypted = Buffer.from(data, 'hex');
-          let decipher = crypto.createDecipheriv(secret.algorithm, Buffer.from(secret.key, 'hex'), Buffer.from(secret.iv, 'hex'));
-          let decrypted = decipher.update(encrypted);
-          decrypted = Buffer.concat([decrypted, decipher.final()]);
-          resolve(decrypted.toString());
-        })
-      }
-
-      return decrypt(encryptedData).then(userInfo => {
+      return aes256.decrypt(encryptedData).then(userInfo => {
         return JSON.parse(userInfo);
-      })
+      });
     })
     // GET USER'S PASSWORD
     .then(userInfo => {
