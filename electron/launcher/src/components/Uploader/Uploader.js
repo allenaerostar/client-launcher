@@ -19,14 +19,44 @@ const Uploader = props => {
       name: "Overview",
     }
   ];
+
+  const formFields = [
+    {
+      name: 'patch-version',
+      label: 'Patch Version',
+      type: 'text',
+      required: true
+    },
+    {
+      name: 'patch-notes',
+      label: 'Patch Notes',
+      type: 'textarea',
+      required: false
+    }
+  ];
   
   const setNextStep = () => {
     setCurrentStep(currentStep+1);
-  }
+  };
 
   const setPrevStep = () => {
     setCurrentStep(currentStep-1);
-  }
+  };
+
+  const renderFormContent = () => {
+    switch (currentStep) {
+      case 1:
+        return <>
+
+        </>
+      case 2:
+        return <FormBuilder />
+      case 3:
+        return <div></div>
+      default:
+        break;
+    }
+  };
   return (
     <div>
       <FormStepNavigator
@@ -34,11 +64,8 @@ const Uploader = props => {
         changeStep={setCurrentStep}
         currentStep={currentStep}
       />
-      {currentStep}
       <form>
-        {/* Special Uploader */}
-        {/* Form Builder */}
-        {/* Overview */}
+        
       </form>
     </div>
   );

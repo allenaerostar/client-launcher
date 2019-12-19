@@ -85,12 +85,19 @@ h1{
     &--active{
       color: #4A4A4A;
     }
+    &:hover{
+      color: #4A4A4A;
+    }
   } 
 }
 
 .play-button{
   width: 144px;
-  box-shadow: 0 2px 6px 0 rgba(0,0,0,0.5);
+  font-weight: bold;
+  letter-spacing: 2px;
+  border-radius: 10px;
+  border: 5px solid #1f8637;
+  // box-shadow: 0 2px 4px 0 rgba(0,0,0,0.5);
 }
 
 .patcher{
@@ -111,8 +118,27 @@ h1{
   font-size: 1.5rem;
 }
 
+.hero-card {
+ background-color: white;
+ border: 2px solid #F7943A;
+ margin: 1rem 0 0 1rem;
+ box-shadow: 0 2px 1px -1px rgba(0,0,0,.2), 0 1px 1px 0 rgba(0,0,0,.14), 0 1px 3px 0 rgba(0,0,0,.12);
+}
+.profile{
+  &__picture{
+    width:250px;
+    border-radius: 50%;
+    border: 2px solid #F7943A;
+    margin: 1rem;
+  }
+  &__username{
+    font-size: 3rem;
+    display:inline;
+  }
+}
+
 .title-bar{
-  margin-top: 0.5rem;
+  padding-top: 0.5rem;
   position:fixed;
   width: 100%;
   display:flex;

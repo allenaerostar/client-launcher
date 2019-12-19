@@ -5,6 +5,7 @@ import { Router, Route, Switch } from 'react-router-dom';
 import Root from 'components/Root/Root';
 import Login from 'components/Login/Login';
 import Header from 'components/Header/Header';
+import UserProfile from 'components/UserProfile/UserProfile';
 import TitleBar from 'components/TitleBar';
 import Registration from 'components/Registration/Registration';
 import VerifyEmail from 'components/Registration/VerifyEmail';
@@ -36,8 +37,10 @@ const App = props => {
             <Route exact path="/" component={Root}/>
             {/* <PrivateRoute exact path="/" Component={Root} isAuthenticated={props.auth.isAuthenticated}/> */}
             <Route path="/login" component={Login}/>
+            <Route path="/profile" component={UserProfile} />
             <Route path="/registration" component={Registration} />
             <Route path="/verify-email" component={VerifyEmail} />
+          {/* <PrivateRoute exact path="/" Component={Root} isAuthenticated={props.auth.user.isAdmin}/> */}
             <Route path="/admin" component={Uploader} />
           </Switch>
       </Router>

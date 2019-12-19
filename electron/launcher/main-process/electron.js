@@ -47,3 +47,4 @@ require('ipc-listeners/user-login');
 require('ipc-listeners/user-logout');
 require('ipc-listeners/user-registration');
 require('ipc-listeners/file-manager');
+require('ipc-listeners/game-client-start');
