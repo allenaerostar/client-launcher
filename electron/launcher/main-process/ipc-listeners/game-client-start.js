@@ -6,8 +6,8 @@ const app = require('electron').app;
 
 const startGameClient = () => {
   return new Promise((resolve, reject) => {
-    // exec('dietstory.exe', { cwd: gameInstallationPath }, (error, stdout, stderr) => {
-    exec('open Resume.pdf', { cwd: '/Users/william/Downloads' }, (error, stdout, stderr) => {
+    const command = 'open dietstory.exe';
+    exec(command, { cwd: gameInstallationPath }, (error, stdout, stderr) => {
       if (error) {
         reject(error);
       }
@@ -17,11 +17,6 @@ const startGameClient = () => {
 }
 
 ipc.on('start-game-client', event => {
-  
-  // Look for game client folder
-  // find dietstory exe, trigger it
-
-  // const command = 'open dietstory.exe';
   startGameClient().then(() => {
     event.reply('start-game-client-success');
   }).catch((err) => {
