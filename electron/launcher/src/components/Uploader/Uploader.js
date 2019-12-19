@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
 
-import FormStepNavigator from 'components/FormStepNavigator';
-import FormBuilder from 'components/FormBuilder';
+import FormStepNavigator from 'components/Form/FormStepNavigator';
+import FormBuilder from 'components/Form/FormBuilder';
+import FormOverview from 'components/Form/FormOverview';
 
 const Uploader = props => {
   const [inputs, setInputs] = useState({});
+
   const [currentStep, setCurrentStep] = useState(1);
 
   const steps = [
@@ -46,13 +48,11 @@ const Uploader = props => {
   const renderFormContent = () => {
     switch (currentStep) {
       case 1:
-        return <>
-
-        </>
+        return <div>test</div>
       case 2:
         return <FormBuilder />
       case 3:
-        return <div></div>
+        return <FormOverview inputs={inputs}/>
       default:
         break;
     }

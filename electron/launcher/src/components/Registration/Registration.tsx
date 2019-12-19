@@ -2,7 +2,7 @@ import React, {useEffect} from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { userActions } from '_actions';
-import FormBuilder from 'components/FormBuilder';
+import FormBuilder from 'components/Form/FormBuilder';
 import logo from 'assets/dietstory_logo.png';
 
 const Registration = props => {
