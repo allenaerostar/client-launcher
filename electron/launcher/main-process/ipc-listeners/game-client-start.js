@@ -1,8 +1,6 @@
-const fs = require('fs').promises;
-const path = require('path');
 const exec = require('child_process').exec;
 const ipc = require('electron').ipcMain;
-const app = require('electron').app;
+
 
 const startGameClient = () => {
   return new Promise((resolve, reject) => {
@@ -17,6 +15,7 @@ const startGameClient = () => {
 }
 
 ipc.on('start-game-client', event => {
+  
   startGameClient().then(() => {
     event.reply('start-game-client-success');
   }).catch((err) => {
