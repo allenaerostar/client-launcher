@@ -15,5 +15,5 @@ RUN apk add --no-cache build-base \
 
 # Run mounted Django project
 CMD cd /mnt \ 
-&& echo '{"SECRET_KEY": "gl5x$tzu_kjb=@2!)h)*ur_=5$i##n41(nhb949u0j)6wsz9hs","DATABASES": {"default": {}},"EMAIL_BACKEND": "django.core.mail.backends.smtp.EmailBackend","EMAIL_HOST": "smtp-mail.outlook.com","EMAIL_PORT": "587","EMAIL_HOST_USER": "dietstory-devs@outlook.com","EMAIL_HOST_PASSWORD": "d13tst0ry","EMAIL_USE_TLS": "True","TEST_DATABASES": {"default": {"ENGINE": "django.db.backends.sqlite3","NAME": "dietstory"}}}' > ./dietstory-routing/dietstory_secret_config.json \
+&& echo '{"SECRET_KEY": "hello_world","DATABASES": {"default": {}},"EMAIL_BACKEND": "","EMAIL_HOST": "","EMAIL_PORT": "587","EMAIL_HOST_USER": "","EMAIL_HOST_PASSWORD": "","EMAIL_USE_TLS": "True","TEST_DATABASES": {"default": {"ENGINE": "django.db.backends.sqlite3","NAME": "dietstory"}}}' > ./dietstory-routing/dietstory_secret_config.json \
 	&& python -u manage.py test -v2
