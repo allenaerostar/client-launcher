@@ -1,6 +1,8 @@
-Django==2.2.6
+Django==2.2.8
 djangorestframework==3.10.3
 mysqlclient==1.4.4
 coverage==4.5.4
 pyyaml==5.1.2
-boto3==1.10.33
+uritemplate==3.0.0
+boto3==1.10.34
+apscheduler==3.6.3

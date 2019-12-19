@@ -50,7 +50,7 @@ const Uploader = props => {
       case 1:
         return <div>test</div>
       case 2:
-        return <FormBuilder />
+        return <></>
       case 3:
         return <FormOverview inputs={inputs}/>
       default:
@@ -65,7 +65,9 @@ const Uploader = props => {
         currentStep={currentStep}
       />
       <form>
-        
+        {
+          renderFormContent
+        }
       </form>
     </div>
   );

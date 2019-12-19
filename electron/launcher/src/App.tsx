@@ -22,26 +22,22 @@ const App = props => {
 
   
   return ( 
-    <div className="app-container--loggedin">
-    {/* //  <div className={props.auth.isAuthenticated ? "app-container--loggedin" : ""}> */}
+    <div className={props.auth.isAuthenticated ? "app-container--loggedin" : ""}>
       <TitleBar />
       <Router history={history}>
-        {/* {
+        {
           props.auth.isAuthenticated ? 
             <Header />
             :
             null
-        } */}
-          <Header />
+        }
           <Switch>
-            <Route exact path="/" component={Root}/>
-            {/* <PrivateRoute exact path="/" Component={Root} isAuthenticated={props.auth.isAuthenticated}/> */}
+            <PrivateRoute exact path="/" Component={Root} isAuthenticated={props.auth.isAuthenticated}/>
             <Route path="/login" component={Login}/>
             <Route path="/profile" component={UserProfile} />
             <Route path="/registration" component={Registration} />
             <Route path="/verify-email" component={VerifyEmail} />
-          {/* <PrivateRoute exact path="/" Component={Root} isAuthenticated={props.auth.user.isAdmin}/> */}
-            <Route path="/admin" component={Uploader} />
+            <PrivateRoute path="/admin" Component={Uploader} isAuthenticated={props.auth.user.isAdmin}/>
           </Switch>
       </Router>
     </div>
