@@ -10,21 +10,14 @@ const Login = props => {
 
   // Attempts to login automatically from stored session or credentials
   useEffect(() => {
-    if(props.auth.user.password !== ''){
-      props.login({
-        username: props.auth.user.username,
-        password: props.auth.user.password
-      });
-    }
+    props.autoLogin();
     // eslint-disable-next-line
   });
 
   // Error handling 
   useEffect(() => {
     if(props.auth.error !== null){
-      console.log(props.auth.error);
-      let error = JSON.parse(props.auth.error.error);
-      alert(error.message);
+      alert(props.auth.error.message);
       props.resetError();
     }
     // eslint-disable-next-line

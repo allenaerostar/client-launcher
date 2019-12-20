@@ -15,11 +15,13 @@
     "async": "^3.1.0",
     "bootstrap": "^4.4.0",
     "concurrently": "^5.0.0",
+    "cookie": "^0.4.0",
     "cross-env": "^6.0.3",
     "electron": "^7.0.0",
     "electron-builder": "^22.1.0",
     "electron-is-dev": "^1.1.0",
     "fs-extra": "^8.1.0",
+    "keytar": "^5.0.0",
     "node-sass": "^4.13.0",
     "qs": "^6.9.1",
     "react": "^16.11.0",
@@ -35,6 +37,7 @@
     "wait-on": "^3.3.0"
   },
   "scripts": {
+    "rebuild": "electron-rebuild -f -o keytar",
     "react-start": "react-scripts start",
     "react-build": "react-scripts build",
     "react-test": "react-scripts test --env=jsdom",
@@ -60,6 +63,7 @@
     ]
   },
   "devDependencies": {
+    "electron-rebuild": "^1.8.8",
     "redux-devtools": "^3.5.0"
   }
 }
