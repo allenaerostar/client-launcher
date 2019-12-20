@@ -1,0 +1,11 @@
+{
+  "DJANGO_SERVER": {
+    "HOST": "http://127.0.0.1",
+    "PORT": 8000
+  },
+  "SECRET": {
+    "algorithm": "aes-256-cbc",
+    "key": "<32 BYTE SECRET KEY IN HEX>",
+    "iv": "<16 BYTE INITIALIZATION VECTOR IN HEX>"
+  }
+}

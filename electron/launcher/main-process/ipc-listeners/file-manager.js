@@ -1,4 +1,4 @@
-const request = require('request-promise');
+const request = require('helpers/request-wrapper').request;
 const _request = require('request');
 const crypto = require('crypto');
 const path = require('path');

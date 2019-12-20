@@ -1,6 +1,7 @@
 const fs = require('fs').promises;
 const path = require('path');
 const exec = require('child_process').exec;
+const app = require('electron').app;
 
 // CHECKS WINDOWS DEFENDER'S EXCLUSION PATH
 checkWinDefender = () => {
@@ -39,6 +40,23 @@ addExclusionPath = () => {
 }
 
 async function load(){
+
+  // SETTING DIETSTORY GAME INSTALLATION PATH
+  if(process.platform === 'win32'){
+    // WINDOWS  ---  C:\Users\<Username>\AppData\Local\Dietstory\Game
+    global.gameInstallationPath = path.join(app.getPath('appData'), '../Local', app.name, 'Game');
+  }
+  else{
+    // MAC OS   ---  ~/Library/Application Support/Dietstory/Game
+    // LINUX    ---  ~/.config/Dietstory/Game
+    global.gameInstallationPath = path.join(app.getPath('userData'), 'Game');
+  }
+
+  // CREATING GLOBAL VARIABLE FOR SESSION
+  global.sessionKey = '';
+  global.sessionExpiry = 0;
+  global.csrfToken = '';
+
   // MAKE `Dietstory` DIRECTORY IF IT DOES NOT EXIST
   try{
     await fs.stat(path.join(gameInstallationPath, '..'));
