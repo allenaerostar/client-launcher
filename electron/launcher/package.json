@@ -1,8 +1,8 @@
 {
   "name": "Dietstory",
   "description": "Launches Dietstory, auto-update files, register/login, etc...",
-  "author": "Kevin X",
-  "version": "0.2.0",
+  "author": "Dietstory Team",
+  "version": "0.1.0",
   "private": true,
   "main": "main-process/electron.js",
   "homepage": "./",
