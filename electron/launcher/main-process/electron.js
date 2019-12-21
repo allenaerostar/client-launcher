@@ -31,6 +31,10 @@ function createWindow() {
 
 app.on("ready", () => {
     createWindow();
+
+    // CHECKS FOR UPDATE AFTER LAUNCH
+    autoUpdater.checkForUpdatesAndNotify();
+    
     // CHECKS FOR UPDATE EVERY 2 HOURS
     setInterval(() => {
         autoUpdater.checkForUpdatesAndNotify();
