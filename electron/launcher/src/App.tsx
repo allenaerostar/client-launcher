@@ -10,6 +10,7 @@ import TitleBar from 'components/TitleBar';
 import Registration from 'components/Registration/Registration';
 import VerifyEmail from 'components/Registration/VerifyEmail';
 import Uploader from 'components/Uploader/Uploader';
+import Patcher from 'components/Patcher/Patcher';
 import PrivateRoute from 'components/PrivateRoute';
 import history from '_helpers/history';
 import { userActions } from '_actions';
@@ -32,14 +33,21 @@ const App = props => {
             null
         }
           <Switch>
-            <PrivateRoute exact path="/" Component={Root} isAuthenticated={props.auth.isAuthenticated}/>
+            {/* Route requires a lowercase component, while PrivateRoute requires Capital */}
+            <PrivateRoute exact path="/" component={Root} isAuthenticated={props.auth.isAuthenticated}/>
             <Route path="/login" component={Login}/>
-            <Route path="/profile" component={UserProfile} />
+            <PrivateRoute path="/profile" component={UserProfile} isAuthenticated={props.auth.isAuthenticated}/>
             <Route path="/registration" component={Registration} />
             <Route path="/verify-email" component={VerifyEmail} />
-            <PrivateRoute path="/admin" Component={Uploader} isAuthenticated={props.auth.user.isAdmin}/>
+            <PrivateRoute path="/admin" component={Uploader} isAuthenticated={props.auth.user.isAdmin}/>
           </Switch>
       </Router>
+      {
+        props.auth.isAuthenticated && !props.patch.isLatest ?
+          <Patcher />
+          :
+          null
+      }
     </div>
   );
 }

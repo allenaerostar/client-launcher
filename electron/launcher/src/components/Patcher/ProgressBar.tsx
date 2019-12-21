@@ -12,7 +12,7 @@ const ProgressBar = props => {
           style={{ width: `${props.percentage}%` }}>
             {
               props.percentage === 100 ?
-                "Finished!"
+                "Ready to play!"
               : props.percentage + "%"
             }
         </div>

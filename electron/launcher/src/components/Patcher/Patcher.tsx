@@ -1,24 +1,41 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { patcherActions } from '_actions';
-
 import ProgressBar from 'components/Patcher/ProgressBar';
 
 const Patcher = props => {
-  const updatePercentage = props.patch.updateProgress.totalProgress/props.patch.updateProgress.totalSize;
+  const [updatePercentage, setUpdatePercentage] = useState(0);
+  useEffect(() => {
+    props.checkForUpdate();
+    // eslint-disable-next-line
+  }, [])
+
+  useEffect(() => {
+    setUpdatePercentage(props.patch.updateProgress.totalProgress/props.patch.updateProgress.totalSize);
+    console.log(props.patch.updateProgress.totalProgress);
+    // eslint-disable-next-line
+  }, [props.patch.updateProgress.totalProgress])
+
+  useEffect(() => {
+    if(!props.patch.isLatest)
+      props.downloadFiles();
+      // eslint-disable-next-line
+  }, [props.patch.isLatest])
+
   return (
       <div className="patcher">
-        <h3>Update Available? {String(!props.patch.isLatest)}</h3>
+        {/* <h3>Update Available? {String(!props.patch.isLatest)}</h3>
         <button type="submit" onClick={props.checkForUpdate}>Check for update</button>
         <button type="submit" onClick={props.downloadFiles}>Download Files</button>
         <p>STATUS: {props.patch.updateProgress.status}</p> 
         <p>CURRENTLY DOWNLOADING: {props.patch.updateProgress.currentFile}</p> 
         <p>CURRENT FILE PROGRESS: {props.patch.updateProgress.currentFileProgress}/{props.patch.updateProgress.currentFileSize}</p>
         <p>TOTAL PROGRESS: {props.patch.updateProgress.totalProgress}/{props.patch.updateProgress.totalSize}</p> 
-        <p>RETRY AT: {props.patch.updateProgress.retryTime}</p>
+        <p>RETRY AT: {props.patch.updateProgress.retryTime}</p> */}
+        <h3>Patching...</h3>
         {
           !isNaN(updatePercentage) ?
-          <ProgressBar percentage={100}/>
+          <ProgressBar percentage={updatePercentage}/>
           : null
         }
       </div>

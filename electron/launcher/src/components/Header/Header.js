@@ -8,11 +8,11 @@ const Header = props => {
 
   const handleButtonClick = () => {
     // enable onclick if gameClient is not running
-    if(!props.client.isGameClientRunning ) {
+    if (!props.client.isGameClientRunning && props.patch.isLatest) {
       props.startGameClient();
     }
   };
-  
+
   return (
     <header className="main-header">
       <nav>
@@ -20,7 +20,7 @@ const Header = props => {
           <img src={logo} alt="dietstory logo"/>
         </Link>
         <button
-          className={"btn btn-success play-button " + (props.client.isGameClientRunning ? "disabled" : '')}
+          className={"btn btn-success play-button " + ((props.client.isGameClientRunning || !props.patch.isLatest) ? "disabled" : '')}
           onClick={handleButtonClick}
         >
           PLAY
@@ -39,16 +39,16 @@ const Header = props => {
         >
           PROFILE
         </NavLink>
-        {/* {
-          props.auth.user.isAdmin ? */}
+        {
+          props.auth.user.isAdmin ?
           <NavLink to="/admin"
             className="main-header__link"
             activeClassName="main-header__link--active"
           >
             ADMIN
           </NavLink>
-          {/* : null
-        } */}
+           : null
+        }
       </nav>
     </header>
   );

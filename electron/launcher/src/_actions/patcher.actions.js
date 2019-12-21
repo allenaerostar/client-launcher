@@ -22,7 +22,14 @@ const checkForUpdate = () => {
     });
   }
 }
+const doSomething = () => {
+  console.log('xxx');
+  return (dispatch) => {
 
+  
+  dispatch({ type: patcherTypes.IS_LATEST_VERSION });
+  }
+}
 const downloadFiles = () => {
   return (dispatch) => {
     // START THE DOWNLOAD PROCESS
@@ -52,5 +59,6 @@ const downloadFiles = () => {
 
 export const patcherActions = {
   checkForUpdate,
-  downloadFiles
+  downloadFiles,
+  doSomething
 };
