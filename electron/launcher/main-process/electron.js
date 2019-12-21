@@ -33,11 +33,11 @@ app.on("ready", () => {
     createWindow();
 
     // CHECKS FOR UPDATE AFTER LAUNCH
-    autoUpdater.checkForUpdatesAndNotify();
-    
+    autoUpdater.checkForUpdates();
+
     // CHECKS FOR UPDATE EVERY 2 HOURS
     setInterval(() => {
-        autoUpdater.checkForUpdatesAndNotify();
+        autoUpdater.checkForUpdates();
     }, 72000000);
 });
 app.on("window-all-closed", () => {if (process.platform !== "darwin") {app.quit();}});
