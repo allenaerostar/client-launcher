@@ -3,7 +3,7 @@
   "description": "Launches Dietstory, auto-update files, register/login, etc...",
   "author": "Dietstory Team",
   "version": "1.0.0",
-  "private": true,
+  "private": false,
   "main": "main-process/electron.js",
   "homepage": "./",
   "repository": {
