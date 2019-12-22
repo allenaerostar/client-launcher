@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { isSafeToUnpackElectronOnRemoteBuildServer } from 'app-builder-lib/out/platformPackager'; 
 import { Router, Route, Switch } from 'react-router-dom';
 
@@ -13,7 +13,8 @@ import Uploader from 'components/Uploader/Uploader';
 import Patcher from 'components/Patcher/Patcher';
 import PrivateRoute from 'components/PrivateRoute';
 import history from '_helpers/history';
-import { userActions } from '_actions';
+// import { userActions } from '_actions';
+import { patcherActions } from '_actions';
 
 import { connect } from 'react-redux';
 
@@ -21,7 +22,11 @@ import 'App.scss';
 
 const App = props => {
 
-  
+  useEffect(() => {
+    props.checkForUpdate();
+    // eslint-disable-next-line
+  }, [])
+
   return ( 
     <div className={props.auth.isAuthenticated ? "app-container--loggedin" : ""}>
       <TitleBar />
@@ -55,4 +60,10 @@ const mapStateToProps = (state) => {
   return state;
 }
 
-export default connect(mapStateToProps, userActions)(App);
+// const mapDispatchToProps = (dispatch) => {
+//   return {
+//     checkForUpdate: patcherActions.checkForUpdate
+//   }
+// }
+
+export default connect(mapStateToProps, patcherActions)(App);

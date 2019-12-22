@@ -2,14 +2,18 @@ import React from 'react';
 import logo from '../../assets/small_logo.png';
 import { NavLink, Link } from 'react-router-dom';
 import { clientActions } from '_actions';
+import { patcherActions } from '_actions';
 import { connect } from 'react-redux';
 
 const Header = props => {
-
+  console.log(props);
   const handleButtonClick = () => {
-    // enable onclick if gameClient is not running
-    if (!props.client.isGameClientRunning && props.patch.isLatest) {
-      props.startGameClient();
+    // button is diabled while patching
+    if (props.patch.updateProgress.status !== 'downloading') {
+      props.checkForUpdate();
+      if (props.patch.isLatest) {
+        props.startGameClient();
+      }
     }
   };
 
@@ -20,7 +24,7 @@ const Header = props => {
           <img src={logo} alt="dietstory logo"/>
         </Link>
         <button
-          className={"btn btn-success play-button " + ((props.client.isGameClientRunning || !props.patch.isLatest) ? "disabled" : '')}
+          className={"btn btn-success play-button " + (props.patch.updateProgress.status === 'downloading' ? "disabled" : '')}
           onClick={handleButtonClick}
         >
           PLAY
@@ -57,5 +61,11 @@ const Header = props => {
 const mapStateToProps = (state) => {
   return state;
 }
+const mapDispatchToProps = (dispatch) => {
+  return {
+    startGameClient: clientActions.startGameClient,
+    checkForUpdate: patcherActions.checkForUpdate
+  }
+}
 
-export default connect(mapStateToProps, clientActions)(Header);
+export default connect(mapStateToProps, mapDispatchToProps)(Header);
