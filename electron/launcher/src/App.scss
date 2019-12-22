@@ -130,3 +130,15 @@ h1{
   width: 144px;
   box-shadow: 0 2px 6px 0 rgba(0,0,0,0.5);
 }
+
+.upgrade-prompt{
+  background: #F7943A !important;
+  padding: 12px !important;
+}
+
+.upgrade-prompt-body{
+  color: white !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+}
