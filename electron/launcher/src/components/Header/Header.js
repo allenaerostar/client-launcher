@@ -6,7 +6,7 @@ import { patcherActions } from '_actions';
 import { connect } from 'react-redux';
 
 const Header = props => {
-  console.log(props);
+
   const handleButtonClick = () => {
     // button is diabled while patching
     if (props.patch.updateProgress.status !== 'downloading') {

@@ -31,7 +31,7 @@ const request = options => {
       if(options.uri.includes(djangoUrl)){
         // ALREADY HAS A HEADER, WE WILL KEEP THE ORIGINAL AND ADDED CSRF AND SESSION INFO
         if(options.hasOwnProperty('header')){
-          return {...options, header: {...options.header, 'X-CSRFToken': csrfToken, 'Cookie': `sessionid:${sessionKey}`}};
+          return {...options, header: {...options.header, 'X-CSRFToken': csrfToken, 'Cookie': `sessionid=${sessionKey}`}};
         }
         else{
           return {...options, header: {'X-CSRFToken': csrfToken, 'Cookie': `sessionid=${sessionKey}`}};
