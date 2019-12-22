@@ -1,18 +1,26 @@
-import React from 'react';
+import React, { useEffect ,useState} from 'react';
 import closeIcon from 'assets/icons/close_icon.svg';
 import minimizeIcon from 'assets/icons/minimize_icon.svg';
 
-const { remote } = window.require('electron')
+const { electron } = window.require('electron')
 
 const TitleBar = props => {
+  const [ window, setWindow ] = useState();
+  
+  useEffect(() => {
+    setWindow(electron.BrowserWindow.getFocusedWindow());
+  }, []);
 
   const minimizeWindow = () => {
-    remote.getCurrentWindow().minimize();
+    window.minimize();
+    // remote.getCurrentWindow().minimize();
   }
 
   const closeWindow = () => {
+    electron.app.quit();
     // props.logout(props.auth.user)
-    remote.getCurrentWindow().close();
+    // window.close();
+    // remote.getCurrentWindow().close();
   }
 
   return (
