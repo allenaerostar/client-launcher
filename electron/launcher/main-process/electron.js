@@ -37,7 +37,7 @@ function createWindow() {
 app.on("ready", () => {
     createWindow();
 
-    if(isDev) {
+    if(!isDev) {
         // CHECKS FOR UPDATE AFTER LAUNCH
         autoUpdater.checkForUpdates();
 
