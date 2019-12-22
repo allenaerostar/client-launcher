@@ -2,13 +2,13 @@
   "name": "Dietstory",
   "description": "Launches Dietstory, auto-update files, register/login, etc...",
   "author": "Dietstory Team",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "main": "main-process/electron.js",
   "homepage": "./",
   "repository": {
-    "type" : "git",
-    "url" : "https://github.com/allenaerostar/client-launcher.git"
+    "type": "git",
+    "url": "https://github.com/allenaerostar/client-launcher.git"
   },
   "dependencies": {
     "@types/jest": "24.0.21",
@@ -23,6 +23,7 @@
     "cookie": "^0.4.0",
     "cross-env": "^6.0.3",
     "electron-is-dev": "^1.1.0",
+    "electron-log": "^4.0.0",
     "electron-updater": "^4.2.0",
     "fs-extra": "^8.1.0",
     "keytar": "^5.0.0",
@@ -48,9 +49,8 @@
     "react-build-win": "react-scripts build && robocopy \"main-process\" \"build\\main-process\" /S",
     "react-test": "react-scripts test --env=jsdom",
     "react-eject": "react-scripts eject",
-    "electron-build": "electron-builder build --win -c.extraMetadata.main=build/main-process/electron.js --publish never",
+    "package": "electron-builder build --win -c.extraMetadata.main=build/main-process/electron.js --publish never",
     "release": "electron-builder build --win -c.extraMetadata.main=build/main-process/electron.js --publish always",
-    "build": "npm run react-build && npm run electron-build --win --publish never",
     "start": "concurrently \"cross-env BROWSER=none npm run react-start\" \"wait-on http://localhost:3000 && electron .\""
   },
   "eslintConfig": {
@@ -69,9 +69,9 @@
     ]
   },
   "devDependencies": {
-    "electron-rebuild": "^1.8.8",
-    "electron": "^7.0.0",
+    "electron": "^6.1.7",
     "electron-builder": "^22.1.0",
+    "electron-rebuild": "^1.8.8",
     "redux-devtools": "^3.5.0"
   },
   "build": {
