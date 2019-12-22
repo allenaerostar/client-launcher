@@ -12,6 +12,7 @@ const login = (cred) => {
     ipc.send('http-login-credentials', cred);
 
     ipc.on('http-login-credentials-success', (e, res) => {
+
       dispatch({
         type: actionTypes.LOGIN_SUCCESS,
         payload: {
@@ -33,6 +34,7 @@ const login = (cred) => {
     });
 
     ipc.on('http-login-credentials-fail', (e, err) => {
+
       dispatch({type: actionTypes.LOGIN_FAILED, payload: {error: err}});
     });
   }
@@ -129,7 +131,7 @@ const autoLogin = () => {
         type: actionTypes.LOGIN_SUCCESS,
         payload: {
           user: {
-            username: res.username,
+            username: res.name,
             email: res.email,
             isActive: res.is_active,
             isAdmin: res.is_superuser

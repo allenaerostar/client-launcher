@@ -21,7 +21,7 @@ export default (state = INITIAL_STATE, action) => {
     case types.UPDATE_AVAILABLE:
       return { ...state, isLatest: false };
     case types.DOWNLOAD_FILES_STATUS:
-      return { ... state, updateProgress: action.payload}
+      return { ...state, updateProgress: action.payload}
     default:
       return state;
   }

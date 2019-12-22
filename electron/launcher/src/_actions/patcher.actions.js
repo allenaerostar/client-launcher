@@ -52,5 +52,5 @@ const downloadFiles = () => {
 
 export const patcherActions = {
   checkForUpdate,
-  downloadFiles
+  downloadFiles,
 };

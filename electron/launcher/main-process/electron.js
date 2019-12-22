@@ -23,7 +23,8 @@ function createWindow() {
         height: 578,
         minWidth:1008,
         minHeight: 578,
-        // frame: false, 
+        frame: false,
+        icon: path.join(__dirname, 'dietstory-desktop-icon.png'),
         webPreferences: {
             nodeIntegration: true
         }
@@ -52,6 +53,7 @@ require('ipc-listeners/user-login');
 require('ipc-listeners/user-logout');
 require('ipc-listeners/user-registration');
 require('ipc-listeners/file-manager');
+require('ipc-listeners/game-client-start');
 
 // ONCE UPDATE IS DOWNLOADED, NOTIFY USER
 autoUpdater.on('update-downloaded', () => {

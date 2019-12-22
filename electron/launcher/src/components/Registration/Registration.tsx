@@ -2,7 +2,7 @@ import React, {useEffect} from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { userActions } from '_actions';
-import FormBuilder from 'components/FormBuilder';
+import FormBuilder from 'components/Form/FormBuilder';
 import logo from 'assets/dietstory_logo.png';
 
 const Registration = props => {
@@ -80,7 +80,7 @@ const Registration = props => {
   return (
     <div className="row no-gutters">
       <section className="hero-image col-8">
-        <img src={logo} className="img-fluid" width="228" height="96" />
+        <img src={logo} className="img-fluid" width="228" height="96" alt="dietstory-logo"/>
       </section>
       <section className="col-4 form__container">
         <h1>Registration</h1>
