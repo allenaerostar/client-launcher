@@ -10,9 +10,9 @@ const login = (cred) => {
     dispatch({type: actionTypes.LOGIN_START});
 
     ipc.send('http-login-credentials', cred);
-    console.log(cred);
+
     ipc.on('http-login-credentials-success', (e, res) => {
-      console.log('success');
+
       dispatch({
         type: actionTypes.LOGIN_SUCCESS,
         payload: {
@@ -34,7 +34,7 @@ const login = (cred) => {
     });
 
     ipc.on('http-login-credentials-fail', (e, err) => {
-      console.log('fail');
+
       dispatch({type: actionTypes.LOGIN_FAILED, payload: {error: err}});
     });
   }

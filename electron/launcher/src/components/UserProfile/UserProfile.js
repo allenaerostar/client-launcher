@@ -20,7 +20,6 @@ const UserProfile = props => {
 }
 
 const mapStateToProps = (state) => {
-  console.log(state);
   return state;
 }
 
