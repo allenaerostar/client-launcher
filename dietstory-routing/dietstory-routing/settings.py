@@ -29,7 +29,7 @@ with open(SECRET_CONFIG_FILE, 'r') as f:
 SECRET_KEY = secret_config['SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = secret_config['DEBUG']
 
 ALLOWED_HOSTS = secret_config['ALLOWED_HOSTS']
 
