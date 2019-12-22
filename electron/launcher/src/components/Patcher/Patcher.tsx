@@ -22,6 +22,7 @@ const Patcher = props => {
       // eslint-disable-next-line
       props.checkForUpdate();
     }
+    // eslint-disable-next-line
   }, [props.patch.updateProgress.status])
 
   return (
