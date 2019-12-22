@@ -8,6 +8,10 @@ const path = require("path");
 const initialize = require("helpers/on-app-load").load;
 const ipc = electron.ipcMain;
 
+const log = require('electron-log');
+autoUpdater.logger = log;
+autoUpdater.logger.transports.file.level = "info";
+
 // SCRIPTS WHEN APPLICATION STARTS UP
 initialize();
 
