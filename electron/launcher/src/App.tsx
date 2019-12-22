@@ -13,7 +13,6 @@ import Uploader from 'components/Uploader/Uploader';
 import Patcher from 'components/Patcher/Patcher';
 import PrivateRoute from 'components/PrivateRoute';
 import history from '_helpers/history';
-// import { userActions } from '_actions';
 import { patcherActions } from '_actions';
 
 import { connect } from 'react-redux';
@@ -59,11 +58,5 @@ const App = props => {
 const mapStateToProps = (state) => {
   return state;
 }
-
-// const mapDispatchToProps = (dispatch) => {
-//   return {
-//     checkForUpdate: patcherActions.checkForUpdate
-//   }
-// }
 
 export default connect(mapStateToProps, patcherActions)(App);
