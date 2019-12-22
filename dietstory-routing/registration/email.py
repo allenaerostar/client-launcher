@@ -1,13 +1,12 @@
 from django.core.mail import EmailMessage
-from django.http import HttpResponse
-
+from django.conf import settings
 
 def send_verification_email(target_email, verification_code):
 
     email = EmailMessage(
         subject='Verify your dietstory account.',
         body='Please enter the verification code: {} to verify your account.\n'.format(verification_code),
-        from_email='dietstory-devs@outlook.com',
+        from_email=settings.EMAIL_HOST_USER,
         to=[target_email],
     )
 
