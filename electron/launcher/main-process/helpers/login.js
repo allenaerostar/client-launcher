@@ -130,7 +130,6 @@ const autoLogin = () => {
     .then(userInfo => {
       // SESSION IS EXPIRED, MUST RE-LOG
       if(Date.now() > userInfo.session_expiry){
-        console.log(userInfo.name);
         return login({username: userInfo.name, password: userInfo.password}).then(response => {
           return keytar.getPassword('Dietstory_Session', response.userInfo.name).then(sessionToken => {
             return {...response.userInfo, password: userInfo.password, session_token: sessionToken};

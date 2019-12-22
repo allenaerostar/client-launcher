@@ -33,7 +33,6 @@ const App = props => {
             null
         }
           <Switch>
-            {/* Route requires a lowercase component, while PrivateRoute requires Capital */}
             <PrivateRoute exact path="/" component={Root} isAuthenticated={props.auth.isAuthenticated}/>
             <Route path="/login" component={Login}/>
             <PrivateRoute path="/profile" component={UserProfile} isAuthenticated={props.auth.isAuthenticated}/>
