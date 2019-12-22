@@ -192,8 +192,7 @@ class GameVersionView(views.APIView):
         if game_version_form.is_valid():
 
             try:
-                major_ver = game_version_form.cleaned_data.get('major_ver')
-                minor_ver = game_version_form.cleaned_data.get('minor_ver')
+                major_ver, minor_ver = game_version_form.get_version_values();
                 live_by = game_version_form.cleaned_data.get('live_by')
 
                 game_version = GameVersions(major_ver=major_ver, minor_ver=minor_ver, live_by=live_by)

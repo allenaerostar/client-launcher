@@ -33,7 +33,7 @@ class CharFieldArrayValidator(BaseValidator):
     message = "CharFieldArray must be of the form: {0}{1}{0}{1}...".format('<CHAR_FIELD>', '<DELIMETER>')
 
 
-
+# Base form with versionid applied
 class GameMetadataForm(forms.Form):
     versionid = forms.CharField(max_length=16, required=False, validators=[VersionIdValidator(True)])
 
@@ -55,12 +55,10 @@ class RequestGameAssetForm(GameMetadataForm):
     def clean(self):
         cleaned_data = super().clean()
         filenames_string = cleaned_data.get('filenames')
-        cleaned_data['filenames'] = filenames_string.split(',')
+        cleaned_data['filenames'] = filenames_string.split(',') if filenames_string else []
 
 
-class SubmitGameVersionForm(forms.Form):
-	major_ver = forms.IntegerField(validators=[MinValueValidator(0)])
-	minor_ver = forms.IntegerField(validators=[MinValueValidator(0)])
+class SubmitGameVersionForm(GameMetadataForm):
 	live_by = forms.DateTimeField(required=False)
 
 
