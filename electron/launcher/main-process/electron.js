@@ -24,7 +24,7 @@ function createWindow() {
         minWidth:1008,
         minHeight: 578,
         frame: false,
-        icon: path.join(__dirname, 'dietstory-desktop-icon.png'),
+        icon: path.join(__dirname, 'dietstory-desktop-icon.ico'),
         webPreferences: {
             nodeIntegration: true
         }
