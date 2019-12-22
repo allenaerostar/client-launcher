@@ -24,7 +24,7 @@ function createWindow() {
         minWidth:1008,
         minHeight: 578,
         frame: false,
-        icon: path.join(__dirname, 'dietstory-desktop-icon.png'),
+        icon: path.join(__dirname, 'dietstory-desktop-icon.ico'),
         webPreferences: {
             nodeIntegration: true
         }
@@ -37,13 +37,15 @@ function createWindow() {
 app.on("ready", () => {
     createWindow();
 
-    // CHECKS FOR UPDATE AFTER LAUNCH
-    autoUpdater.checkForUpdates();
-
-    // CHECKS FOR UPDATE EVERY 2 HOURS
-    setInterval(() => {
+    if(isDev) {
+        // CHECKS FOR UPDATE AFTER LAUNCH
         autoUpdater.checkForUpdates();
-    }, 72000000);
+
+        // CHECKS FOR UPDATE EVERY 2 HOURS
+        setInterval(() => {
+            autoUpdater.checkForUpdates();
+        }, 72000000);
+    }
 });
 app.on("window-all-closed", () => {if (process.platform !== "darwin") {app.quit();}});
 app.on("activate", () => {if (mainWindow === null) {createWindow();}});
