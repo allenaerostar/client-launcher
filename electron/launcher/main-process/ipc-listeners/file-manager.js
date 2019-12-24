@@ -208,7 +208,6 @@ EVENT LISTENERS
 
 // CHECK IF USER'S DIETSTORY FILES ARE UP TO DATE
 ipc.on('fm-is-latest', event => {
-  console.log('lel')
   let cacheFilePath = path.join(app.getPath('userData'), 'hash_cache.json');
   fileDifference = new Map();
 
@@ -346,6 +345,7 @@ ipc.on('fm-download-difference', event => {
     })
     .catch(error => {
       event.reply('fm-download-difference-fail', error);
+      console.log(error);
     })
     // CLEANS UP TEMP FOLDER
     .finally(() => {
