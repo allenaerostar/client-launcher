@@ -87,7 +87,7 @@ class DownloadView(views.APIView):
             s3_client = S3Boto3Factory.get_s3_client()
             for file in game_files:
                 res[file.file_name] = {
-                        'download_link': s3_client.create_presigned_url(key=file.s3_path, http_method='get_object', expires=300),
+                        'download_link': s3_client.create_presigned_url(key=file.s3_path, http_method='get_object', expires=3600),
                         'http_head_link': s3_client.create_presigned_url(key=file.s3_path, http_method='head_object', expires=300),
                         'hash': file.hash_value
                     }
