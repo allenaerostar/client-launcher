@@ -29,7 +29,9 @@ const App = props => {
 
   // app start check for game client update
   useEffect(() => {
-    props.checkForUpdate();
+    if(props.patch.reqInitialCheck){
+      props.checkForUpdate(false);
+    }
     // eslint-disable-next-line
   }, []);
 
@@ -68,7 +70,7 @@ const App = props => {
           </Switch>
       </Router>
       {
-        props.auth.isAuthenticated && !props.patch.isLatest ?
+        props.auth.isAuthenticated && props.patch.patching ?
           <Patcher />
           :
           null

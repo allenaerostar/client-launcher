@@ -82,9 +82,7 @@ async function load(){
       if(!excluded){
         await addExclusionPath();
       }
-    } catch(error){
-      console.log(error);
-    }
+    } catch(error){}
   }
 }
 

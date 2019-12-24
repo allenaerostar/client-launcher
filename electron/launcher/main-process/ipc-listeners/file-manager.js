@@ -208,6 +208,7 @@ EVENT LISTENERS
 
 // CHECK IF USER'S DIETSTORY FILES ARE UP TO DATE
 ipc.on('fm-is-latest', event => {
+  console.log('lel')
   let cacheFilePath = path.join(app.getPath('userData'), 'hash_cache.json');
   fileDifference = new Map();
 
@@ -309,7 +310,7 @@ ipc.on('fm-is-latest', event => {
 ipc.on('fm-download-difference', event => {
   
   let totalSize = 0;
-  let downloadedHash; 
+  let downloadedHash;
 
   // CREATE A TEMP FOLDER TO HOLD THE NEW FILES
   fs.mkdir(path.join(gameInstallationPath, 'tmp'))
