@@ -1,15 +1,17 @@
 import React from 'react';
 import logo from '../../assets/small_logo.png';
 import { NavLink, Link } from 'react-router-dom';
-import { clientActions } from '_actions';
+//import { clientActions } from '_actions';
 import { patcherActions } from '_actions';
 import { connect } from 'react-redux';
 
 const Header = props => {
 
   const handleButtonClick = () => {
-    console.log(props.startGameClient)
-    props.startGameClient();
+    props.checkForUpdate({
+      reqInitialCheck: false,
+      reqGameLaunchCheck: false
+    });
   };
 
   return (
@@ -56,11 +58,5 @@ const Header = props => {
 const mapStateToProps = (state) => {
   return state;
 }
-const mapDispatchToProps = (dispatch) => {
-  return {
-    startGameClient: clientActions.startGameClient,
-    checkForUpdate: patcherActions.checkForUpdate
-  }
-}
 
-export default connect(mapStateToProps, mapDispatchToProps)(Header);
+export default connect(mapStateToProps, patcherActions)(Header);

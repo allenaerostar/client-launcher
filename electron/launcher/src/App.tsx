@@ -29,8 +29,11 @@ const App = props => {
 
   // app start check for game client update
   useEffect(() => {
-    if(props.patch.reqInitialCheck){
-      props.checkForUpdate(false);
+    if(props.patch.reqInitialCheck && !props.patch.patching && !props.patch.isLatest){
+      props.checkForUpdate({
+        reqInitialCheck: false,
+        reqGameLaunchCheck: true
+      });
     }
     // eslint-disable-next-line
   }, []);
