@@ -5,25 +5,18 @@ import ProgressBar from 'components/Patcher/ProgressBar';
 
 const Patcher = props => {
   const [updatePercentage, setUpdatePercentage] = useState(0);
-  
-  // When patcher mounts, start downloading files
+
   useEffect(() => {
-    props.downloadFiles();
+    if(props.patch.patching){
+      props.downloadFiles();
+    }
     // eslint-disable-next-line
-  },[])
+  }, [])
 
   useEffect(() => {
     setUpdatePercentage((props.patch.updateProgress.totalProgress/props.patch.updateProgress.totalSize)*100);
     // eslint-disable-next-line
-  }, [props.patch.updateProgress.totalProgress])
-
-  useEffect(() => {
-    if (props.patch.updateProgress.status === 'download complete') {
-      // eslint-disable-next-line
-      props.checkForUpdate();
-    }
-    // eslint-disable-next-line
-  }, [props.patch.updateProgress.status])
+  }, [props.patch.updateProgress.totalProgress]);
 
   return (
       <div className="patcher">

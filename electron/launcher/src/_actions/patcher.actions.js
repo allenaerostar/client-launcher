@@ -2,7 +2,7 @@ import * as patcherTypes from '_constants/patcher.types';
 
 const ipc = window.require('electron').ipcRenderer;
 
-const checkForUpdate = () => {
+const checkForUpdate = (reqInitialCheck) => {
   return (dispatch) => {
     dispatch({type: patcherTypes.CHECKING_FOR_UPDATE});
 
@@ -14,10 +14,20 @@ const checkForUpdate = () => {
 
     ipc.on('fm-is-latest-res', (e, res) => {
       if(res.isLatest){
-        dispatch({type: patcherTypes.IS_LATEST_VERSION});
+        dispatch({
+          type: patcherTypes.IS_LATEST_VERSION,
+          payload: {
+            reqInitialCheck: reqInitialCheck
+          }
+        });
       }
       else{
-        dispatch({type: patcherTypes.UPDATE_AVAILABLE});
+        dispatch({
+          type: patcherTypes.UPDATE_AVAILABLE,
+          payload: {
+            reqInitialCheck: reqInitialCheck
+          }
+        });
       }
     });
   }
@@ -43,10 +53,10 @@ const downloadFiles = () => {
     //   dispatch({type: patcherTypes.DOWNLOAD_FILES_FAIL});
     // });
 
-    // // DONWLOAD DONE
-    // ipc.on('fm-download-difference-fail', e => {
-    //   dispatch({type: patcherTypes.DOWNLOAD_FILES_DONE});
-    // });
+    // DONWLOAD DONE
+    ipc.on('fm-download-difference-fail', e => {
+      dispatch({type: patcherTypes.DOWNLOAD_FILES_DONE});
+    });
   }
 }
 

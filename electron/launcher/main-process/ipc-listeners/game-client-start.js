@@ -4,8 +4,9 @@ const ipc = require('electron').ipcMain;
 
 const startGameClient = () => {
   return new Promise((resolve, reject) => {
-    const command = 'open dietstory.exe';
+    const command = 'Dietstory.exe';
     exec(command, { cwd: gameInstallationPath }, (error, stdout, stderr) => {
+      console.log(stderr)
       if (error) {
         reject(error);
       }

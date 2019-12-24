@@ -8,13 +8,8 @@ import { connect } from 'react-redux';
 const Header = props => {
 
   const handleButtonClick = () => {
-    // button is diabled while patching
-    if (props.patch.updateProgress.status !== 'downloading') {
-      props.checkForUpdate();
-      if (props.patch.isLatest) {
-        props.startGameClient();
-      }
-    }
+    console.log(props.startGameClient)
+    props.startGameClient();
   };
 
   return (
@@ -24,7 +19,7 @@ const Header = props => {
           <img src={logo} alt="dietstory logo"/>
         </Link>
         <button
-          className={"btn btn-success play-button " + (props.patch.updateProgress.status === 'downloading' ? "disabled" : '')}
+          className={"btn btn-success play-button " + (props.patch.patching ? "disabled" : '')}
           onClick={handleButtonClick}
         >
           PLAY
