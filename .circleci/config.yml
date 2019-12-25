@@ -52,6 +52,21 @@ jobs:
           name: Compress Artifacts
           command: |
             zip -r dietstory-django.zip .
+      - run:
+          name: Push Develop Deployment
+          command: |
+            aws deploy push \
+            --application-name dietstory-django-app-dev \
+            --s3-location s3://dietstory-api-server-assets/dev/releases/dietstory-django.zip \
+            --ignore-hidden-files
+      - run:
+          name: Deploy
+          command: |
+            aws deploy create-deployment \
+            --application-name dietstory-django-app-dev \
+            --deployment-config-name CodeDeployDefault.OneAtATime \
+            --deployment-group-name dietstory-django-group-dev \
+            --s3-location bucket=dietstory-api-server-assets,bundleType=zip,key=dev/releases/dietstory-django.zip 
 
 
 # Workflows

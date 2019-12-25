@@ -1,0 +1,17 @@
+version: 0.0
+os: linux
+files:
+  - source: /
+    destination: /apps/dietstory-django
+hooks:
+  BeforeInstall:
+    - location: deploy/scripts/pre_installation_cleanup.sh
+      runas: root
+  AfterInstall:
+    - location: deploy/scripts/post_installation_setup.sh
+      timeout: 180
+      runas: root
+  ApplicationStart:
+    - location: deploy/scripts/start_server.sh
+      timeout: 3600
+      runas: ec2-user
