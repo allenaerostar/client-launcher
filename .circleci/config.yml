@@ -1,7 +1,31 @@
-  
+# filter job for only develop branch
+develop-only: &develop-only
+  filters:
+    branches:
+      only: develop
+
+# filter job for only release branch
+release-only: &release-only
+  filters:
+    branches:
+      only: release
+
+# filter job for protected branches
+protected-only: &protected-only
+  filters:
+    branches:
+      only:
+        - master
+        - develop
+        - release
+        - /feature[/].*/
+        - /fix[/].*/
+        - /chore[/]./
+        - /deploy[/].*/
+
 version: 2
 jobs:
-  build:
+  build-artifacts:
     machine: true # Build using our custom docker build image
     
     steps:
@@ -11,6 +35,34 @@ jobs:
           path: dietstory-routing
           command: |
             docker run -v $(pwd):/mnt -p 8000:8000 benjixd/dietstory-django-tests
-      - store_artifacts:
-          path: dietstory-routing
+      - persist_to_workspace: # Persist required files for deployment
+          root: ~/project
+          paths: dietstory-routing
+
+  deploy-develop: # Deploy artifacts to dev server
+    machine: true
+    steps:
+      - attach_workspace:
+          at: ~/project/dietstory-routing
+      - run:
+          command: |
+            echo "Deploying to dev" && ls -lrt
+      - run:
+          name: Compress Artifacts
+          command: |
+            zip -r dietstory-django.zip .
+
+
+# Workflows
+workflows:
+  version: 2
+  build-and-deploy:
+    jobs:
+      - build-artifacts:
+          <<: *protected-only
+      - deploy-develop:
+          <<: *develop-only
+          requires:
+            - build-artifacts
+
           
