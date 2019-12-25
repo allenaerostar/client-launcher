@@ -37,10 +37,11 @@ jobs:
             docker run -v $(pwd):/mnt -p 8000:8000 benjixd/dietstory-django-tests
       - persist_to_workspace: # Persist required files for deployment
           root: ~/project
-          paths: dietstory-routing/.
+          paths: dietstory-routing
 
   deploy-develop: # Deploy artifacts to dev server
     machine: true
+    working_directory: ~/project/dietstory-routing
     steps:
       - attach_workspace:
           at: ~/project
