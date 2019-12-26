@@ -166,7 +166,7 @@ downloadFiles = (fileObjectList, totalSize, event) => {
         stream.on('end', () => {
           totalDownloadedSize += currentDownloadedSize;
           event.reply('fm-download-status-update', {
-            status: 'download complete',
+            status: 'file downloaded',
             currentFile: path.basename(fileObject.path),
             currentFileProgress: currentDownloadedSize,
             currentFileSize: fileObject.size,
@@ -207,7 +207,7 @@ EVENT LISTENERS
 ***/
 
 // CHECK IF USER'S DIETSTORY FILES ARE UP TO DATE
-ipc.on('fm-is-latest', event => {
+ipc.on('fm-check-for-update', event => {
   let cacheFilePath = path.join(app.getPath('userData'), 'hash_cache.json');
   fileDifference = new Map();
 
@@ -290,67 +290,61 @@ ipc.on('fm-is-latest', event => {
       });
     }
   })
-  // IPC RESPONSE TO REACT FRONT END
+  // IPC RESPONSE TO REACT FRONT END OR DOWNLOAD IF UPDATE AVAILABLE
   .then(() => {
-    if(fileDifference.size > 0){
-      event.reply('fm-is-latest-res', {isLatest: false});
+    if(fileDifference.size === 0){
+      event.reply('fm-up-to-date');
     }
     else{
-      event.reply('fm-is-latest-res', {isLatest: true});
+      let totalSize = 0;
+      let downloadedHash;
+
+      event.reply('fm-download-start');
+
+      // CREATE A TEMP FOLDER TO HOLD THE NEW FILES
+      return fs.mkdir(path.join(gameInstallationPath, 'tmp'))
+        // CALCULATES TOTAL SIZE OF THE DOWNLOAD
+        .then(() => {
+          fileDifference.forEach((fileObject, name, map) => {
+            totalSize += fileObject.size;
+          });
+        })
+        // DOWNLOADS FILE, CHECK INCOMING FILE'S HASH 
+        .then(async function(){
+          downloadedHash = await downloadFiles(fileDifference.values(), totalSize, event);
+        })
+        // COPY FILE FROM TEMP FOLDER TO GAME INSTALLATION FOLDER
+        .then(() => {
+          fileDifference.forEach(async function(fileObject, name, map){
+            await fs.copyFile(fileObject.tempPath, fileObject.path);
+          });
+        })
+        // UPDATE LOCAL HASHMAP
+        .then(() => {
+          downloadedHash.forEach((hash, name, map) => {
+            localHashes.set(name, hash)
+          });
+        })
+        // CACHE THE LOCAL HASHMAP TO SAVE CALCULATION TIME IN THE FUTURE
+        .then(() => {
+          let cacheFilePath = path.join(app.getPath('userData'), 'hash_cache.json');
+          fs.writeFileSync(cacheFilePath, JSON.stringify([...localHashes]), 'utf8');
+        })
+        .then(() => {
+          event.reply('fm-up-to-date');
+        })
+        .catch(error => {
+          throw error;
+        })
+        // CLEANS UP TEMP FOLDER
+        .finally(() => {
+          fs.remove(path.join(gameInstallationPath, 'tmp')).catch(err => {
+            // DO NOTHING IF tmp FOLDER WAS NOT REMOVED
+          });
+        });
     }
   })
   .catch(error => {
-    event.reply('fm-is-latest-fail', error);
+    event.reply('fm-check-for-update-error', error);
   });
-});
-
-
-// DOWNLOAD FILE FROM S3
-ipc.on('fm-download-difference', event => {
-  
-  let totalSize = 0;
-  let downloadedHash;
-
-  // CREATE A TEMP FOLDER TO HOLD THE NEW FILES
-  fs.mkdir(path.join(gameInstallationPath, 'tmp'))
-    // CALCULATES TOTAL SIZE OF THE DOWNLOAD
-    .then(() => {
-      fileDifference.forEach((fileObject, name, map) => {
-        totalSize += fileObject.size;
-      });
-    })
-    // DOWNLOADS FILE, CHECK INCOMING FILE'S HASH 
-    .then(async function(){
-      downloadedHash = await downloadFiles(fileDifference.values(), totalSize, event);
-    })
-    // COPY FILE FROM TEMP FOLDER TO GAME INSTALLATION FOLDER
-    .then(() => {
-      fileDifference.forEach(async function(fileObject, name, map){
-        await fs.copyFile(fileObject.tempPath, fileObject.path);
-      });
-    })
-    // UPDATE LOCAL HASHMAP
-    .then(() => {
-      downloadedHash.forEach((hash, name, map) => {
-        localHashes.set(name, hash)
-      });
-    })
-    // CACHE THE LOCAL HASHMAP TO SAVE CALCULATION TIME IN THE FUTURE
-    .then(() => {
-      let cacheFilePath = path.join(app.getPath('userData'), 'hash_cache.json');
-      fs.writeFileSync(cacheFilePath, JSON.stringify([...localHashes]), 'utf8');
-    })
-    .then(() => {
-      event.reply('fm-download-difference-done');
-    })
-    .catch(error => {
-      event.reply('fm-download-difference-fail', error);
-      console.log(error);
-    })
-    // CLEANS UP TEMP FOLDER
-    .finally(() => {
-      fs.remove(path.join(gameInstallationPath, 'tmp')).catch(err => {
-        // DO NOTHING IF tmp FOLDER WAS NOT REMOVED
-      });
-    });
 });

@@ -11,24 +11,28 @@ const INITIAL_STATE = {
     retryTime: 0,
     error: null
   },
-  isLatest: false,
+  playButtonLock: false,
   reqInitialCheck: true,
-  reqGameLaunchCheck: true,
+  gameLaunchQueued: false,
   patching: false
 }
 
 export default (state = INITIAL_STATE, action) => {
   switch(action.type) {
     case types.CHECKING_FOR_UPDATE:
-      return { ...state, patching: true}
+      return { ...state, playButtonLock: true}
+    case types.INITIAL_CHECK_COMPLETE:
+      return { ...state, reqInitialCheck: false}
+    case types.QUEUE_GAME_LAUNCH:
+      return { ...state, gameLaunchQueued: true}
     case types.IS_LATEST_VERSION:
-      return { ...state, isLatest: true, reqInitialCheck: action.payload.reqInitialCheck, reqGameLaunchCheck: action.payload.reqGameLaunchCheck, patching: false };
-    case types.UPDATE_AVAILABLE:
-      return { ...state, isLatest: false, reqInitialCheck: action.payload.reqInitialCheck, reqGameLaunchCheck: action.payload.reqGameLaunchCheck, patching: true };
+      return { ...state, playButtonLock: false, patching: false};
+    case types.PATCHING:
+      return { ...state, patching: true };
     case types.DOWNLOAD_FILES_STATUS:
-      return { ...state, updateProgress: action.payload, patching: true};
-    case types.DOWNLOAD_FILES_DONE:
-      return { ...state, isLatest: true, patching: false}
+      return { ...state, updateProgress: action.payload};
+    case types.RESET_GAME_LAUNCH_QUEUE:
+      return { ...state, gameLaunchQueued: false};
     default:
       return state;
   }
