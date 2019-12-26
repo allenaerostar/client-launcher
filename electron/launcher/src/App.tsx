@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-import { isSafeToUnpackElectronOnRemoteBuildServer } from 'app-builder-lib/out/platformPackager'; 
 import { Router, Route, Switch } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 
@@ -29,9 +28,14 @@ const App = props => {
 
   // app start check for game client update
   useEffect(() => {
-    props.checkForUpdate();
+    if(props.patch.reqInitialCheck){
+      props.checkForUpdate({
+        initialCheck: true,
+        preGameLaunchCheck: false
+      });
+    }
     // eslint-disable-next-line
-  }, []);
+  }, [props.patch.reqInitialCheck]);
 
   // LISTENS FOR UPDATE FROM MAIN PROCESS
   ipc.on('launcher-update-ready', e => {
@@ -50,7 +54,7 @@ const App = props => {
 
   return ( 
     <div className={props.auth.isAuthenticated ? "app-container--loggedin" : ""}>
-      <TitleBar />
+      {/*<TitleBar />*/}
       <Router history={history}>
         {
           props.auth.isAuthenticated ? 
@@ -68,7 +72,7 @@ const App = props => {
           </Switch>
       </Router>
       {
-        props.auth.isAuthenticated && !props.patch.isLatest ?
+        props.auth.isAuthenticated && props.patch.patching ?
           <Patcher />
           :
           null

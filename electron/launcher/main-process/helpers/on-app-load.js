@@ -44,7 +44,7 @@ async function load(){
   // SETTING DIETSTORY GAME INSTALLATION PATH
   if(process.platform === 'win32'){
     // WINDOWS  ---  C:\Users\<Username>\AppData\Local\Dietstory\Game
-    global.gameInstallationPath = path.join(app.getPath('appData'), '../Local', app.name, 'Game');
+    global.gameInstallationPath = path.join(app.getPath('appData'), '../Local', app.getName(), 'Game');
   }
   else{
     // MAC OS   ---  ~/Library/Application Support/Dietstory/Game
@@ -82,9 +82,7 @@ async function load(){
       if(!excluded){
         await addExclusionPath();
       }
-    } catch(error){
-      console.log(error);
-    }
+    } catch(error){}
   }
 }
 

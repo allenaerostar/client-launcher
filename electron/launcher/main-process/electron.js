@@ -18,17 +18,28 @@ initialize();
 let mainWindow;
 
 function createWindow() {
-    mainWindow = new BrowserWindow({ 
+    options = {
         width: 1008, 
-        height: 578,
-        minWidth:1008,
-        minHeight: 578,
-        frame: false,
+        height: 607,
+        resizable: false,
+        frame: true,
         icon: path.join(__dirname, 'dietstory-desktop-icon.ico'),
-        webPreferences: {
-            nodeIntegration: true
+        webPreferences: {nodeIntegration: true}
+    }
+
+    if(isDev){
+        options = { 
+            ...options,
+            resizable: true,
+            height: 637
         }
-    });
+    }
+
+    mainWindow = new BrowserWindow(options);
+
+    if(!isDev){
+        mainWindow.setMenu(null);
+    }
     mainWindow.loadURL(isDev? "http://localhost:3000": `file://${path.join(__dirname, "../index.html")}`);
     mainWindow.on("closed", () => (mainWindow = null));
     mainWindow.once('ready-to-show', () => {mainWindow.show()});
@@ -37,7 +48,7 @@ function createWindow() {
 app.on("ready", () => {
     createWindow();
 
-    if(isDev) {
+    if(!isDev) {
         // CHECKS FOR UPDATE AFTER LAUNCH
         autoUpdater.checkForUpdates();
 
