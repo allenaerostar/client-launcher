@@ -1,3 +1,4 @@
+const checkForUpdateAndDownload = require('helpers/update-game-files').checkForUpdateAndDownload;
 const exec = require('child_process').exec;
 const ipc = require('electron').ipcMain;
 
@@ -9,16 +10,25 @@ const startGameClient = () => {
       if (error) {
         reject(error);
       }
-      resolve(stdout);
+      resolve(null);
     });
   });
 }
 
 ipc.on('start-game-client', event => {
-  
-  startGameClient().then(() => {
-    event.reply('start-game-client-success');
-  }).catch((err) => {
-    event.reply('start-game-client-fail')
-  })  
+  checkForUpdateAndDownload(event)
+    .then(() => {
+      event.reply('fm-up-to-date');
+    })
+    .then(() => {
+      return startGameClient().catch(error => {
+        throw error;
+      })
+    })
+    .then(() => {
+      event.reply('start-game-client-success');
+    })
+    .catch(error => {
+      event.reply('start-game-client-fail');
+    });
 });
