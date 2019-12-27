@@ -13,7 +13,7 @@ const ProgressBar = props => {
             {
               props.percentage === 100 ?
                 "Ready to Play!"
-              : props.percentage + "%"
+              : props.percentage.toFixed(1) + "%"
             }
         </div>
       </div>

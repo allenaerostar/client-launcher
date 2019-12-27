@@ -11,17 +11,28 @@ const INITIAL_STATE = {
     retryTime: 0,
     error: null
   },
-  isLatest: false
+  playButtonLock: false,
+  reqInitialCheck: true,
+  patching: false,
+  isGameClientRunning: false
 }
 
 export default (state = INITIAL_STATE, action) => {
   switch(action.type) {
+    case types.CHECKING_FOR_UPDATE:
+      return { ...state, playButtonLock: true };
+    case types.INITIAL_CHECK_COMPLETE:
+      return { ...state, reqInitialCheck: false };
     case types.IS_LATEST_VERSION:
-      return { ...state, isLatest: true };
-    case types.UPDATE_AVAILABLE:
-      return { ...state, isLatest: false };
+      return { ...state, playButtonLock: false, patching: false };
+    case types.PATCHING:
+      return { ...state, patching: true };
     case types.DOWNLOAD_FILES_STATUS:
-      return { ...state, updateProgress: action.payload}
+      return { ...state, updateProgress: action.payload };
+    case types.GAME_CLIENT_RUNNING:
+      return { ...state, isGameClientRunning: true };
+    case types.GAME_CLIENT_EXIT:
+      return { ...state, isGameClientRunning: false };
     default:
       return state;
   }

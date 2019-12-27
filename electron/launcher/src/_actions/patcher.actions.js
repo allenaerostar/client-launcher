@@ -2,34 +2,23 @@ import * as patcherTypes from '_constants/patcher.types';
 
 const ipc = window.require('electron').ipcRenderer;
 
-const checkForUpdate = () => {
+const checkForUpdate = (isInitialCheck) => {
   return (dispatch) => {
     dispatch({type: patcherTypes.CHECKING_FOR_UPDATE});
+    ipc.send('fm-check-for-update');
 
-    ipc.send('fm-is-latest');
+    ipc.on('fm-up-to-date', () => {
+      dispatch({type: patcherTypes.IS_LATEST_VERSION});
 
-    ipc.on('fm-is-latest-fail', (e, error) => {
-      dispatch({type: patcherTypes.UPDATE_CHECK_FAILED});
-    });
-
-    ipc.on('fm-is-latest-res', (e, res) => {
-      if(res.isLatest){
-        dispatch({type: patcherTypes.IS_LATEST_VERSION});
-      }
-      else{
-        dispatch({type: patcherTypes.UPDATE_AVAILABLE});
+      if(isInitialCheck){
+        dispatch({type: patcherTypes.INITIAL_CHECK_COMPLETE});
       }
     });
-  }
-}
 
-const downloadFiles = () => {
-  return (dispatch) => {
-    // START THE DOWNLOAD PROCESS
-    dispatch({type: patcherTypes.DOWNLOAD_FILES_START});
-    ipc.send('fm-download-difference');
+    ipc.on('fm-download-start', () => {
+      dispatch({type: patcherTypes.PATCHING})
+    });
 
-    // STATUS UPDATES FROM ELECTRON
     ipc.on('fm-download-status-update', (e, update) => {
       dispatch({
         type: patcherTypes.DOWNLOAD_FILES_STATUS,
@@ -37,20 +26,44 @@ const downloadFiles = () => {
       });
     });
 
-    // // ERROR FROM DOWNLOAD ATTEMPT
-    // ipc.on('fm-download-difference-fail', (e, error) => {
-    //   console.log(error);
-    //   dispatch({type: patcherTypes.DOWNLOAD_FILES_FAIL});
-    // });
+    // ipc.on('fm-check-for-update-error', (e, error) => {
 
-    // // DONWLOAD DONE
-    // ipc.on('fm-download-difference-fail', e => {
-    //   dispatch({type: patcherTypes.DOWNLOAD_FILES_DONE});
     // });
+  }
+}
+
+const startGameClient = () => {
+  return (dispatch) => {
+    dispatch({type: patcherTypes.CHECKING_FOR_UPDATE});
+    ipc.send('start-game-client');
+
+    ipc.on('fm-up-to-date', () => {
+      dispatch({type: patcherTypes.IS_LATEST_VERSION});
+      dispatch({type: patcherTypes.GAME_CLIENT_RUNNING});
+    });
+
+    ipc.on('fm-download-start', () => {
+      dispatch({type: patcherTypes.PATCHING})
+    });
+
+    ipc.on('fm-download-status-update', (e, update) => {
+      dispatch({
+        type: patcherTypes.DOWNLOAD_FILES_STATUS,
+        payload: update
+      });
+    });
+
+    ipc.on('start-game-client-success', () => {
+      dispatch({type: patcherTypes.GAME_CLIENT_EXIT});
+    });
+
+    ipc.on('start-game-client-fail', () => {
+      dispatch({type: patcherTypes.GAME_CLIENT_EXIT});
+    });
   }
 }
 
 export const patcherActions = {
   checkForUpdate,
-  downloadFiles,
+  startGameClient
 };
