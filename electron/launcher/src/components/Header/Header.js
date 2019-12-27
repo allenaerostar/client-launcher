@@ -1,23 +1,15 @@
 import React, { useEffect } from 'react';
 import logo from '../../assets/small_logo.png';
 import { NavLink, Link } from 'react-router-dom';
-import { patcherActions, clientActions } from '_actions';
+import { patcherActions } from '_actions';
 import { connect } from 'react-redux';
 
 const Header = props => {
 
-  useEffect(() => {
-    if (props.patch.gameLaunchQueued){
-      props.resetGameLaunchQueue();
+  const handleButtonClick = () => {
+    if(!props.patch.isGameClientRunning){
       props.startGameClient();
     }
-  }, [props.patch.gameLaunchQueued]);
-
-  const handleButtonClick = () => {
-    props.checkForUpdate({
-      initialCheck: false,
-      preGameLaunchCheck: true
-    });
   };
 
   return (
@@ -65,9 +57,4 @@ const mapStateToProps = (state) => {
   return state;
 }
 
-const mapDispatchToProps = {
-  ...patcherActions, 
-  ...clientActions
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(Header);
+export default connect(mapStateToProps, patcherActions)(Header);
