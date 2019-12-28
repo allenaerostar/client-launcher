@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import FormBuilder from 'components/Form/FormBuilder';
+import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { userActions } from '_actions';
 import logo from 'assets/dietstory_logo.png';
@@ -50,6 +50,9 @@ const VerifiedEmail = props => {
           <button type="submit">OK</button>
         </form>
         <a href='#resend' onClick={resendEmail}>> Re-send Verification Email</a>
+        <Link to="/login">
+          > Login
+        </Link>
       </section>
     </div>
   );

@@ -13,7 +13,7 @@ const Header = props => {
   };
 
   const logout = () => {
-    props.userActions.logout(props.auth.user);
+    props.logout(props.auth.user);
   }
 
   return (
@@ -67,10 +67,10 @@ const mapStateToProps = (state) => {
   return state;
 }
 
-const mapDispatchToProps = () => {
+const mapDispatchToProps = (dispatch) => {
   return {
-    ...patcherActions,
-    userActions
+    startGameClient: () => dispatch(patcherActions.startGameClient()),
+    logout: () => dispatch(userActions.logout())
   }
 }
 
