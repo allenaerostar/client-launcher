@@ -2,7 +2,7 @@
 
 SERVER_NAME=dietstory-django-server
 
-if [ "$(docker ps -q -f name=${SERVER_NAME})" ]; then
+if [ "$(docker ps -aq -f name=${SERVER_NAME})" ]; then
     if [ "$(docker ps -aq -f status=running -f name=${SERVER_NAME})" ]; then
         # stop existing server
         docker stop ${SERVER_NAME}
