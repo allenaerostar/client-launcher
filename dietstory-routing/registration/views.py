@@ -416,7 +416,7 @@ class LoginView(views.APIView):
         params = LoginForm(request.data)
         if params.is_valid():
             username, password = params.cleaned_data.get('username'), params.cleaned_data.get('password')
-            exists = Accounts.objects.get(username=username, password=password)
+            exists = Accounts.objects.get(name=username, password=password)
             account = authenticate(username=username, password=password)
             if account is not None:
                 login(request, account)
