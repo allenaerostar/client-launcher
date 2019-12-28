@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import logo from '../../assets/small_logo.png';
 import { NavLink, Link } from 'react-router-dom';
-import { patcherActions } from '_actions';
+import { patcherActions, userActions } from '_actions';
 import { connect } from 'react-redux';
 
 const Header = props => {
@@ -11,6 +11,10 @@ const Header = props => {
       props.startGameClient();
     }
   };
+
+  const logout = () => {
+    props.userActions.logout(props.auth.user);
+  }
 
   return (
     <header className="main-header">
@@ -38,6 +42,12 @@ const Header = props => {
         >
           PROFILE
         </NavLink>
+        <button
+          onClick={logout}
+          className="btn btn-warning"
+        >
+          LOGOUT
+        </button>
         {
           props.auth.user.isAdmin ?
           <NavLink to="/admin"
@@ -57,4 +67,11 @@ const mapStateToProps = (state) => {
   return state;
 }
 
-export default connect(mapStateToProps, patcherActions)(Header);
+const mapDispatchToProps = () => {
+  return {
+    ...patcherActions,
+    userActions
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Header);

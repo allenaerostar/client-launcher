@@ -57,6 +57,9 @@ const Login = props => {
           <Link to="/">
             > Forgot your password?
           </Link>
+          <Link to="/verify-email">
+            > Verify your email
+          </Link>
         </section>
       </div>
   );
