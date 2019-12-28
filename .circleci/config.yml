@@ -66,7 +66,36 @@ jobs:
             --application-name dietstory-django-app-dev \
             --deployment-config-name CodeDeployDefault.OneAtATime \
             --deployment-group-name dietstory-django-group-dev \
-            --s3-location bucket=dietstory-api-server-assets,bundleType=zip,key=dev/releases/dietstory-django.zip 
+            --s3-location bucket=dietstory-api-server-assets,bundleType=zip,key=dev/releases/dietstory-django.zip
+
+  deploy-release: # Deploy Artifacts to live server
+    machine: true
+    working_directory: ~/project/dietstory-routing
+    steps:
+      - attach_workspace:
+          at: ~/project
+      - run:
+          command: |
+            echo "Deploying to release" && ls -lrt
+      - run:
+          name: Compress Artifacts
+          command: |
+            zip -r dietstory-django.zip .
+      - run:
+          name: Push Develop Deployment
+          command: |
+            aws deploy push \
+            --application-name dietstory-django-app-prod \
+            --s3-location s3://dietstory-api-server-assets/prod/releases/dietstory-django.zip \
+            --ignore-hidden-files
+      - run:
+          name: Deploy
+          command: |
+            aws deploy create-deployment \
+            --application-name dietstory-django-app-prod \
+            --deployment-config-name CodeDeployDefault.OneAtATime \
+            --deployment-group-name dietstory-django-group-prod \
+            --s3-location bucket=dietstory-api-server-assets,bundleType=zip,key=prod/releases/dietstory-django.zip
 
 
 # Workflows
@@ -80,5 +109,15 @@ workflows:
           <<: *develop-only
           requires:
             - build-artifacts
+      - release-approval:
+          <<: *release-only
+          type: approval
+          requires:
+            - build-artifacts
+      - deploy-release:
+          <<: *release-only
+          requires:
+            - release-approval
+
 
           
