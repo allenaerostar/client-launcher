@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { userActions } from '_actions';
+import logo from 'assets/dietstory_logo.png';
 
 const VerifiedEmail = props => {
 
@@ -36,16 +38,30 @@ const VerifiedEmail = props => {
   }
 
   return (
-    <>
-      <h1>Verify Account</h1>
-      <form onSubmit={handleSubmit}>
-        <label htmlFor="verify_token">Verification Code: </label>
-        <input id="verify_token" type="text" value={postData.verify_token} onChange={handleChange}></input>
-        <button type="submit">OK</button>
-        <br></br>
-        <a href='#resend' onClick={resendEmail}>Re-send Verification Email</a>
-      </form>
-    </>
+    <div className="row no-gutters">
+      <section className="hero-image col-8">
+        <img src={logo} className="img-fluid" width="228" height="96" alt="dietstory" />
+      </section>
+      <section className="col-4 form__container">
+        <h1>Verify Account</h1>
+        <form onSubmit={handleSubmit} className="form-inline">
+          <label htmlFor="verify_token">Verification Code: </label>
+          <input
+            id="verify_token"
+            type="text"
+            value={postData.verify_token}
+            onChange={handleChange}
+            className="form-control"
+          >  
+          </input>
+          <button className="btn btn-success" type="submit">OK</button>
+        </form>
+        <button className="btn btn-primary btn-resend" onClick={resendEmail}>Re-send Verification Email</button>
+        <Link to="/login">
+          > Login
+        </Link>
+      </section>
+    </div>
   );
 }
 const mapStateToProps = (state) => {
