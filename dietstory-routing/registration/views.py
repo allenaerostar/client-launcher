@@ -120,6 +120,7 @@ class SignupView(views.APIView):
                     password = params.cleaned_data.get('password1')
                     birthday = params.cleaned_data.get('birthday')
                     account = Accounts(name=username, password=password, email=email, birthday=birthday)
+                    account.nxcredit = 20000
                     account.save()
 
                     try:
