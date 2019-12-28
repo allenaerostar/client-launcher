@@ -44,12 +44,19 @@ const VerifiedEmail = props => {
       </section>
       <section className="col-4 form__container">
         <h1>Verify Account</h1>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className="form-inline">
           <label htmlFor="verify_token">Verification Code: </label>
-          <input id="verify_token" type="text" value={postData.verify_token} onChange={handleChange}></input>
-          <button type="submit">OK</button>
+          <input
+            id="verify_token"
+            type="text"
+            value={postData.verify_token}
+            onChange={handleChange}
+            className="form-control"
+          >  
+          </input>
+          <button className="btn btn-success" type="submit">OK</button>
         </form>
-        <a href='#resend' onClick={resendEmail}>> Re-send Verification Email</a>
+        <button className="btn btn-primary btn-resend" onClick={resendEmail}>Re-send Verification Email</button>
         <Link to="/login">
           > Login
         </Link>

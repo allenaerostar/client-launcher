@@ -46,7 +46,7 @@ h1{
   }
   form{
     margin: 2.5rem 0;
-    button{
+    button[type=submit]{
       font-weight: bold;
     }
   }
@@ -177,4 +177,8 @@ h1{
   display: flex !important;
   justify-content: center !important;
   align-items: center !important;
+}
+
+.btn-resend{
+  margin-bottom: 2rem;
 }
