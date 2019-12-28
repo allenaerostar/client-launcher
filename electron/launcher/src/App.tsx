@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Router, Route, Switch } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 
@@ -25,14 +25,6 @@ import 'react-toastify/dist/ReactToastify.min.css';
 const ipc = window.require('electron').ipcRenderer;
   
 const App = props => {
-
-  // app start check for game client update
-  useEffect(() => {
-    if(props.patch.reqInitialCheck){
-      props.checkForUpdate(true);
-    }
-    // eslint-disable-next-line
-  }, [props.patch.reqInitialCheck]);
 
   // LISTENS FOR UPDATE FROM MAIN PROCESS
   ipc.on('launcher-update-ready', e => {

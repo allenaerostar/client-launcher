@@ -1,8 +1,16 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
-import { userActions } from '_actions';
+import { patcherActions } from '_actions';
 
 const Root = (props) => {
+
+  // app start check for game client update
+  useEffect(() => {
+    if(props.patch.reqInitialCheck){
+      props.checkForUpdate(true);
+    }
+    // eslint-disable-next-line
+  }, [props.patch.reqInitialCheck]);
 
   return (
     <section className="container">
@@ -20,4 +28,4 @@ const mapStateToProps = (state) => {
   return state;
 }
 
-export default connect(mapStateToProps, userActions)(Root);
+export default connect(mapStateToProps, patcherActions)(Root);
