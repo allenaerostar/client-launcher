@@ -1,6 +1,5 @@
 const request = require('request-promise');
 const cookie = require('cookie');
-const crypto = require('crypto');
 const fs = require('fs-extra');
 const path = require('path');
 const keytar = require('keytar');
@@ -8,7 +7,6 @@ const app = require('electron').app;
 const aes256 = require('helpers/aes256');
 
 const config = require('config.json');
-const secret = config.SECRET;
 const djangoUrl = config.DJANGO_SERVER.HOST +":" +config.DJANGO_SERVER.PORT;
 
 // REGULAR LOGIN WITH USERNAME AND PASSWORD
