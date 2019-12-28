@@ -5,6 +5,9 @@ files:
     destination: /apps/dietstory-django
 hooks:
   ApplicationStop:
+    - location: deploy/scripts/stop_server.sh
+      runas: root
+  BeforeInstall:
     - location: deploy/scripts/pre_installation_cleanup.sh
       runas: root
   AfterInstall:
