@@ -1,4 +1,4 @@
-const fs = require('fs').promises;
+const fs = require('fs-extra');
 const path = require('path');
 const exec = require('child_process').exec;
 const app = require('electron').app;
@@ -84,6 +84,11 @@ async function load(){
       }
     } catch(error){}
   }
+
+  // DELETES TEMP FOLDER IF IT EXIST
+  try{
+    await fs.remove(path.join(gameInstallationPath, 'tmp'));
+  } catch(error){}
 }
 
 module.exports.load = load;

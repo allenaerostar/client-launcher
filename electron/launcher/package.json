@@ -2,7 +2,7 @@
   "name": "Dietstory",
   "description": "Launches Dietstory, auto-update files, register/login, etc...",
   "author": "Dietstory Team",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "private": false,
   "main": "main-process/electron.js",
   "homepage": "./",
@@ -83,7 +83,7 @@
     ],
     "win": {
       "target": "nsis",
-      "icon": "build/icon.ico",
+      "icon": "build/main-process/dietstory-desktop-icon.ico",
       "requestedExecutionLevel": "requireAdministrator"
     },
     "publish": {
