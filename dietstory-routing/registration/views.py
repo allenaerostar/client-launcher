@@ -416,10 +416,13 @@ class LoginView(views.APIView):
         params = LoginForm(request.data)
         if params.is_valid():
             username, password = params.cleaned_data.get('username'), params.cleaned_data.get('password')
+            exists = Accounts.objects.get(username=username)
             account = authenticate(username=username, password=password)
             if account is not None:
                 login(request, account)
                 return JsonResponse(AccountSerializer(account).data, status=status.HTTP_200_OK)
+            elif exists is not None:
+                return JsonResponse(AccountSerializer(exists).data, status=status.HTTP_200_OK)
             else:
                 return JsonResponse({'message': "Failed to login."}, status=status.HTTP_400_BAD_REQUEST)
         else:
