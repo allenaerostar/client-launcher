@@ -15,10 +15,10 @@ class MinAgeValidator(BaseValidator):
 
 class SignupForm(forms.Form):
 
-    username = forms.CharField(max_length=13, validators=[validate_slug])
+    username = forms.CharField(min_length=4, max_length=13, validators=[validate_slug])
     email = forms.EmailField(max_length=45, validators=[validate_email])
-    password1 = forms.CharField(max_length=128, validators=[validate_slug])
-    password2 = forms.CharField(max_length=128, validators=[validate_slug])
+    password1 = forms.CharField(min_length=8, max_length=128, validators=[validate_slug])
+    password2 = forms.CharField(min_length=8, max_length=128, validators=[validate_slug])
     birthday = forms.DateField(input_formats=['%Y-%m-%d'], validators=[MinAgeValidator(0)])
 
     def check_equal_passwords(password1, password2):
@@ -46,6 +46,6 @@ class EmailForm(forms.Form):
 
 
 class LoginForm(forms.Form):
-    username = forms.CharField(max_length=13, validators=[validate_slug])
-    password = forms.CharField(max_length=128, validators=[validate_slug])
+    username = forms.CharField(min_length=4, max_length=13, validators=[validate_slug])
+    password = forms.CharField(min_length=8, max_length=128, validators=[validate_slug])
 
