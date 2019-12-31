@@ -20,7 +20,7 @@ let mainWindow;
 function createWindow() {
     options = {
         width: 1008, 
-        height: 607,
+        height: 578,
         resizable: false,
         frame: false,
         icon: path.join(__dirname, 'dietstory-desktop-icon.ico'),
