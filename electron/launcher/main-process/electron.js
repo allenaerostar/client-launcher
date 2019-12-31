@@ -22,7 +22,7 @@ function createWindow() {
         width: 1008, 
         height: 607,
         resizable: false,
-        frame: true,
+        frame: false,
         icon: path.join(__dirname, 'dietstory-desktop-icon.ico'),
         webPreferences: {nodeIntegration: true}
     }
