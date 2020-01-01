@@ -479,6 +479,33 @@ class ChangePasswordViewTest(TestCase):
 
 
 
+class ResetPasswordViewTest(TestCase):
+	RESET_PASSWORD_VIEW_URL = '/accounts/password/reset/'
+
+	def test_reset_password_for_existing_account(self):
+		models.Accounts.objects.create(name='username', password='password', email='pokemon@domain.com',birthday='1990-01-01', tempban=timezone.localtime())
+		response = self.client.post(ResetPasswordViewTest.RESET_PASSWORD_VIEW_URL,
+			{
+				'email': 'pokemon@domain.com'
+			})
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+	def test_reset_password_for_non_existing_account(self):
+		response = self.client.post(ResetPasswordViewTest.RESET_PASSWORD_VIEW_URL,
+			{
+				'email': 'pokemon@domain.com'
+			})
+		self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+	def test_reset_password_for_invalid_email_input(self):
+		response = self.client.post(ResetPasswordViewTest.RESET_PASSWORD_VIEW_URL,
+			{
+				'email': 'aasdsadsaasdas'
+			})
+		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+
+
 
 
 
