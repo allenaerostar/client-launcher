@@ -15,4 +15,21 @@ def send_verification_email(target_email, verification_code):
     except IOError:
         raise IOError("Failed to send confirmation email.")
 
+def send_reset_password_email(target_email, reset_password):
+
+    email = EmailMessage(
+        subject='Your Dietstory password has been reset!',
+        body='Please login with your newly reset password: {} .\n'.format(reset_password),
+        from_email=settings.EMAIL_HOST_USER,
+        to=[target_email],
+    )
+
+    try:
+        email.send()
+    except IOError:
+        raise IOError("Failed to send reset password email.")
+
+
+
+
 

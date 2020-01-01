@@ -8,5 +8,7 @@ urlpatterns = [
     path('resend-verification-code/', views.SendVerificationView.as_view()),
     path('login/', views.LoginView.as_view()),
     path('logout/', views.LogoutView.as_view()),
+    path('password/reset/', views.ResetPasswordView.as_view()),
+    path('password/change/', views.ChangePasswordView.as_view())
 ]
 
