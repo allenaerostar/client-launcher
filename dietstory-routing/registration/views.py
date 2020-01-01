@@ -6,8 +6,7 @@ from .validate_forms import *
 from .email import send_verification_email, send_reset_password_email
 from .verification import account_activation_token
 from .serializers import AccountSerializer
-from password_generator import PasswordGenerator
-
+from .password_utils import RandomPasswordGenerator
 
 # This view allows user to signup for an dietstory account.
 class SignupView(views.APIView):
@@ -530,10 +529,7 @@ class ResetPasswordView(views.APIView):
                 account = None
             if account is not None:
                 try:
-                    pwo = PasswordGenerator()
-                    pwo.minlen = 4
-                    pwo.maxlen = 12
-                    reset_password = pwo.generate()
+                    reset_password = RandomPasswordGenerator.generate()
                     account.password = reset_password
                     account.save()
                     try:
@@ -551,9 +547,87 @@ class ResetPasswordView(views.APIView):
 
 class ChangePasswordView(views.APIView):
 
-    permission_classes = (permissions.AllowAny,)
+    permission_classes = (permissions.IsAuthenticated,)
 
     def post(self, request, *args, **kwargs):
-        return
+        """
+        summary: Post Change Password description
+        description: Change password for the account.
+        parameters:
+            - name: old_password
+              schema:
+                  type: string
+              description: >
+                  The old account password.
+              required: true
+            - name: new_password1
+              schema:
+                  type: string
+              description: >
+                  The new account password.
+              required: true
+            - name: new_password2
+              schema:
+                  type: string
+              description: >
+                  Verification of the new account password.
+              required: true
+        tags:
+            - ChangePasswordView
+        responses:
+            200:
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                message:
+                                    type: string
+                                    description: Successfully updated the account with the new password.
+            400:
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                message:
+                                    type: string
+                                    description: Invalid input parameters.
+            404:
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                message:
+                                    type: string
+                                    description: No account with the provided credentials.
+            500:
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                message:
+                                    type: string
+                                    description: Failed to save account with the new password.
+        """
+        params = PasswordChangeForm(request.data)
+
+        if params.is_valid():
+            try:
+                account = Accounts.objects.get(name=request.user.name,password=params.cleaned_data.get('old_password'))
+            except Accounts.DoesNotExist:
+                account = None
+
+            if account is not None:
+                try:
+                    account.password = params.cleaned_data.get('new_password1')
+                    account.save()
+                    return JsonResponse({'message': "Successfully updated the account with the new password."}, status=status.HTTP_200_OK)
+                except IOError:
+                    return JsonResponse({'message': "Failed to save account with the new password."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return JsonResponse({'message': "No account with the provided credentials."}, status=status.HTTP_404_NOT_FOUND)
+        return JsonResponse({'message': "Invalid input parameters"}, status=status.HTTP_400_BAD_REQUEST)
 
 
