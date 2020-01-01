@@ -4,6 +4,7 @@ from rest_framework import status
 from django.utils import timezone 
 import registration.models as models
 import registration.verification as verification
+from json import loads
 
 
 
@@ -67,28 +68,42 @@ class SignupViewTest(TestCase):
 			})
 		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-	# Test Creating An Already Existing User
-	#def test_create_an_existing_user(self):
-	#	response1 = self.client.post(SignupViewTest.SIGNUP_VIEW_URL,
-	#		{
-	#			'username': 'testuser',
-	#			'password1': 'password',
-	#			'password2': 'password',
-	#			'email': 'test@test.com',
-	#			'birthday': '1995-02-02',
-	#			'Content-Type': 'application/x-www-form-urlencoded'
-	#		})
-	#	response2 = self.client.post(SignupViewTest.SIGNUP_VIEW_URL,
-	#		{
-	#			'username': 'testuser',
-	#			'password1': 'password',
-	#			'password2': 'password',
-	#			'email': 'test@test.com',
-	#			'birthday': '1995-02-02',
-	#			'Content-Type': 'application/x-www-form-urlencoded'
-	#		})
-	#	self.assertEqual(response1.status_code, status.HTTP_201_CREATED)
-	#	self.assertEqual(response2.status_code, status.HTTP_400_BAD_REQUEST)
+	def test_shorter_than_min_length_for_username(self):
+		response = self.client.post(SignupViewTest.SIGNUP_VIEW_URL,
+			{
+				'username': 'tes',
+				'password1': 'password',
+				'password2': 'password',
+				'email': 'test@test.com',
+				'birthday': '1990-01-01',
+				'Content-Type': 'application/x-www-form-urlencoded'
+			})
+		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+	def test_shorter_than_min_length_for_password(self):
+		response = self.client.post(SignupViewTest.SIGNUP_VIEW_URL,
+			{
+				'username': 'testuser',
+				'password1': 'pas',
+				'password2': 'pas',
+				'email': 'test@test.com',
+				'birthday': '1990-01-01',
+				'Content-Type': 'application/x-www-form-urlencoded'
+			})
+		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+	def test_both_username_and_password_shorter_than_min_length(self):
+		response = self.client.post(SignupViewTest.SIGNUP_VIEW_URL,
+			{
+				'username': 'tes',
+				'password1': 'pas',
+				'password2': 'pas',
+				'email': 'test@test.com',
+				'birthday': '1990-01-01',
+				'Content-Type': 'application/x-www-form-urlencoded'
+			})
+		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
 
 
 class VerifyViewTest(TestCase):
@@ -203,10 +218,45 @@ class LoginViewTest(TestCase):
 				'password': 'password'
 			})
 		self.assertEqual(response.status_code, status.HTTP_200_OK)
+		self.assertEqual(loads(response.content)["is_active"], True)
+
+	def test_correct_credentials_for_unverified_user(self):
+		models.Accounts.objects.create(name='username', password='password', email='pokemon@domain.com',birthday='1990-01-01', tempban=timezone.localtime(), verified = 0)
+		response = self.client.post(LoginViewTest.LOGIN_VIEW_URL,
+			{
+				'username': 'username',
+				'password': 'password'
+			})
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+		self.assertEqual(loads(response.content)["is_active"], False)
 
 	def test_get_login(self):
 		response = self.client.get(LoginViewTest.LOGIN_VIEW_URL)
 		self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+	def test_login_with_shorter_than_min_length_for_username(self):
+		response = self.client.post(LoginViewTest.LOGIN_VIEW_URL,
+			{
+				'username': 'tes',
+				'password': 'password'
+			})
+		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+	def test_login_with_shorter_than_min_length_for_password(self):
+		response = self.client.post(LoginViewTest.LOGIN_VIEW_URL,
+			{
+				'username': 'testuser',
+				'password': 'pas'
+			})
+		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+	def test_both_username_and_password_shorter_than_min_length(self):
+		response = self.client.post(LoginViewTest.LOGIN_VIEW_URL,
+			{
+				'username': 'tes',
+				'password': 'pas'
+			})
+		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
 
 class LogoutViewTest(TestCase):

@@ -43,7 +43,7 @@ const App = props => {
 
   return ( 
     <div className={props.auth.isAuthenticated ? "app-container--loggedin" : ""}>
-      {/*<TitleBar />*/}
+      <TitleBar />
       <Router history={history}>
         {
           props.auth.isAuthenticated ? 

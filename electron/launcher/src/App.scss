@@ -144,25 +144,30 @@ h1{
 .title-bar{
   padding-top: 0.5rem;
   position:fixed;
+  z-index: 99;
   width: 100%;
   display:flex;
   justify-content: flex-end;
   -webkit-app-region: drag;
-  z-index: 999;
-  & button{
-    -webkit-appearance: none;
-    border: none;
-    &:hover{
-      background-color: #CECECE;
-    }
-    &:focus{
-      outline:none;
-    }
-    &:active{
-      background-color: #BABABA;
-    }
-    & img {
-      vertical-align: bottom;
+  &__controls{
+    -webkit-app-region: no-drag;
+    & button{
+      overflow: hidden;
+      background-color:white;
+      -webkit-appearance: none;
+      border: none;
+      &:hover{
+        background-color: #CECECE;
+      }
+      &:focus{
+        outline:none;
+      }
+      &:active{
+        background-color: #BABABA;
+      }
+      & img {
+        vertical-align: bottom;
+      }
     }
   }
 }
