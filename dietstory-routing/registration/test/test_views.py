@@ -505,6 +505,70 @@ class ResetPasswordViewTest(TestCase):
 		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
 
+class ChangePasswordViewTest(TestCase):
+	CHANGE_PASSWORD_VIEW_URL = '/accounts/password/change/'
+	username = 'username'
+	password = 'password'
+	incorrect_password = '123123'
+
+	def test_change_password_with_incorrect_authentication(self):
+		models.Accounts.objects.create(name='username', password='password', email='pokemon@domain.com',birthday='1990-01-01', tempban=timezone.localtime(), verified = 1)
+		self.client.login(username=self.username, password=self.incorrect_password)
+		response = self.client.post(ChangePasswordViewTest.CHANGE_PASSWORD_VIEW_URL,
+			{
+				'old_password': "cat123",
+				'new_password1': "DROP TABLE accounts;",
+				'new_password2': "DROP TABLE accounts;"
+			})
+		self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+	def test_change_password_with_invalid_input(self):
+		models.Accounts.objects.create(name='username', password='password', email='pokemon@domain.com',birthday='1990-01-01', tempban=timezone.localtime(), verified = 1)
+		self.client.login(username=self.username, password=self.password)
+		response = self.client.post(ChangePasswordViewTest.CHANGE_PASSWORD_VIEW_URL,
+			{
+				'old_password': "cat123",
+				'new_password1': "DROP TABLE accounts;",
+				'new_password2': "DROP TABLE accounts;"
+			})
+		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+	def test_change_password_with_incorrect_old_password(self):
+		models.Accounts.objects.create(name='username', password='password', email='pokemon@domain.com',birthday='1990-01-01', tempban=timezone.localtime(), verified = 1)
+		self.client.login(username=self.username, password=self.password)
+		response = self.client.post(ChangePasswordViewTest.CHANGE_PASSWORD_VIEW_URL,
+			{
+				'old_password': "cat123",
+				'new_password1': "password123",
+				'new_password2': "password123"
+			})
+		self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+	def test_change_password_with_non_matching_new_passwords(self):
+		models.Accounts.objects.create(name='username', password='password', email='pokemon@domain.com',birthday='1990-01-01', tempban=timezone.localtime(), verified = 1)
+		self.client.login(username=self.username, password=self.password)
+		response = self.client.post(ChangePasswordViewTest.CHANGE_PASSWORD_VIEW_URL,
+			{
+				'old_password': "password",
+				'new_password1': "password1234",
+				'new_password2': "password123"
+			})
+		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+	def test_change_password_with_matching_new_passwords(self):
+		models.Accounts.objects.create(name='username', password='password', email='pokemon@domain.com',birthday='1990-01-01', tempban=timezone.localtime(), verified = 1)
+		self.client.login(username='username',password='password')
+		account = models.Accounts.objects.get(name='username')
+		self.assertEqual(account.password, 'password')
+		response = self.client.post(ChangePasswordViewTest.CHANGE_PASSWORD_VIEW_URL,
+			{
+				'old_password': "password",
+				'new_password1': "password123",
+				'new_password2': "password123"
+			})
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+		self.assertEqual(models.Accounts.objects.get(name=self.username).password, 'password123')
+
 
 
 
