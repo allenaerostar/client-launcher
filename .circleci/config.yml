@@ -20,7 +20,7 @@ protected-only: &protected-only
         - release
         - /feature[/].*/
         - /fix[/].*/
-        - /chore[/]./
+        - /chore[/].*/
         - /deploy[/].*/
 
 version: 2
