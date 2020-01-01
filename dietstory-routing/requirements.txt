@@ -7,3 +7,4 @@ uritemplate==3.0.0
 boto3==1.10.34
 apscheduler==3.6.3
 requests==2.22.0
+random-password-generator==2.1.0
