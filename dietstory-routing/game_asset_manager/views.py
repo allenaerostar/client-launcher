@@ -314,14 +314,18 @@ class UploadView(views.APIView):
                 {'message': 'File hashes do not match. Perhaps upload was corrupted? Expected: {0}, Computed: {1}'.format(file_hash, computed_hash)},
                 status=status.HTTP_400_BAD_REQUEST)
 
-        # Check if Game Version Already Exists
+        # Check if Game Version Exists
         try:
             exists = GameVersions.objects.get(major_ver=major_ver, minor_ver=minor_ver)
         except GameVersions.DoesNotExist:
             return JsonResponse({'message': 'Provided game version does not exist.'}, status=status.HTTP_400_BAD_REQUEST)
 
         # Upload file to S3
-        
+        s3_client = S3Boto3Factory.get_s3_client()
+        s3_path = s3_client.upload_file(file_location=filepath, key='v{0}.{1}/{2}'.format(major_ver, minor_ver, file.name))
+
+        if not s3_path:
+            return JsonResponse({'message': 'Upload was unsuccessful.'}, status=status.HTTP_503_SERVICE_UNAVAILABLE)
 
         # Add File to Database (override if exists)
         try:
@@ -330,12 +334,12 @@ class UploadView(views.APIView):
             file_entry.hash_value = file_hash
             file_entry.submitted_by_id = request.user.id
             file_entry.save()
-        except GameVersions.DoesNotExist:
+        except GameFiles.DoesNotExist:
             file_entry = GameFiles(file_name=file.name, s3_path=s3_path, hash_value=file_hash, submitted_by_id=request.user.id, version_ref_id=exists.id)
             file_entry.save()
 
         return JsonResponse({
-                    'ok': 'ok'
+                    'message': 'File {0} was uploaded successfully for version {1}.{2}'.format(file.name, major_ver, minor_ver)
                 },
                 status=status.HTTP_200_OK)
 
