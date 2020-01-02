@@ -1,4 +1,4 @@
-from game_asset_manager.models import GameVersions
+from game_asset_manager.models import GameVersions, GameFiles
 from django.utils import timezone
 from django.db import transaction
 
@@ -20,7 +20,6 @@ def add_all_game_version_update_jobs(job_scheduler):
 
 
 def update_game_version(major_ver, minor_ver):
-
     try:
         current_game_version = GameVersions.objects.get(major_ver=major_ver, minor_ver=minor_ver)
         if current_game_version:
@@ -35,5 +34,25 @@ def update_game_version(major_ver, minor_ver):
                 current_game_version.save()
 
             print("Updating game version finished.")
+    except Exception as e:
+        print(e)
+
+
+def add_game_version(major_ver, minor_ver):
+    try:
+        current_game_version = GameVersions.objects.get(is_live=1)
+        game_files = GameFiles.objects.filter(version_ref_id=current_game_version.id)
+
+        with transaction.atomic():
+            # Create New Version
+            new_game_version = GameVersions(major_ver=major_ver, minor_ver=minor_ver, live_by=live_by)
+            new_game_version.save()
+
+            # Insert copies of file locations woith new version ref
+            for file in game_files:
+                file.id = None
+                file.version_ref_id = new_game_version.id
+            game_files.save()
+
     except Exception as e:
         print(e)

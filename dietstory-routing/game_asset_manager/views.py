@@ -1,18 +1,19 @@
 from django.http import HttpResponse, JsonResponse
 from rest_framework import views, permissions, status
 from .s3boto3 import S3Boto3Factory
-from.validate_forms import GameMetadataForm, RequestGameAssetForm, SubmitGameVersionForm
+from.validate_forms import GameMetadataForm, RequestGameAssetForm, SubmitGameVersionForm, SubmitGameFileForm
 from .models import GameFiles, GameVersions
 from .serializers import GameVersionSerializer
+from .md5_hash import LocalFileHash
 from django.db import IntegrityError
 from game_version_updater.updater import version_update_scheduler
-from game_version_updater.updateGameVersion import update_game_version
+from game_version_updater.updateGameVersion import update_game_version, add_game_version
 from django.utils import timezone
 
 
 # Create your views here.
 class DownloadView(views.APIView):
-    permission_classes = (permissions.AllowAny,)
+    permission_classes = (permissions.IsAuthenticated,)
 
     def get(self, request, *args, **kwargs):
         """
@@ -107,7 +108,7 @@ class GameVersionView(views.APIView):
             return (permissions.AllowAny,)
 
         elif self.request.method == "POST":
-            return (permissions.IsAdminUser(),)
+            return (permissions.IsAdminUser,)
 
     def get(self, request, *args, **kwargs):
         """
@@ -189,39 +190,47 @@ class GameVersionView(views.APIView):
         """
         game_version_form = SubmitGameVersionForm(request.data)
 
-        if game_version_form.is_valid():
+        if not game_version_form.is_valid():
+            return JsonResponse(
+                {'message': 'Invalid input parameters'},
+                status=status.HTTP_400_BAD_REQUEST)
 
-            try:
-                major_ver, minor_ver = game_version_form.get_version_values();
-                live_by = game_version_form.cleaned_data.get('live_by')
+        major_ver, minor_ver = game_version_form.get_version_values();
+        live_by = game_version_form.cleaned_data.get('live_by')
 
-                game_version = GameVersions(major_ver=major_ver, minor_ver=minor_ver, live_by=live_by)
+        # Check if Game Version Already Exists
+        try:
+            exists = GameVersions.objects.get(major_ver=major_ver, minor_ver=minor_ver)
+        except GameVersions.DoesNotExist:
+            exists = None
+        if exists:
+            return JsonResponse(
+                {'message': 'Version already exists'},
+                status=status.HTTP_304_NOT_MODIFIED)
 
-                if live_by:
-                    if live_by <= timezone.localtime():
-                        return JsonResponse(
-                            {'message': 'Invalid input parameters'},
-                            status=status.HTTP_400_BAD_REQUEST)
-
-                    version_update_scheduler.add_job(update_game_version, 'date', run_date=game_version.live_by, args=[game_version.major_ver, game_version.minor_ver])
-
-                game_version.save()
+        # Add new Game Version
+        try:
+            if live_by and live_by <= timezone.localtime():
                 return JsonResponse(
-                    {'message': 'Game version {} has been submitted successfully.'.format(game_version)},
-                    status=status.HTTP_200_OK)
-
-            except (IntegrityError, IOError):
-                return JsonResponse(
-                    {'message': "Game version submission was not successful."},
+                    {'message': 'Invalid live by time requested'},
                     status=status.HTTP_400_BAD_REQUEST)
 
-        return JsonResponse(
-            {'message': 'Invalid input parameters'},
-            status=status.HTTP_400_BAD_REQUEST)
+                version_update_scheduler.add_job(update_game_version, 'date', run_date=game_version.live_by, args=[game_version.major_ver, game_version.minor_ver])
+
+            add_game_version(major_ver, minor_ver)
+
+            return JsonResponse(
+                {'message': 'Game version {} has been submitted successfully.'.format(game_version)},
+                status=status.HTTP_200_OK)
+
+        except (IntegrityError, IOError):
+            return JsonResponse(
+                {'message': "Game version submission was not successful."},
+                status=status.HTTP_400_BAD_REQUEST)
 
 
 class ReturnHashesView(views.APIView):
-    permission_classes = (permissions.AllowAny,)
+    permission_classes = (permissions.IsAuthenticated,)
 
     def get(self, request, *args, **kwargs):
         """
@@ -257,7 +266,7 @@ class ReturnHashesView(views.APIView):
                 game_version = None
 
         if game_version:
-            game_files = GameFiles.objects.filter(version_ref=game_version.id)
+            game_files = GameFiles.objects.filter(version_ref_id=game_version.id)
             res = [ [file.file_name, file.hash_value] for file in game_files ]
             return JsonResponse({
                     'hash_values': res
@@ -268,6 +277,68 @@ class ReturnHashesView(views.APIView):
             return JsonResponse(
                 {'message': 'No version of the game exists.'},
                 status=status.HTTP_404_NOT_FOUND)
+
+
+class UploadView(views.APIView):
+    #permission_classes = (permissions.IsAdminUser(),)
+    permission_classes = (permissions.AllowAny,)
+
+    def post(self, request, *args, **kwargs):
+        """
+        summary: Uploads new version game files to server
+        description: Provided game files for a specified version release, saved to S3
+        """
+
+        params = SubmitGameFileForm(request.POST, request.FILES)
+
+        # Check for valid Parameters
+        if not params.is_valid():
+            return JsonResponse(
+                {'message': 'Inputs have invalid format.'},
+                status=status.HTTP_400_BAD_REQUEST)
+
+        # Handle Uploaded File
+        file = params.cleaned_data.get('file')
+        file_hash = params.cleaned_data.get('file_hash')
+        filepath = '/tmp/{0}'.format(file.name)
+        major_ver, minor_ver = params.get_version_values();
+
+        with open(filepath, 'wb+') as dest:
+            for chunk in file.chunks():
+                dest.write(chunk)
+
+        # Check Hash Correctness
+        computed_hash = LocalFileHash.md5_hash(filepath)
+        if  computed_hash != file_hash:
+            return JsonResponse(
+                {'message': 'File hashes do not match. Perhaps upload was corrupted? Expected: {0}, Computed: {1}'.format(file_hash, computed_hash)},
+                status=status.HTTP_400_BAD_REQUEST)
+
+        # Check if Game Version Already Exists
+        try:
+            exists = GameVersions.objects.get(major_ver=major_ver, minor_ver=minor_ver)
+        except GameVersions.DoesNotExist:
+            return JsonResponse({'message': 'Provided game version does not exist.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Upload file to S3
+        
+
+        # Add File to Database (override if exists)
+        try:
+            file_entry = GameFiles.objects.get(file_name=file.name, version_ref_id=exists.id)
+            file_entry.s3_path = s3_path
+            file_entry.hash_value = file_hash
+            file_entry.submitted_by_id = request.user.id
+            file_entry.save()
+        except GameVersions.DoesNotExist:
+            file_entry = GameFiles(file_name=file.name, s3_path=s3_path, hash_value=file_hash, submitted_by_id=request.user.id, version_ref_id=exists.id)
+            file_entry.save()
+
+        return JsonResponse({
+                    'ok': 'ok'
+                },
+                status=status.HTTP_200_OK)
+
 
 
 
