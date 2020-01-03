@@ -9,8 +9,8 @@ class GameVersions(TestCase):
 
 	# Test Game Version Creation
 	def test_gameversions_creation(self):
-		version = models.GameVersion.objects.get(major_ver=1, minor_ver=0)
-		self.assertTrue(isinstance(version, models.GameVersion))
+		version = models.GameVersions.objects.get(major_ver=1, minor_ver=0)
+		self.assertTrue(isinstance(version, models.GameVersions))
 		self.assertTrue(version.major_ver == 1)
 		self.assertTrue(version.minor_ver == 0)
 
@@ -22,7 +22,7 @@ class GameFiles(TestCase):
 
 	# Test Game Files
 	def test_gamefiles_creation(self):
-		version = models.GameVersion.objects.get(major_ver=1, minor_ver=0)
+		version = models.GameVersions.objects.get(major_ver=1, minor_ver=0)
 		files = models.GameFiles.objects.filter(version_ref_id=version.id)
 		
 		self.assertTrue(len(files) == 1)
