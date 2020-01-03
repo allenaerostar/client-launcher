@@ -38,7 +38,7 @@ def update_game_version(major_ver, minor_ver):
         print(e)
 
 
-def add_game_version(major_ver, minor_ver):
+def add_game_version(major_ver, minor_ver, live_by):
     try:
         current_game_version = GameVersions.objects.get(is_live=1)
         game_files = GameFiles.objects.filter(version_ref_id=current_game_version.id)
@@ -48,11 +48,11 @@ def add_game_version(major_ver, minor_ver):
             new_game_version = GameVersions(major_ver=major_ver, minor_ver=minor_ver, live_by=live_by)
             new_game_version.save()
 
-            # Insert copies of file locations woith new version ref
+            # Insert copies of file locations with new version ref
             for file in game_files:
                 file.id = None
                 file.version_ref_id = new_game_version.id
-            game_files.save()
+                file.save()
 
     except Exception as e:
         print(e)

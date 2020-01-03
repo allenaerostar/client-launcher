@@ -19,6 +19,9 @@ class DownloadView(views.APIView):
         """
         summary: Download Game File Assets
         description: Provides users with a temporary s3 download link for a specified version controlled asset file
+        tags: 
+            - DownloadView
+
         parameters:
             - name: filename
               schema:
@@ -26,14 +29,14 @@ class DownloadView(views.APIView):
               description: >
                   Name of asset file requested.
               required: true
+
             - name: versionid
               schema:
                   type: string
               description: >
                   Specified version of asset file. If not specified, provide live version. If specified, must require admin authentication.
               required: false
-           tags:
-            - DownloadView
+
         responses:
             200:
                 content:
@@ -217,10 +220,10 @@ class GameVersionView(views.APIView):
 
                 version_update_scheduler.add_job(update_game_version, 'date', run_date=game_version.live_by, args=[game_version.major_ver, game_version.minor_ver])
 
-            add_game_version(major_ver, minor_ver)
+            add_game_version(major_ver, minor_ver, live_by)
 
             return JsonResponse(
-                {'message': 'Game version {} has been submitted successfully.'.format(game_version)},
+                {'message': 'Game version {}.{} has been submitted successfully.'.format(major_ver, minor_ver)},
                 status=status.HTTP_200_OK)
 
         except (IntegrityError, IOError):
@@ -234,8 +237,56 @@ class ReturnHashesView(views.APIView):
 
     def get(self, request, *args, **kwargs):
         """
-        summary: Provides Hashes of required game files
-        description: Returns a json of corresponding hashes to all assets for a specific game version
+        summary: Get Hashes of Required Downloadable Files
+        description: Returns a json of corresponding hashes to all assets for a specific game version.
+        tags:
+            - ReturnHashesView
+
+        parameters:
+            - name: versionid
+              schema:
+                  type: string
+              description: >
+                  Specified version of asset file. If not specified, provide live version. If specified, must require admin authentication.
+              required: true
+
+        responses:
+            200:
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                message:
+                                    type: object
+                                    description: A list of (file_name, hash) pairs
+            400:
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                message:
+                                    type: string
+                                    description: Invalid input parameters.
+            401:
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                message:
+                                    type: string
+                                    description: Unauthorized request if not authenticated, or superuser if requesting specific version                       
+            404:
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                message:
+                                    type: string
+                                    description: Invalid Version Id provided
         """
 
         params = GameMetadataForm(request.data)
@@ -280,13 +331,43 @@ class ReturnHashesView(views.APIView):
 
 
 class UploadView(views.APIView):
-    #permission_classes = (permissions.IsAdminUser(),)
-    permission_classes = (permissions.AllowAny,)
+    permission_classes = (permissions.IsAdminUser,)
 
     def post(self, request, *args, **kwargs):
         """
-        summary: Uploads new version game files to server
-        description: Provided game files for a specified version release, saved to S3
+        summary: Post Game File for download tied to a Version Id
+        description: Provided game file for a specified version release, saved to S3
+        tags:
+            - UploadView
+
+        parameters:
+            - name: file_hash
+              schema:
+                  type: string
+              description: >
+                  Hash value of the file. Also used as a checksum for correctness.
+              required: true
+            
+            - name: file_name
+              schema:
+                  type: string
+              description: >
+                  File name and full path to file.
+              required: true
+
+            - name: file
+              schema:
+                  type: file
+              description: >
+                  File content to be saved.
+              required: true
+
+            - name: versionid
+              schema:
+                  type: string
+              description: >
+                  Specified version of asset file.
+              required: true
         """
 
         params = SubmitGameFileForm(request.POST, request.FILES)
@@ -300,15 +381,16 @@ class UploadView(views.APIView):
         # Handle Uploaded File
         file = params.cleaned_data.get('file')
         file_hash = params.cleaned_data.get('file_hash')
-        filepath = '/tmp/{0}'.format(file.name)
+        file_name = params.cleaned_data.get('file_name')
+        temp_path = '/tmp/{0}'.format(file.name)
         major_ver, minor_ver = params.get_version_values();
 
-        with open(filepath, 'wb+') as dest:
+        with open(temp_path, 'wb+') as dest:
             for chunk in file.chunks():
                 dest.write(chunk)
 
         # Check Hash Correctness
-        computed_hash = LocalFileHash.md5_hash(filepath)
+        computed_hash = LocalFileHash.md5_hash(temp_path)
         if  computed_hash != file_hash:
             return JsonResponse(
                 {'message': 'File hashes do not match. Perhaps upload was corrupted? Expected: {0}, Computed: {1}'.format(file_hash, computed_hash)},
@@ -322,24 +404,24 @@ class UploadView(views.APIView):
 
         # Upload file to S3
         s3_client = S3Boto3Factory.get_s3_client()
-        s3_path = s3_client.upload_file(file_location=filepath, key='v{0}.{1}/{2}'.format(major_ver, minor_ver, file.name))
+        s3_path = s3_client.upload_file(file_location=temp_path, key='v{0}.{1}/{2}'.format(major_ver, minor_ver, file_name))
 
         if not s3_path:
             return JsonResponse({'message': 'Upload was unsuccessful.'}, status=status.HTTP_503_SERVICE_UNAVAILABLE)
 
         # Add File to Database (override if exists)
         try:
-            file_entry = GameFiles.objects.get(file_name=file.name, version_ref_id=exists.id)
+            file_entry = GameFiles.objects.get(file_name=file_name, version_ref_id=exists.id)
             file_entry.s3_path = s3_path
             file_entry.hash_value = file_hash
             file_entry.submitted_by_id = request.user.id
             file_entry.save()
         except GameFiles.DoesNotExist:
-            file_entry = GameFiles(file_name=file.name, s3_path=s3_path, hash_value=file_hash, submitted_by_id=request.user.id, version_ref_id=exists.id)
+            file_entry = GameFiles(file_name=file_name, s3_path=s3_path, hash_value=file_hash, submitted_by_id=request.user.id, version_ref_id=exists.id)
             file_entry.save()
 
         return JsonResponse({
-                    'message': 'File {0} was uploaded successfully for version {1}.{2}'.format(file.name, major_ver, minor_ver)
+                    'message': 'File {0} was uploaded successfully for version {1}.{2}'.format(file_name, major_ver, minor_ver)
                 },
                 status=status.HTTP_200_OK)
 
