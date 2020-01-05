@@ -36,7 +36,10 @@ def update_game_version(major_ver, minor_ver):
             print("Updating game version finished.")
     except Exception as e:
         print(e)
+<<<<<<< HEAD
         raise e
+=======
+>>>>>>> Feature/file upload (#59)
 
 
 def add_game_version(major_ver, minor_ver, live_by):
