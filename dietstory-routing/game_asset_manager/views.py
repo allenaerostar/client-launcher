@@ -172,6 +172,17 @@ class GameVersionView(views.APIView):
                                 message:
                                     type: string
                                     description: Game version has been submitted successfully.
+
+            304:
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                message:
+                                    type: string
+                                    description: Game version already exists so no changes applied.
+
             400:
                 content:
                     application/json:
@@ -368,6 +379,37 @@ class UploadView(views.APIView):
               description: >
                   Specified version of asset file.
               required: true
+
+        responses:
+            200:
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                message:
+                                    type: string
+                                    description: Game file has been submitted successfully.
+
+            400:
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                message:
+                                    type: string
+                                    description: Invalid formatted request, checksum did not pass, game version does not exist
+
+            503:
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                message:
+                                    type: string
+                                    description: Service currently unavailable.
         """
 
         params = SubmitGameFileForm(request.POST, request.FILES)
