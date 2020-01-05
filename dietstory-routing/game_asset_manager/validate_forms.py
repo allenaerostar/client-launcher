@@ -1,3 +1,4 @@
+import os
 import re
 from django import forms
 from django.core.validators import validate_email, validate_slug, BaseValidator, MinValueValidator, MaxValueValidator
@@ -32,6 +33,31 @@ class CharFieldArrayValidator(BaseValidator):
     compare = lambda self, a, b: not self.check_char_fields(a)
     message = "CharFieldArray must be of the form: {0}{1}{0}{1}...".format('<CHAR_FIELD>', '<DELIMETER>')
 
+class FileExtensionValidator(BaseValidator):
+    def __init__(self, allowed_extensions):
+        super().__init__(True)
+        self.extensions = allowed_extensions
+
+    def check_file_extension(self, file):
+        ext = os.path.splitext(file.name)[1]
+        if not ext.lower() in self.extensions:
+            return False
+        else:
+            return True
+
+    compare = lambda self, a, b: not self.check_file_extension(a)
+    message = "File Extension is invalid"
+
+class MaxSizeValidator(BaseValidator):
+    def __init__(self, max_size):
+        super().__init__(True)
+        self.max_size = max_size
+
+    def check_file_size(self, file):
+        return file.size <= self.max_size
+
+    compare = lambda self, a, b: not self.check_file_size(a)
+    message = "File uploaded is too large!"
 
 # Base form with versionid applied
 class GameMetadataForm(forms.Form):
@@ -60,6 +86,13 @@ class RequestGameAssetForm(GameMetadataForm):
 
 class SubmitGameVersionForm(GameMetadataForm):
 	live_by = forms.DateTimeField(required=False)
+
+class SubmitGameFileForm(GameMetadataForm):
+    file_hash = forms.CharField(max_length=50)
+    file_name = forms.CharField(min_length=1, max_length=50)
+    file = forms.FileField(validators=[
+        FileExtensionValidator(allowed_extensions=['.exe', '.wz']),
+        MaxSizeValidator(max_size=5368709120)])
 
 
 
