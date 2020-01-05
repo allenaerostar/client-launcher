@@ -110,6 +110,15 @@ class Accounts(AbstractBaseUser, PermissionsMixin):
     def is_superuser(self):
         return bool(self.adminlevel > 0)
 
+    @property
+    def is_staff(self):
+        return bool(self.adminlevel > 0)
+
+    @property
+    def get_admin_level(self):
+        return self.adminlevel
+    
+
     def check_password(self, raw_password):
         return self.password == raw_password
 
