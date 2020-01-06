@@ -1,0 +1,20 @@
+FROM python:3.7.5-alpine
+
+MAINTAINER Benjamin Zhao <yl4zhao@edu.uwaterloo.ca>
+
+ENV CONFIG_DIR=/tmp/config/
+
+# Add Project Requirements
+COPY requirements.txt ${CONFIG_DIR}
+COPY ../* /app
+
+WORKDIR /app
+
+# Install Python Packages Dependencies
+RUN apk add --no-cache build-base \
+	&& apk add --no-cache mariadb-connector-c-dev \
+	&& pip install --no-cache-dir -r ${CONFIG_DIR}/requirements.txt \
+	&& apk del build-base
+
+# Run mounted Django project
+CMD python -u manage.py runserver 0.0.0.0:8000 --noreload
