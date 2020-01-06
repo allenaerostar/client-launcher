@@ -13,9 +13,11 @@ RUN apk add --no-cache build-base \
 	&& pip install --no-cache-dir -r ${CONFIG_DIR}/requirements.txt \
 	&& apk del build-base
 
-# Run mounted Django project
-CMD cd /mnt \ 
-	&& echo '{ \
+RUN mkdir /code
+WORKDIR /code
+COPY . /code/
+
+RUN echo '{ \
 		"SECRET_KEY": "hello_world", \
 		"DEBUG": true, \
         "LOG_LEVEL_DEV": "DEBUG", \
@@ -28,5 +30,7 @@ CMD cd /mnt \
 		"EMAIL_HOST_USER": "", \
 		"EMAIL_HOST_PASSWORD": "", \
 		"EMAIL_USE_TLS": "True", \
-		"TEST_DATABASES": {"default": {"ENGINE": "django.db.backends.sqlite3","NAME": "dietstory"}}}' > dietstory-routing/dietstory_secret_config.json \
-	&& python -u manage.py test -v2
+		"TEST_DATABASES": {"default": {"ENGINE": "django.db.backends.sqlite3","NAME": "dietstory"}}}' > dietstory-routing/dietstory_secret_config.json
+
+# Run mounted Django project
+CMD python -u manage.py test -v2
