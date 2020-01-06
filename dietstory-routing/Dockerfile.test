@@ -13,9 +13,11 @@ RUN apk add --no-cache build-base \
 	&& pip install --no-cache-dir -r ${CONFIG_DIR}/requirements.txt \
 	&& apk del build-base
 
-# Run mounted Django project
-CMD cd /mnt \ 
-	&& echo '{ \
+RUN mkdir /code
+WORKDIR /code
+COPY . /code/
+
+RUN echo '{ \
 		"SECRET_KEY": "hello_world", \
 		"DEBUG": true, \
         "LOG_LEVEL_DEV": "DEBUG", \
