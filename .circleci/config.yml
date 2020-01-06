@@ -33,11 +33,11 @@ jobs:
       - run: 
           name: Build Dietstory Django Prod
           command: |
-            docker build -t benjixd/dietstory -f client-launcher/Dockerfile.prod .
+            docker build -t benjixd/dietstory -f dietstory-routing/Dockerfile.prod .
       - run:
           name: Build Dietstory Django Tests
           command: |
-            docker build -t benjixd/dietstory-django-tests -f client-launcher/Dockerfile.test
+            docker build -t benjixd/dietstory-django-tests -f dietstory-routing/Dockerfile.test
       - run: # Run Dietstory Django Server Tests
           name: Run Dietstory Django Server Tests
           path: dietstory-routing
