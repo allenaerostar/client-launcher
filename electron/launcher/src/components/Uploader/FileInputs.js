@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 
-const FileInputs = props => {
+// When wake up, connect components and fix props
+const FileInputs = ({ handleChange, fileData, index}) => {
   return (
-    <div className="row" key={index}>
+    <div className="row">
       <div className="col-6">
         <input
           type="text"
           name="name"
-          value={item.file.name}
+          value={fileData.file.name}
           placeholder="File Name"
           onChange={handleChange(index)}
           className="form-control"
@@ -18,7 +19,7 @@ const FileInputs = props => {
         <input
           type="text"
           name="path"
-          value={item.path}
+          value={fileData.path}
           placeholder="Relative Path"
           onChange={handleChange(index)}
           className="form-control"
