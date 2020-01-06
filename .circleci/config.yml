@@ -37,7 +37,7 @@ jobs:
       - run:
           name: Build Dietstory Django Tests
           command: |
-            cd dietstory-routing && docker build -t benjixd/dietstory-django-tests -f Dockerfile.test
+            cd dietstory-routing && docker build -t benjixd/dietstory-django-tests -f Dockerfile.test .
       - run: # Run Dietstory Django Server Tests
           name: Run Dietstory Django Server Tests
           path: dietstory-routing
