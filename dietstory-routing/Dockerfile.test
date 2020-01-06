@@ -17,6 +17,7 @@ RUN mkdir /code
 WORKDIR /code
 COPY . /code/
 
+# Generate config file for tests
 RUN echo '{ \
 		"SECRET_KEY": "hello_world", \
 		"DEBUG": true, \
@@ -32,5 +33,5 @@ RUN echo '{ \
 		"EMAIL_USE_TLS": "True", \
 		"TEST_DATABASES": {"default": {"ENGINE": "django.db.backends.sqlite3","NAME": "dietstory"}}}' > dietstory-routing/dietstory_secret_config.json
 
-# Run mounted Django project
+# Run Django project
 CMD python -u manage.py test -v2
