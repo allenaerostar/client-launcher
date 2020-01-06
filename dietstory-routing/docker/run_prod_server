@@ -6,6 +6,9 @@ ENV CONFIG_DIR=/tmp/config/
 
 # Add Project Requirements
 COPY requirements.txt ${CONFIG_DIR}
+COPY ../* /app
+
+WORKDIR /app
 
 # Install Python Packages Dependencies
 RUN apk add --no-cache build-base \
@@ -14,5 +17,4 @@ RUN apk add --no-cache build-base \
 	&& apk del build-base
 
 # Run mounted Django project
-CMD cd /mnt \
-	&& python -u manage.py runserver 0.0.0.0:8000 --noreload 
+CMD python -u manage.py runserver 0.0.0.0:8000 --noreload
