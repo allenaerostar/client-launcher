@@ -33,7 +33,7 @@ jobs:
       - run: 
           name: Build Dietstory Django Prod
           command: |
-            docker build -t benjixd/dietstory -f Dockerfile.prod
+            docker build -t benjixd/dietstory -f Dockerfile.prod .
       - run:
           name: Build Dietstory Django Tests
           command: |
