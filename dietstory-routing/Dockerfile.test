@@ -17,7 +17,10 @@ RUN mkdir /code
 WORKDIR /code
 COPY . /code/
 
+<<<<<<< HEAD:dietstory-routing/Dockerfile.test
 # Generate config file for tests
+=======
+>>>>>>> Rearranged dockerfile locations.:dietstory-routing/Dockerfile.test
 RUN echo '{ \
 		"SECRET_KEY": "hello_world", \
 		"DEBUG": true, \
