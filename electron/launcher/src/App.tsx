@@ -9,7 +9,7 @@ import UserProfile from 'components/UserProfile/UserProfile';
 import TitleBar from 'components/TitleBar';
 import Registration from 'components/Registration/Registration';
 import VerifyEmail from 'components/Registration/VerifyEmail';
-import Uploader from 'components/Uploader/Uploader';
+import UploaderContainer from 'components/Uploader/UploaderContainer';
 import Patcher from 'components/Patcher/Patcher';
 import PrivateRoute from 'components/PrivateRoute';
 import UpgradePrompt from 'components/Toasts/UpgradePrompt';
@@ -54,10 +54,12 @@ const App = props => {
           <Switch>
             <PrivateRoute exact path="/" component={Root} isAuthenticated={props.auth.isAuthenticated}/>
             <Route path="/login" component={Login}/>
+            <Route path="/forgot-password" component={Registration} />
             <PrivateRoute path="/profile" component={UserProfile} isAuthenticated={props.auth.isAuthenticated}/>
             <Route path="/registration" component={Registration} />
             <Route path="/verify-email" component={VerifyEmail} />
-            <PrivateRoute path="/admin" component={Uploader} isAuthenticated={props.auth.user.isAdmin}/>
+          <PrivateRoute path="/admin" component={UploaderContainer} isAuthenticated={props.auth.isAuthenticated} />
+            {/* <PrivateRoute path="/admin" component={Uploader} isAuthenticated={props.auth.user.isAdmin}/> */}
           </Switch>
       </Router>
       {
