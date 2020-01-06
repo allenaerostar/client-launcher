@@ -16,26 +16,32 @@ class S3Boto3Factory:
 				region_name=config['AWS_DEFAULT_REGION'],
 				config=Config(signature_version='s3v4'))
 
-			return S3Client(s3_client=s3_client, bucket=config['AWS_STORAGE_BUCKET_NAME'])
+			return S3Client(s3_client=s3_client, 
+				bucket=config['AWS_STORAGE_BUCKET_NAME'], 
+				root_folder=config['AWS_STORAGE_ROOT_FOLDER'])
 
 		else:
 			# stub boto3 client method
 			return S3Client(s3_client=boto3.client('s3'), 
-				bucket=None, 
+				bucket=None,
+				root_folder=None,
 				stubbed=True, 
 				stubbed_response=stubbed_response)
 
 class S3Client:
-	def __init__(self, s3_client, bucket, stubbed=False, stubbed_response={}):
+	def __init__(self, s3_client, bucket, root_folder, stubbed=False, stubbed_response={}):
 		self.stubbed = stubbed
 		self.__s3_client = s3_client
 		self.__bucket = bucket
+		self.__root_folder = root_folder
 
 		if stubbed:
 			self.__stubber = Stubber(self.__s3_client)
 			# Wrap or override methods in stubs
 			response = stubbed_response['generate_presigned_url'] if 'generate_presigned_url' in stubbed_response else None
 			self.create_presigned_url = self.stub_create_presigned_url(self.create_presigned_url, response)
+			response = stubbed_response['upload_file'] if 'upload_file' in stubbed_response else None
+			self.upload_file = self.stub_upload_file(self.upload_file, response)
 			# Activate stubber
 			self.__stubber.activate()
 
@@ -46,7 +52,7 @@ class S3Client:
 				http_method,
 				Params={
 					'Bucket': self.__bucket,
-					'Key': key },
+					'Key': '{0}/{1}'.format(self.__root_folder, key) },
 				ExpiresIn=expires)
 		except Exception as e:
 			print(e) # TODO: Logging
@@ -61,3 +67,20 @@ class S3Client:
 			return response
 		return override
 
+	# Upload Object
+	def upload_file(self, file_location, key):
+		full_key = '{0}/{1}'.format(self.__root_folder, key)
+		try:
+			self.__s3_client.upload_file(file_location, self.__bucket, full_key)
+			res = full_key
+		except Exception as e:
+			print(e)
+			res = None
+		return res;
+
+	# Upload Object stub decorator
+	def stub_upload_file(self, function, response):
+		# Override function
+		def override(*args, **kwargs):
+			return response
+		return override
