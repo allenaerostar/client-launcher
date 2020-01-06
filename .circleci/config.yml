@@ -31,9 +31,13 @@ jobs:
     steps:
       - checkout # check out the code in the project directory
       - run: 
-          name: Build Dietstory Django
+          name: Build Dietstory Django Prod
           command: |
-            docker build -t benjixd/dietstory -f docker/run_prod_server
+            docker build -t benjixd/dietstory -f Dockerfile.prod
+      - run:
+          name: Build Dietstory Django Tests
+          command: |
+            docker build -t benjixd/dietstory-django-tests -f Dockerfile.test
       - run: # Run Dietstory Django Server Tests
           name: Run Dietstory Django Server Tests
           path: dietstory-routing
