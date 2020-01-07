@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 
 import FormStepNavigator from 'components/Form/FormStepNavigator';
-import FormBuilder from 'components/Form/FormBuilder';
 import FormOverview from 'components/Form/FormOverview';
 
 import Uploader from 'components/Uploader/Uploader';
@@ -16,8 +15,6 @@ import Uploader from 'components/Uploader/Uploader';
 //         'C:\Nexon\Character.wz'
 //       ]
 // }
-
-// const { remote } = window.require('electron')
 
 const UploaderContainer = props => {
   const [inputs, setInputs] = useState({});
@@ -64,6 +61,17 @@ const UploaderContainer = props => {
       ...prevState,
      ...newFiles
     ]));
+
+    window.scrollTo(0, document.body.scrollHeight);
+  };
+
+  const handleChange = (e) => {
+    const name = e.target.name;
+    const value = e.target.value;
+
+    setInputs(inputs => ({
+      ...inputs, [name]: value
+    }));
   }
 
   const changeFileInfo = index => e => {
@@ -86,7 +94,19 @@ const UploaderContainer = props => {
   const renderFormContent = () => {
     switch (currentStep) {
       case 1:
-        return <Uploader uploadFiles={uploadFiles} changeFileInfo={changeFileInfo} files={files}/>
+        return <>
+            <Uploader uploadFiles={uploadFiles} changeFileInfo={changeFileInfo} files={files}/>
+            <input
+              type="text"
+              name="patch-version"
+              placeholder="Patch Version"
+              onChange={handleChange}
+              required="true"
+              className="form-control"
+            >
+            </input>
+            <button type="button" className="btn btn-success btn-block" onClick={setNextStep}>Next</button>
+          </>
       case 2:
         return <FormOverview inputs={inputs} />
       default:
