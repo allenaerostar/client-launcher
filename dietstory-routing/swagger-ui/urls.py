@@ -7,7 +7,8 @@ urlpatterns = [
 	path('openapi', get_schema_view(
         title="Dietstory API",
         description="API Documentation for Dietstory service.",
-        generator_class=SwaggerSchemaGenerator
+        generator_class=SwaggerSchemaGenerator,
+        public=True
     ), name='openapi-schema'),
     path('swagger-ui/', TemplateView.as_view(
         template_name='swagger-ui.html',

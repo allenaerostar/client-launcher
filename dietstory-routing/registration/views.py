@@ -3,10 +3,10 @@ from django.contrib.auth import authenticate, login, logout
 from rest_framework import views, permissions, status
 from .models import Accounts
 from .validate_forms import *
-from .email import send_verification_email
+from .email import send_verification_email, send_reset_password_email
 from .verification import account_activation_token
 from .serializers import AccountSerializer
-
+from .password_utils import RandomPasswordGenerator
 
 # This view allows user to signup for an dietstory account.
 class SignupView(views.APIView):
@@ -462,4 +462,172 @@ class LogoutView(views.APIView):
         """
         logout(request)
         return JsonResponse({'message': "Successfully logged out."}, status=status.HTTP_200_OK)
+
+
+class ResetPasswordView(views.APIView):
+
+    permission_classes = (permissions.AllowAny,)
+
+    def post(self, request, *args, **kwargs):
+        """
+        summary: Post Reset Password description
+        description: Reset password for the account with the given email.
+        parameters:
+            - name: email
+              schema:
+                  type: string
+                  format: email
+              description: >
+                  An email of the form user@domain.com
+              required: true
+        tags:
+            - ResetPasswordView
+        responses:
+            200:
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                message:
+                                    type: string
+                                    description: Reset password has been sent to the email.
+            400:
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                message:
+                                    type: string
+                                    description: Invalid input parameters.
+            404:
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                message:
+                                    type: string
+                                    description: No account is associated with the email provided.
+            500:
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                message:
+                                    type: string
+                                    description: Failed to save account, or send reset password to email.
+        """
+        params = EmailForm(request.data)
+
+        if params.is_valid():
+            try:
+                account = Accounts.objects.get(email=params.cleaned_data.get('email'))
+            except Accounts.DoesNotExist:
+                account = None
+            if account is not None:
+                try:
+                    reset_password = RandomPasswordGenerator.generate()
+                    account.password = reset_password
+                    account.save()
+                    try:
+                        send_reset_password_email(account.email, reset_password)
+                        return JsonResponse({'message': "Reset password has been sent to the email."}, status=status.HTTP_200_OK)
+                    except IOError:
+                        return JsonResponse({'message': "Failed to send email with reset password."},
+                                            status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+                except IOError:
+                    return JsonResponse({'message': "Failed to save account with the new reset password."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+            return JsonResponse({'message': "No account is associated with the email provided."}, status=status.HTTP_404_NOT_FOUND)
+        return JsonResponse({'message': "Invalid input parameters"}, status=status.HTTP_400_BAD_REQUEST)
+
+class ChangePasswordView(views.APIView):
+
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def post(self, request, *args, **kwargs):
+        """
+        summary: Post Change Password description
+        description: Change password for the account.
+        parameters:
+            - name: old_password
+              schema:
+                  type: string
+              description: >
+                  The old account password.
+              required: true
+            - name: new_password1
+              schema:
+                  type: string
+              description: >
+                  The new account password.
+              required: true
+            - name: new_password2
+              schema:
+                  type: string
+              description: >
+                  Verification of the new account password.
+              required: true
+        tags:
+            - ChangePasswordView
+        responses:
+            200:
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                message:
+                                    type: string
+                                    description: Successfully updated the account with the new password.
+            400:
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                message:
+                                    type: string
+                                    description: Invalid input parameters.
+            404:
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                message:
+                                    type: string
+                                    description: No account with the provided credentials.
+            500:
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                message:
+                                    type: string
+                                    description: Failed to save account with the new password.
+        """
+        params = PasswordChangeForm(request.data)
+
+        if params.is_valid():
+            try:
+                account = Accounts.objects.get(name=request.user.name,password=params.cleaned_data.get('old_password'))
+            except Accounts.DoesNotExist:
+                account = None
+
+            if account is not None:
+                try:
+                    account.password = params.cleaned_data.get('new_password1')
+                    account.save()
+                    return JsonResponse({'message': "Successfully updated the account with the new password."}, status=status.HTTP_200_OK)
+                except IOError:
+                    return JsonResponse({'message': "Failed to save account with the new password."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return JsonResponse({'message': "No account with the provided credentials."}, status=status.HTTP_404_NOT_FOUND)
+        return JsonResponse({'message': "Invalid input parameters"}, status=status.HTTP_400_BAD_REQUEST)
+
 
