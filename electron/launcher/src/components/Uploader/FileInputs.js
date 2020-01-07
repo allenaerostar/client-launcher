@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 // When wake up, connect components and fix props
 const FileInputs = ({ handleChange, fileData, index}) => {
   return (
-    <div className="row">
+    <div className="row file-inputs">
       <div className="col-6">
         <input
           type="text"
