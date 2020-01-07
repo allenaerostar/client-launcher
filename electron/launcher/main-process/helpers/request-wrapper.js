@@ -30,11 +30,11 @@ const request = options => {
       // ONLY ADD CSRF AND SESSION TOKEN TO REQUESTS TO DJANGO SERVER
       if(options.uri.includes(djangoUrl)){
         // ALREADY HAS A HEADER, WE WILL KEEP THE ORIGINAL AND ADDED CSRF AND SESSION INFO
-        if(options.hasOwnProperty('header')){
-          return {...options, header: {...options.header, 'X-CSRFToken': csrfToken, 'Cookie': `sessionid=${sessionKey}`}};
+        if(options.hasOwnProperty('headers')){
+          return {...options, headers: {...options.headers, 'X-CSRFToken': csrfToken, Cookie: `sessionid=${sessionKey}`}};
         }
         else{
-          return {...options, header: {'X-CSRFToken': csrfToken, 'Cookie': `sessionid=${sessionKey}`}};
+          return {...options, headers: { 'X-CSRFToken': csrfToken, Cookie: `sessionid=${sessionKey}`}};
         }
       }
       else{

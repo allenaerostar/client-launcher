@@ -15,12 +15,11 @@ const login = cred => {
     let options = {
       method: 'POST',
       uri: djangoUrl +'/accounts/login/',
-      header: {'content-type': 'application/x-www-form-urlencoded'},
+      headers: {'content-type': 'application/x-www-form-urlencoded'},
       form: cred,
       resolveWithFullResponse: true,
       json: true
     }
-    
     let body;
     let encryptedPassword;
 
