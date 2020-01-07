@@ -27,13 +27,8 @@ version: 2
 jobs:
   build-artifacts:
     machine: true # Build using our custom docker build image
-    
     steps:
       - checkout # check out the code in the project directory
-      - run: 
-          name: Build Dietstory Django Prod
-          command: |
-            cd dietstory-routing && docker build -t benjixd/dietstory -f Dockerfile.prod .
       - run:
           name: Build Dietstory Django Tests
           command: |
@@ -75,6 +70,10 @@ jobs:
             --deployment-config-name CodeDeployDefault.OneAtATime \
             --deployment-group-name dietstory-django-group-dev \
             --s3-location bucket=dietstory-api-server-assets,bundleType=zip,key=dev/releases/dietstory-django.zip
+      - run: 
+        name: Build Dietstory Django for the Dev server
+        command: |
+          docker build -t benjixd/dietstory-django-server -f Dockerfile.prod .
 
   deploy-release: # Deploy Artifacts to live server
     machine: true
@@ -104,7 +103,10 @@ jobs:
             --deployment-config-name CodeDeployDefault.OneAtATime \
             --deployment-group-name dietstory-django-group-prod \
             --s3-location bucket=dietstory-api-server-assets,bundleType=zip,key=prod/releases/dietstory-django.zip
-
+      - run: 
+        name: Build Dietstory Django for the Prod server
+        command: |
+          docker build -t benjixd/dietstory-django-server -f Dockerfile.prod .
 
 # Workflows
 workflows:
