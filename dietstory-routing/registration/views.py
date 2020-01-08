@@ -1,5 +1,3 @@
-import logging
-
 from django.http import JsonResponse
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from rest_framework import views, permissions, status
