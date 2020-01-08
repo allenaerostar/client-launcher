@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import Dropzone from 'react-dropzone';
 
 import FileInputs from 'components/Uploader/FileInputs';
