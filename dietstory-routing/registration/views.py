@@ -1,3 +1,6 @@
+import logging
+
+from django.conf import settings
 from django.http import JsonResponse
 from django.contrib.auth import authenticate, login, logout
 from rest_framework import views, permissions, status
@@ -7,6 +10,11 @@ from .email import send_verification_email, send_reset_password_email
 from .verification import account_activation_token
 from .serializers import AccountSerializer
 from .password_utils import RandomPasswordGenerator
+
+logger = logging.getLogger('default-logger')
+
+if settings.DEBUG:
+    logger = logging.getLogger('dev-logger')
 
 # This view allows user to signup for an dietstory account.
 class SignupView(views.APIView):
@@ -124,9 +132,11 @@ class SignupView(views.APIView):
                     account.save()
 
                     try:
-                        send_verification_email(account.email, account_activation_token.make_token(account))
+                        token = account_activation_token.make_token(account)
+                        logger.debug("Verification Token: {}".format(token))
+                        send_verification_email(account.email, token)
                     except IOError:
-                        print("Failed to send email.") #TODO: Logging
+                        logger.warn("Failed to send email to: {}".format(account.email))
 
                     return JsonResponse(
                         {'message': "Successful creation."}, 
@@ -312,7 +322,9 @@ class SendVerificationView(views.APIView):
 
             if user:
                 try:
-                    send_verification_email(email, account_activation_token.make_token(user))
+                    token = account_activation_token.make_token(user)
+                    logger.debug("Verification Token: {}".format(token))
+                    send_verification_email(email, token)
                     return JsonResponse(
                         {'message': "Verification code has been resent to the valid email address."},
                         status=status.HTTP_200_OK)
@@ -413,7 +425,6 @@ class LoginView(views.APIView):
                                     description: Inputs have invalid format.
 
         """
-
         params = LoginForm(request.data)
         if params.is_valid():
             username, password = params.cleaned_data.get('username'), params.cleaned_data.get('password')
