@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 
 // When wake up, connect components and fix props
 const FileInputs = ({ handleChange, fileData, index}) => {

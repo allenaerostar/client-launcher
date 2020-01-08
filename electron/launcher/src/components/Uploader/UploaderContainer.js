@@ -1,20 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { connect } from 'react-redux';
 
 import FormStepNavigator from 'components/Form/FormStepNavigator';
+import FormStepButtons from 'components/Form/FormStepButtons';
 import FormOverview from 'components/Form/FormOverview';
 
 import Uploader from 'components/Uploader/Uploader';
-
-
-// {
-//   version: 'v1.1',
-//     root: 'C:\Nexon',
-//       files: [
-//         'C:\Nexon\Map.wz',
-//         'C:\Nexon\Character.wz'
-//       ]
-// }
 
 const UploaderContainer = props => {
   const [inputs, setInputs] = useState({});
@@ -26,9 +17,6 @@ const UploaderContainer = props => {
       name: "Upload Files"
     },
     {
-      name: "Patch Information"
-    },
-    {
       name: "Overview",
     }
   ];
@@ -38,25 +26,18 @@ const UploaderContainer = props => {
     // dispatch action
   }
   
-  const setNextStep = () => {
-    setCurrentStep(currentStep+1);
-  };
-
-  const setPrevStep = () => {
-    setCurrentStep(currentStep-1);
-  };
-
   /**
    * Stores array of files as an entry for input state
    * @param {array} acceptedFiles - Array of files
    * NOTE: the path in the actual file is not the path we will be using
    */
   const uploadFiles = acceptedFiles => {
+    // create newFiles object from uploaded files
     const newFiles = acceptedFiles.map(file => ({
       file: file,
       path: ''
     }));
-
+    // store uploaded files in state
     setFiles(prevState => ([
       ...prevState,
      ...newFiles
@@ -101,14 +82,17 @@ const UploaderContainer = props => {
               name="patch-version"
               placeholder="Patch Version"
               onChange={handleChange}
-              required="true"
               className="form-control"
+              required
             >
             </input>
-            <button type="button" className="btn btn-success btn-block" onClick={setNextStep}>Next</button>
+            <FormStepButtons currentStep={currentStep} setCurrentStep={setCurrentStep} totalSteps={steps.length}/>
           </>
       case 2:
-        return <FormOverview inputs={inputs} />
+        return <> 
+          <FormOverview inputs={inputs}/>
+          <FormStepButtons currentStep={currentStep} setCurrentStep={setCurrentStep} totalSteps={steps.length} />
+          </>
       default:
         return <Uploader />
     }
