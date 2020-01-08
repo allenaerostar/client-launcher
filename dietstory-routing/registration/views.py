@@ -1,3 +1,5 @@
+import logging
+
 from django.http import JsonResponse
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from rest_framework import views, permissions, status
@@ -124,7 +126,9 @@ class SignupView(views.APIView):
                     account.save()
 
                     try:
-                        send_verification_email(account.email, account_activation_token.make_token(account))
+                        token = account_activation_token.make_token(account)
+                        logging.warn(token)
+                        send_verification_email(account.email, token)
                     except IOError:
                         print("Failed to send email.") #TODO: Logging
 
@@ -413,7 +417,7 @@ class LoginView(views.APIView):
                                     description: Inputs have invalid format.
 
         """
-
+        logging.warn("Logging in")
         params = LoginForm(request.data)
         if params.is_valid():
             username, password = params.cleaned_data.get('username'), params.cleaned_data.get('password')
@@ -425,6 +429,7 @@ class LoginView(views.APIView):
             if account is not None:
                 login(request, account)
                 request.session['username'] = username
+                logging.warn("Session username: {}".format(request.session['username']))
                 return JsonResponse(AccountSerializer(account).data, status=status.HTTP_200_OK)
             elif exists is not None:
                 return JsonResponse(AccountSerializer(exists).data, status=status.HTTP_200_OK)
@@ -462,7 +467,8 @@ class LogoutView(views.APIView):
                                     description: Successfully logged out.
         """
         logout(request)
-        del request.session['username']
+#        logging.warn("Request session username: {}".format(request.session['username']))
+#        del request.session['username']
         return JsonResponse({'message': "Successfully logged out."}, status=status.HTTP_200_OK)
 
 
