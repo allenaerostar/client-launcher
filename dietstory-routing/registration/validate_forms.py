@@ -49,3 +49,5 @@ class LoginForm(forms.Form):
     username = forms.CharField(min_length=4, max_length=13, validators=[validate_slug])
     password = forms.CharField(min_length=8, max_length=128, validators=[validate_slug])
 
+class DisconnectFromServerForm(forms.Form):
+    character_name = forms.CharField(min_length=0, max_length=10, validators=[validate_slug])
