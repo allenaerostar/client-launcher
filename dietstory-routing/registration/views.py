@@ -1,3 +1,5 @@
+import logging
+
 from django.http import JsonResponse
 from django.contrib.auth import authenticate, login, logout
 from rest_framework import views, permissions, status
@@ -424,6 +426,7 @@ class LoginView(views.APIView):
             account = authenticate(username=username, password=password)
             if account is not None:
                 login(request, account)
+                request.session['username'] = username
                 return JsonResponse(AccountSerializer(account).data, status=status.HTTP_200_OK)
             elif exists is not None:
                 return JsonResponse(AccountSerializer(exists).data, status=status.HTTP_200_OK)
@@ -461,6 +464,7 @@ class LogoutView(views.APIView):
                                     description: Successfully logged out.
         """
         logout(request)
+        del request.session['username']
         return JsonResponse({'message': "Successfully logged out."}, status=status.HTTP_200_OK)
 
 

@@ -209,6 +209,7 @@ class LoginViewTest(TestCase):
 				'password': 'password1'
 			})
 		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+		self.assertNotInt('username', self.client.session)
 
 	def test_correct_credentials(self):
 		models.Accounts.objects.create(name='username', password='password', email='pokemon@domain.com',birthday='1990-01-01', tempban=timezone.localtime(), verified = 1)
@@ -219,6 +220,7 @@ class LoginViewTest(TestCase):
 			})
 		self.assertEqual(response.status_code, status.HTTP_200_OK)
 		self.assertEqual(loads(response.content)["is_active"], True)
+		self.assertEquals(self.client.session['username'], 'username')
 
 	def test_correct_credentials_for_unverified_user(self):
 		models.Accounts.objects.create(name='username', password='password', email='pokemon@domain.com',birthday='1990-01-01', tempban=timezone.localtime(), verified = 0)
