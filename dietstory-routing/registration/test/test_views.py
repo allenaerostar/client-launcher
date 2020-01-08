@@ -209,7 +209,7 @@ class LoginViewTest(TestCase):
 				'password': 'password1'
 			})
 		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-		self.assertNotInt('username', self.client.session)
+		self.assertNotIn('username', self.client.session)
 
 	def test_correct_credentials(self):
 		models.Accounts.objects.create(name='username', password='password', email='pokemon@domain.com',birthday='1990-01-01', tempban=timezone.localtime(), verified = 1)
