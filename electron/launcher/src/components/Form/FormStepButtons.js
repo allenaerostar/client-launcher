@@ -13,7 +13,7 @@ const FormStepButtons = ({ currentStep, setCurrentStep, totalSteps}) => {
 
   return (
     // <div className="offset-6 col-6">
-      <div className="row">
+      <div className="row mt-4">
         <div className="offset-6 col-3">
           {
             // Create a previous step button if not on the first step
