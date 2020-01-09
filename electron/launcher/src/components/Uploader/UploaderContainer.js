@@ -76,16 +76,17 @@ const UploaderContainer = props => {
     switch (currentStep) {
       case 1:
         return <>
-            <Uploader uploadFiles={uploadFiles} changeFileInfo={changeFileInfo} files={files}/>
+            <h1>Upload Files</h1>
             <input
               type="text"
               name="patch-version"
               placeholder="Patch Version"
               onChange={handleChange}
-              className="form-control"
+              className="form-control col-4"
               required
             >
             </input>
+            <Uploader uploadFiles={uploadFiles} changeFileInfo={changeFileInfo} files={files}/>
             <FormStepButtons currentStep={currentStep} setCurrentStep={setCurrentStep} totalSteps={steps.length}/>
           </>
       case 2:
@@ -94,7 +95,7 @@ const UploaderContainer = props => {
           <FormStepButtons currentStep={currentStep} setCurrentStep={setCurrentStep} totalSteps={steps.length} />
           </>
       default:
-        return <Uploader />
+        return <Uploader uploadFiles={uploadFiles} changeFileInfo={changeFileInfo} files={files}/>
     }
   };
   
