@@ -19,7 +19,7 @@ import upload_icon from 'assets/icons/upload_icon.svg';
 const Uploader = ({uploadFiles, changeFileInfo, files}) => {
   return (
     <>
-      <div className="row">
+      <div className="row mt-4">
         <div className="col-12">
           <Dropzone onDrop={acceptedFiles => uploadFiles(acceptedFiles)} >
             {({ getRootProps, getInputProps }) => (
