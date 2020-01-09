@@ -24,6 +24,10 @@ const UploaderContainer = props => {
   const handleSubmit = () => {
 
     // dispatch action
+    /* props.xxx({
+      ...inputs,
+      files
+    })*/
   }
   
   /**
@@ -35,7 +39,7 @@ const UploaderContainer = props => {
     // create newFiles object from uploaded files
     const newFiles = acceptedFiles.map(file => ({
       file: file,
-      path: ''
+      path: '/'
     }));
     // store uploaded files in state
     setFiles(prevState => ([
@@ -82,7 +86,7 @@ const UploaderContainer = props => {
               name="patch-version"
               placeholder="Patch Version"
               onChange={handleChange}
-              className="form-control col-4"
+              className="form-control col-4 mt-4"
               required
             >
             </input>
@@ -91,7 +95,7 @@ const UploaderContainer = props => {
           </>
       case 2:
         return <> 
-          <FormOverview inputs={inputs}/>
+          <FormOverview inputs={inputs} files={files} />
           <FormStepButtons currentStep={currentStep} setCurrentStep={setCurrentStep} totalSteps={steps.length} />
           </>
       default:
