@@ -200,6 +200,18 @@ class GameVersionView(views.APIView):
         """
         summary: Post Game Version
         description: Submit game version with live by time.
+        parameters:
+            - name: versionid
+              schema:
+                  type: string
+              description: >
+                  versionid is in the form of ^[vV]?([0-9]*)[.]([0-9]*)$.
+            - name: live_by
+              schema:
+                  type: string
+                  format: date-time
+              description: >
+                  live_by is in the form of YYYY-MM-DD hh:mm:ss.
         tags:
             - GameVersionView
         responses:
@@ -269,7 +281,8 @@ class GameVersionView(views.APIView):
                     {'message': 'Invalid live by time requested'},
                     status=status.HTTP_400_BAD_REQUEST)
 
-                version_update_scheduler.add_job(update_game_version, 'date', run_date=game_version.live_by, args=[game_version.major_ver, game_version.minor_ver])
+            elif live_by:
+                version_update_scheduler.add_job(update_game_version, 'date', run_date=live_by, args=[major_ver, minor_ver])
 
             add_game_version(major_ver, minor_ver, live_by)
 
