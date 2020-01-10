@@ -569,7 +569,7 @@ class ResetPasswordView(views.APIView):
                                             status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
                 except IOError:
-                    logger.warn("[RV-11] Failed to save account: {} with the new reset password.".format(account.name)))
+                    logger.warn("[RV-11] Failed to save account: {} with the new reset password.".format(account.name))
                     return JsonResponse({'message': "Failed to save account with the new reset password."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             
             logger.warn("[RV-12] No account is associated with the email provided: {}.".format(account.email))
@@ -656,7 +656,7 @@ class ChangePasswordView(views.APIView):
                 try:
                     account.password = params.cleaned_data.get('new_password1')
                     account.save()
-                    logger.info("Successfully updated the account: {} with the new password.".format(account.name)))
+                    logger.info("Successfully updated the account: {} with the new password.".format(account.name))
                     return JsonResponse({'message': "Successfully updated the account with the new password."}, status=status.HTTP_200_OK)
                 except IOError:
                     logger.info("Failed to save account: {} with the new password.".format(account.name))
