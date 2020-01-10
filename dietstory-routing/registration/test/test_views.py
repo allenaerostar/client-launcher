@@ -358,6 +358,28 @@ class ChangePasswordViewTest(TestCase):
 		self.assertEqual(response.status_code, status.HTTP_200_OK)
 		self.assertEqual(models.Accounts.objects.get(name=self.username).password, 'password123')
 
+	def test_change_password_on_success_updates_session(self):
+		models.Accounts.objects.create(name='username', password='password', email='pokemon@domain.com',birthday='1990-01-01', tempban=timezone.localtime(), verified = 1)
+		self.client.login(username='username',password='password')
+		account = models.Accounts.objects.get(name='username')
+		self.assertEqual(account.password, 'password')
+		self.assertEqual(self.client.session['_auth_user_hash'], account.get_session_auth_hash())
+		response = self.client.post(ChangePasswordViewTest.CHANGE_PASSWORD_VIEW_URL,
+			{
+				'old_password': "password",
+				'new_password1': "password123",
+				'new_password2': "password123"
+			})
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+		self.assertEqual(self.client.session['_auth_user_hash'], models.Accounts.objects.get(name='username').get_session_auth_hash())
+
+
+
+
+
+
+
+
 
 
 
