@@ -16,7 +16,7 @@ logger = logging.getLogger('default-logger')
 if settings.DEBUG:
     logger = logging.getLogger('dev-logger')
 
-# Next Error: RV-1
+# Next Error: RV-15
 
 # This view allows user to signup for an dietstory account.
 class SignupView(views.APIView):
@@ -346,7 +346,7 @@ class SendVerificationView(views.APIView):
             return JsonResponse({'message': "No Email has been sent."}, status=status.HTTP_400_BAD_REQUEST)
 
         else:
-            logger.warn("[RV-8] Inputs have invalid format.")
+            logger.warn("[RV-14] Inputs have invalid format.")
             return JsonResponse({'message': "Inputs have invalid format."}, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -552,7 +552,7 @@ class ResetPasswordView(views.APIView):
         if params.is_valid():
             email = params.cleaned_data.get('email')
             try:
-                account = Accounts.objects.get(email)
+                account = Accounts.objects.get(email=email)
             except Accounts.DoesNotExist:
                 account = None
             if account is not None:
