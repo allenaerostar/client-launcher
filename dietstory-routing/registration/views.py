@@ -1,5 +1,5 @@
 from django.http import JsonResponse
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from rest_framework import views, permissions, status
 from .models import Accounts
 from .validate_forms import *
@@ -624,6 +624,7 @@ class ChangePasswordView(views.APIView):
                 try:
                     account.password = params.cleaned_data.get('new_password1')
                     account.save()
+                    update_session_auth_hash(request, account)
                     return JsonResponse({'message': "Successfully updated the account with the new password."}, status=status.HTTP_200_OK)
                 except IOError:
                     return JsonResponse({'message': "Failed to save account with the new password."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
