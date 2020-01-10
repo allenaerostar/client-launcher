@@ -139,9 +139,9 @@ class SignupView(views.APIView):
                         send_verification_email(account.email, token)
                     except IOError:
                         logger.warn("[RV-1] Failed to send email to: {}".format(account.email))
-
+                    
+                    logger.info("Successfully created account with username: {}".format(username))
                     return JsonResponse(
-                        logger.info("Successfully created account with username: {}".format(username))
                         {'message': "Successful creation."}, 
                         status=status.HTTP_201_CREATED)
 
