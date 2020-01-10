@@ -146,13 +146,13 @@ class SignupView(views.APIView):
                         status=status.HTTP_201_CREATED)
 
                 except IOError:
-                    logger.error("Could not create account with username: {}".format(username), exc_info=True)
+                    logger.error("[RV-2] Could not create account with username: {}".format(username), exc_info=True)
                     return JsonResponse(
                         {'message': "Account creation was not successful."}, 
                         status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
             else:
-                logger.warn("Account: {} already exists.".format(username))
+                logger.warn("[RV-3] Account: {} already exists.".format(username))
                 return JsonResponse(
                     {'message': "That account already exists."}, 
                     status=status.HTTP_400_BAD_REQUEST)
@@ -239,22 +239,23 @@ class VerifyView(views.APIView):
         try:
             user = Accounts.objects.get(email=email)
         except (TypeError, ValueError, OverflowError, Accounts.DoesNotExist):
+            logger.warn("[RV-4] Email: {} does not exist.".format(email))
             user = None
 
         if user and account_activation_token.check_token(user, verify_token):
             try:
                 user.verified = 1
                 user.save()
-
+                logger.info("Account: {} has been verified.".format(user.name))
                 return JsonResponse(
                     {'message': "Your account has been verified."}, 
                     status=status.HTTP_200_OK)
             except IOError:
+                logger.error("[RV-5] Account: {} was not successfully verified.")
                 return JsonResponse(
                     {'message': "Account verification was not successful."}, 
                     status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         else:
-
             return JsonResponse(
                 {'message': "Verification code is invalid."}, 
                 status=status.HTTP_400_BAD_REQUEST)
@@ -331,17 +332,21 @@ class SendVerificationView(views.APIView):
                     token = account_activation_token.make_token(user)
                     logger.debug("Verification Token: {}".format(token))
                     send_verification_email(email, token)
+                    logger.info("Sent verification email to: {}".format(email))
                     return JsonResponse(
                         {'message': "Verification code has been resent to the valid email address."},
                         status=status.HTTP_200_OK)
                 except IOError:
+                    logger.error("[RV-6] Failed to send verification code to: {}".format(email), exc_info=True)
                     return JsonResponse(
                         {'message': "Failed to send confirmation email."}, 
                         status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+            logger.warn("[RV-7] Email: {} does not exist.".format(email))
             return JsonResponse({'message': "No Email has been sent."}, status=status.HTTP_400_BAD_REQUEST)
 
         else:
+            logger.warn("[RV-8] Inputs have invalid format.")
             return JsonResponse({'message': "Inputs have invalid format."}, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -447,7 +452,7 @@ class LoginView(views.APIView):
                 logger.info("User with account name: {} exists, but was not verfied. Redirecting to account verification page.")
                 return JsonResponse(AccountSerializer(exists).data, status=status.HTTP_200_OK)
             else:
-                logger.warn("Failed to login to account with username: {}".format(username))
+                logger.warn("[RV-8] Failed to login to account with username: {}".format(username))
                 return JsonResponse({'message': "Failed to login."}, status=status.HTTP_400_BAD_REQUEST)
         else:
             logger.info("Inputs have invalid format.")
@@ -559,15 +564,15 @@ class ResetPasswordView(views.APIView):
                         logger.info("Reset password has been sent to the email: {}".format())
                         return JsonResponse({'message': "Reset password has been sent to the email."}, status=status.HTTP_200_OK)
                     except IOError:
-                        logger.warn("Failed to send email to {} with reset password.".format(account.email))
+                        logger.warn("[RV-13] Failed to send email to {} with reset password.".format(account.email))
                         return JsonResponse({'message': "Failed to send email with reset password."},
                                             status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
                 except IOError:
-                    logger.warn("Failed to save account: {} with the new reset password.".format(account.name)))
+                    logger.warn("[RV-11] Failed to save account: {} with the new reset password.".format(account.name)))
                     return JsonResponse({'message': "Failed to save account with the new reset password."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             
-            logger.warn("No account is associated with the email provided: {}.".format(account.email))
+            logger.warn("[RV-12] No account is associated with the email provided: {}.".format(account.email))
             return JsonResponse({'message': "No account is associated with the email provided."}, status=status.HTTP_404_NOT_FOUND)
         logger.info("Invalid input parameters")
         return JsonResponse({'message': "Invalid input parameters"}, status=status.HTTP_400_BAD_REQUEST)
@@ -656,7 +661,11 @@ class ChangePasswordView(views.APIView):
                 except IOError:
                     logger.info("Failed to save account: {} with the new password.".format(account.name))
                     return JsonResponse({'message': "Failed to save account with the new password."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            
+            logger.warn("[RV-9] No account with the provided credentials.")
             return JsonResponse({'message': "No account with the provided credentials."}, status=status.HTTP_404_NOT_FOUND)
+        
+        logger.warn("[RV-10] Invalid input parameters")
         return JsonResponse({'message': "Invalid input parameters"}, status=status.HTTP_400_BAD_REQUEST)
 
 
