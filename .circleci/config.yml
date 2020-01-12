@@ -27,12 +27,9 @@ version: 2
 jobs:
   build-artifacts:
     machine: true # Build using our custom docker build image
+    
     steps:
       - checkout # check out the code in the project directory
-      - run:
-          name: Build Dietstory Django Tests
-          command: |
-            cd dietstory-routing && docker build -t benjixd/dietstory-django-tests -f Dockerfile.test .
       - run: # Run Dietstory Django Server Tests
           name: Run Dietstory Django Server Tests
           path: dietstory-routing
@@ -52,6 +49,11 @@ jobs:
           command: |
             echo "Deploying to dev" && ls -lrt
       - run:
+          command: |
+            echo "Downloading SECRET_CONFIG_FILE.json from S3." && \
+            aws s3 cp s3://dietstory-api-server-assets/dev/config/dietstory_secret_config.json \
+                      dietstory-routing
+      - run:
           name: Compress Artifacts
           command: |
             zip -r dietstory-django.zip .
@@ -70,10 +72,6 @@ jobs:
             --deployment-config-name CodeDeployDefault.OneAtATime \
             --deployment-group-name dietstory-django-group-dev \
             --s3-location bucket=dietstory-api-server-assets,bundleType=zip,key=dev/releases/dietstory-django.zip
-      - run: 
-        name: Build Dietstory Django for the Dev server
-        command: |
-          docker build -t benjixd/dietstory-django-server -f Dockerfile.prod .
 
   deploy-release: # Deploy Artifacts to live server
     machine: true
@@ -84,6 +82,11 @@ jobs:
       - run:
           command: |
             echo "Deploying to release" && ls -lrt
+      - run:
+          command: |
+            echo "Downloading SECRET_CONFIG_FILE.json from S3." && \
+            aws s3 cp s3://dietstory-api-server-assets/prod/config/dietstory_secret_config.json \
+                      dietstory-routing
       - run:
           name: Compress Artifacts
           command: |
@@ -103,10 +106,7 @@ jobs:
             --deployment-config-name CodeDeployDefault.OneAtATime \
             --deployment-group-name dietstory-django-group-prod \
             --s3-location bucket=dietstory-api-server-assets,bundleType=zip,key=prod/releases/dietstory-django.zip
-      - run: 
-        name: Build Dietstory Django for the Prod server
-        command: |
-          docker build -t benjixd/dietstory-django-server -f Dockerfile.prod .
+
 
 # Workflows
 workflows:
