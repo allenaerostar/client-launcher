@@ -51,9 +51,18 @@ jobs:
             echo "Deploying to dev" && ls -lrt
       - run:
           command: |
-            echo "Downloading SECRET_CONFIG_FILE.json from S3." && \
+            echo "Downloading dev SECRET_CONFIG_FILE.json from S3." && \
             aws s3 cp s3://dietstory-api-server-assets/dev/config/dietstory_secret_config.json \
                       dietstory-routing
+      -run:
+          name: Build Docker Image
+          command: |
+            echo "Building docker image" && \
+            docker build -t benjixd/dietstory-django -f Dockerfile.prod .
+      - run:
+         name: Clean up secrets
+         command: |
+            rm dietstory-routing/dietstory_secret_config.json
       - run:
           name: Compress Artifacts
           command: |
@@ -85,9 +94,18 @@ jobs:
             echo "Deploying to release" && ls -lrt
       - run:
           command: |
-            echo "Downloading SECRET_CONFIG_FILE.json from S3." && \
+            echo "Downloading prod SECRET_CONFIG_FILE.json from S3." && \
             aws s3 cp s3://dietstory-api-server-assets/prod/config/dietstory_secret_config.json \
                       dietstory-routing
+      - run:
+         name: Build Docker image
+         command: |
+           echo "echo "Building docker image" && \
+           docker build -t benjixd/dietstory-django -f Dockerfile.prod .
+      - run:
+         name: Clean up secrets
+         command: |
+            rm dietstory-routing/dietstory_secret_config.json
       - run:
           name: Compress Artifacts
           command: |
