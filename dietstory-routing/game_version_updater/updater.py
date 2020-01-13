@@ -6,7 +6,7 @@ def start():
 	version_update_scheduler.start()
 	try:
 		add_all_game_version_update_jobs(version_update_scheduler)
-	except e:
+	except Exception as e:
 		print("Fail to reinitialize all required jobs.")
     
 
