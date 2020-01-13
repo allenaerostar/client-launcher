@@ -467,8 +467,6 @@ class LogoutView(views.APIView):
                                     description: Successfully logged out.
         """
         logout(request)
-#        logging.warn("Request session username: {}".format(request.session['username']))
-#        del request.session['username']
         return JsonResponse({'message': "Successfully logged out."}, status=status.HTTP_200_OK)
 
 
