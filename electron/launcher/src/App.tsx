@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Router, Route, Switch } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 
@@ -26,20 +26,30 @@ const ipc = window.require('electron').ipcRenderer;
   
 const App = props => {
 
-  // LISTENS FOR UPDATE FROM MAIN PROCESS
-  ipc.on('launcher-update-ready', e => {
-    toast.info(<UpgradePrompt />, {
-      position: "bottom-right",
-      closeButton: false,
-      autoClose: false,
-      hideProgressBar: true,
-      closeOnClick: false,
-      pauseOnHover: true,
-      draggable: false,
-      className: 'upgrade-prompt',
-      bodyClassName: 'upgrade-prompt-body'
+  useEffect(() => {
+    // LISTENS FOR UPDATE FROM MAIN PROCESS
+    ipc.on('launcher-update-ready', e => {
+      toast.info(<UpgradePrompt />, {
+        position: "bottom-right",
+        closeButton: false,
+        autoClose: false,
+        hideProgressBar: true,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: false,
+        className: 'upgrade-prompt',
+        bodyClassName: 'upgrade-prompt-body'
+      });
     });
-  });
+  }, []);
+
+
+  // SIMULATES componentWillUnmount()
+  useEffect(() => {
+    return () => {
+      ipc.removeAllListeners('launcher-update-ready');
+    }
+  }, []);
 
   return ( 
     <div className={props.auth.isAuthenticated ? "app-container--loggedin" : ""}>
