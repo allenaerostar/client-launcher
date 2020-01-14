@@ -57,7 +57,7 @@ jobs:
             echo "Downloading dev SECRET_CONFIG_FILE.json from S3." && \
             aws s3 cp s3://dietstory-api-server-assets/dev/config/dietstory_secret_config.json \
                       dietstory-routing
-      -run:
+      - run:
           name: Build Docker Image
           command: |
             echo "Building docker image" && \
