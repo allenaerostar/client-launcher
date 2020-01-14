@@ -19,7 +19,7 @@ const FileInputs = ({ handleChange, fileData, index}) => {
         <input
           type="text"
           name="path"
-          value={fileData.path}
+          value={"<root>/" +fileData.remote_path}
           placeholder="Relative Path"
           onChange={handleChange(index)}
           className="form-control"
