@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
+import { uploaderActions } from '_actions';
 
 import FormStepNavigator from 'components/Form/FormStepNavigator';
 import FormStepButtons from 'components/Form/FormStepButtons';
@@ -21,13 +22,12 @@ const UploaderContainer = props => {
     }
   ];
 
-  const handleSubmit = () => {
-
-    // dispatch action
-    /* props.xxx({
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    props.uploadFiles({
       ...inputs,
       files
-    })*/
+    });
   }
   
   /**
@@ -37,9 +37,12 @@ const UploaderContainer = props => {
    */
   const uploadFiles = acceptedFiles => {
     // create newFiles object from uploaded files
-    const newFiles = acceptedFiles.map(file => ({
-      file: file,
-      path: '/'
+    const newFiles = acceptedFiles.map(currentFile => ({
+      remote_path: currentFile.name,
+      file: {
+        name: currentFile.name,
+        local_path: currentFile.path
+      }
     }));
     // store uploaded files in state
     setFiles(prevState => ([
@@ -67,10 +70,14 @@ const UploaderContainer = props => {
 
     // files are read only, and we cannot directly modify them
     if (name === "name") {
-      let updatedFile = new File([oldFile], value, { type: oldFile.type});
+      let updatedFile = {
+        local_path: oldFile.local_path,
+        name: value
+      }
       updatedFiles[index].file = updatedFile;
-    } else if (name === "path") {
-      updatedFiles[index].path = value;
+    } 
+    else if (name === "path") {
+      updatedFiles[index].remote_path = value.replace('<root>/', '');
     }
     
     setFiles(updatedFiles);
@@ -83,7 +90,7 @@ const UploaderContainer = props => {
             <h1>Upload Files</h1>
             <input
               type="text"
-              name="patch-version"
+              name="version"
               placeholder="Patch Version"
               onChange={handleChange}
               className="form-control col-4 mt-4"
@@ -105,11 +112,11 @@ const UploaderContainer = props => {
   
   return (
     <div className="container">
-      <FormStepNavigator
+      {/*<FormStepNavigator
         steps={steps}
         changeStep={setCurrentStep}
         currentStep={currentStep}
-      />
+      />*/}
       <section className="hero-card">
         <form onSubmit={handleSubmit}>
           {
@@ -125,4 +132,4 @@ const mapStateToProps = (state) => {
   return state;
 }
 
-export default connect(mapStateToProps)(UploaderContainer);
+export default connect(mapStateToProps, uploaderActions)(UploaderContainer);

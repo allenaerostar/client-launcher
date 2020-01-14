@@ -191,26 +191,29 @@ STRUCTURE OF OBJECT FROM REACT:
 */
 
 ipc.on('upload-patch-files', (event, input) => {
-  // CHECK IF THE DESIRED VERSION IS A UNIQUE FUTURE VERSION
-  isVersionUnique(input.version).then(isUnique => {
-    if(isUnique){
-      return createNewFutureVersion(input.version).catch(error => {
-        throw error;
-      });
-    }
-  })
-  // BUILDING LIST TO BE UPLOADED
-  .then(() => {
-    return generateFileInfoArray(input.files, input.root);
-  })
-  // UPLOADS FILES ONE AT A TIME
-  .then(fileInfoArray => {
-    return sequentialUploadAll(fileInfoArray, input.version, event);
-  })
-  .then(result => {
-    event.reply('upload-patch-files-result', result);
-  })
-  .catch(error => {
-    console.log(error);
-  }); 
+  console.log(input.files)
+
+
+  // // CHECK IF THE DESIRED VERSION IS A UNIQUE FUTURE VERSION
+  // isVersionUnique(input.version).then(isUnique => {
+  //   if(isUnique){
+  //     return createNewFutureVersion(input.version).catch(error => {
+  //       throw error;
+  //     });
+  //   }
+  // })
+  // // BUILDING LIST TO BE UPLOADED
+  // .then(() => {
+  //   return generateFileInfoArray(input.files, input.root);
+  // })
+  // // UPLOADS FILES ONE AT A TIME
+  // .then(fileInfoArray => {
+  //   return sequentialUploadAll(fileInfoArray, input.version, event);
+  // })
+  // .then(result => {
+  //   event.reply('upload-patch-files-result', result);
+  // })
+  // .catch(error => {
+  //   console.log(error);
+  // }); 
 });

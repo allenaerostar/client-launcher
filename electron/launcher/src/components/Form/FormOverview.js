@@ -5,12 +5,13 @@ const FormOverview = ({ inputs, files }) => {
   const displayFileMetaData = () => {
     if(files) {
       return <>
-        <h2>Submitted Files</h2>
+        <br></br>
+        <h3>Submitted Files</h3>
         {
           files.map((fileData) => (
             <div className="border-top">
-              <h4><b>File:</b> {fileData.file.name}</h4>
-              <h4><b>Path:</b> {fileData.path}</h4>
+              <h6><b>Filename:</b> {fileData.file.name}</h6>
+              <h6><b>S3 Path:</b> {"<root>/" +fileData.remote_path}</h6>
             </div> 
           ))
         }
@@ -26,8 +27,7 @@ const FormOverview = ({ inputs, files }) => {
           inputs ?
           Object.keys(inputs).map((input,index) => (
               <div key="index">
-                <h2>{input}</h2>
-                <h4>{inputs[input]}</h4>
+                <h3>{input}: {inputs[input]}</h3>
               </div>
           ))
           : null
