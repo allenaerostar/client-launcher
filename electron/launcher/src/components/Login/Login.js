@@ -54,7 +54,7 @@ const Login = props => {
           <Link to="/registration">
             > Create an account
           </Link>
-          <Link to="/">
+          <Link to="/reset-password">
             > Forgot your password?
           </Link>
           <Link to="/verify-email">
