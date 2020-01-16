@@ -125,6 +125,3 @@ class Accounts(AbstractBaseUser, PermissionsMixin):
     class Meta:
         managed = False
         db_table = 'accounts'
-
-
-

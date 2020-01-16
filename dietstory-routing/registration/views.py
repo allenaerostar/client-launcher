@@ -7,6 +7,7 @@ from .email import send_verification_email, send_reset_password_email
 from .verification import account_activation_token
 from .serializers import AccountSerializer
 from .password_utils import RandomPasswordGenerator
+from login_bonus.updater import update_login_bonus
 
 # This view allows user to signup for an dietstory account.
 class SignupView(views.APIView):
@@ -424,6 +425,7 @@ class LoginView(views.APIView):
             account = authenticate(username=username, password=password)
             if account is not None:
                 login(request, account)
+                update_login_bonus(account.pk)
                 return JsonResponse(AccountSerializer(account).data, status=status.HTTP_200_OK)
             elif exists is not None:
                 return JsonResponse(AccountSerializer(exists).data, status=status.HTTP_200_OK)
