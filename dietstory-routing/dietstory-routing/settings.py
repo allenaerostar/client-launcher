@@ -88,11 +88,11 @@ LOGGING = {
     'loggers': {
         'default-logger': {
             'handlers': ['console'],
-            'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
+            'level': secret_config['LOG_LEVEL_DEFAULT'],
         },
         'dev-logger': {
             'handlers': ['console'],
-            'level': os.getenv('DJANGO_LOG_LEVEL', 'DEBUG')
+            'level': secret_config['LOG_LEVEL_DEV']
         }
     },
 }

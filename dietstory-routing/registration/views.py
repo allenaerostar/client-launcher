@@ -620,7 +620,7 @@ class ChangePasswordView(views.APIView):
             400:
                 content:
                     application/json:
-                        schema::
+                        schema:
                             type: object
                             properties:
                                 message:
