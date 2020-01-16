@@ -8,6 +8,7 @@ import Header from 'components/Header/Header';
 import UserProfile from 'components/UserProfile/UserProfile';
 import TitleBar from 'components/TitleBar';
 import Registration from 'components/Registration/Registration';
+import ResetPassword from 'components/PasswordReset/PasswordReset';
 import VerifyEmail from 'components/Registration/VerifyEmail';
 import Uploader from 'components/Uploader/Uploader';
 import Patcher from 'components/Patcher/Patcher';
@@ -57,6 +58,7 @@ const App = props => {
             <PrivateRoute path="/profile" component={UserProfile} isAuthenticated={props.auth.isAuthenticated}/>
             <Route path="/registration" component={Registration} />
             <Route path="/verify-email" component={VerifyEmail} />
+            <Route path="/reset-password" component={ResetPassword} />
             <PrivateRoute path="/admin" component={Uploader} isAuthenticated={props.auth.user.isAdmin}/>
           </Switch>
       </Router>

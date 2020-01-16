@@ -56,6 +56,21 @@ const logout = (user) => {
   }
 }
 
+const resetPassword = (email) => {
+  return (dispatch) => {
+    console.log('dispatching');
+    ipc.send('http-password-reset', email);
+
+    ipc.on('http-password-reset-success', (e, res) => {
+      dispatch({ type: actionTypes.PASSWORD_RESET_SUCCESS, payload: { message: res }  });
+    });
+
+    ipc.on('http-password-reset-fail', (e, err) => {
+      dispatch({ type: actionTypes.PASSWORD_RESET_SUCCESS, payload: { error: err } });
+    });
+  }
+}
+
 const register = (user) => {
   return (dispatch) => {
     dispatch({type: actionTypes.REGISTER_START});
@@ -160,5 +175,6 @@ export const userActions = {
   register,
   verifyEmail,
   resendEmail,
-  resetError
+  resetError,
+  resetPassword,
 };

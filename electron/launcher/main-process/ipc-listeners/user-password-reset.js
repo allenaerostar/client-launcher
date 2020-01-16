@@ -19,7 +19,7 @@ User's Email
 ipc.on('http-password-reset', (e, email) => {
   let options = {
     method: 'POST',
-    uri: djangoUrl + '/accounts/password/reset',
+    uri: djangoUrl + '/accounts/password/reset/',
     headers: { 'content-type': 'application/x-www-form-urlencoded' },
     form: email,
   }
