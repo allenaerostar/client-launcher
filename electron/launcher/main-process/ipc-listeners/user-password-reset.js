@@ -16,7 +16,7 @@ User's Email
 
 }
 ***/
-ipc.on('http-password-reset', (e, email) => {
+ipc.on('http-reset-password', (e, email) => {
   let options = {
     method: 'POST',
     uri: djangoUrl + '/accounts/password/reset/',
@@ -25,9 +25,9 @@ ipc.on('http-password-reset', (e, email) => {
   }
 
   request(options).then(response => {
-    e.reply('http-password-reset-success', response);
+    e.reply('http-reset-password-success', response);
   }).catch(error => {
-    e.reply('http-password-reset-fail', error);
+    e.reply('http-reset-password-fail', error);
   });
 });
 
@@ -44,7 +44,7 @@ THEN SENDS AN HTTP POST REQUEST TO DJANGO WEBSERVER TO CHANGE PASSWORD.
 @param {string} cred.new_password2 - Verification of the new account password.
 ***/
 
-ipc.on('http-password-change', (e, cred) => {
+ipc.on('http-change-password', (e, cred) => {
   let options = {
     method: 'POST',
     uri: djangoUrl + '/accounts/password/change',
@@ -53,8 +53,8 @@ ipc.on('http-password-change', (e, cred) => {
   }
 
   request(options).then(response => {
-    e.reply('http-password-change-success', response);
+    e.reply('http-change-password-success', response);
   }).catch(error => {
-    e.reply('http-password-change-fail', error);
+    e.reply('http-change-password-fail', error);
   });
 });

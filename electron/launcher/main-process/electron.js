@@ -67,7 +67,7 @@ require('ipc-listeners/user-logout');
 require('ipc-listeners/user-registration');
 require('ipc-listeners/file-manager');
 require('ipc-listeners/game-client-start');
-require('ipc-listeners/user-password-reset');
+require('ipc-listeners/user-reset-password');
 
 // ONCE UPDATE IS DOWNLOADED, NOTIFY USER
 autoUpdater.on('update-downloaded', () => {

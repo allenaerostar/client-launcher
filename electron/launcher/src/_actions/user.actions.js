@@ -58,15 +58,29 @@ const logout = (user) => {
 
 const resetPassword = (email) => {
   return (dispatch) => {
-    console.log('dispatching');
-    ipc.send('http-password-reset', email);
+    
+    ipc.send('http-reset-password', email);
 
-    ipc.on('http-password-reset-success', (e, res) => {
-      dispatch({ type: actionTypes.PASSWORD_RESET_SUCCESS, payload: { message: res }  });
+    ipc.on('http-reset-password-success', (e, res) => {
+      dispatch({ type: actionTypes.RESET_PASSWORD_SUCCESS, payload: { message: res }  });
     });
 
-    ipc.on('http-password-reset-fail', (e, err) => {
-      dispatch({ type: actionTypes.PASSWORD_RESET_SUCCESS, payload: { error: err } });
+    ipc.on('http-reset-password-fail', (e, err) => {
+      dispatch({ type: actionTypes.RESET_PASSWORD_FAILED, payload: { error: err } });
+    });
+  }
+}
+
+const changePassword = (user) => {
+  return (dispatch) => {
+    ipc.send('http-change-password', user);
+
+    ipc.on('http-change-password-success', (e, res) => {
+      dispatch({ type: actionTypes.CHANGE_PASSWORD_SUCCESS, payload: { message: res } });
+    });
+
+    ipc.on('http-change-password-fail', (e, err) => {
+      dispatch({ type: actionTypes.CHANGE_PASSWORD_FAILED, payload: { error: err } });
     });
   }
 }
@@ -177,4 +191,5 @@ export const userActions = {
   resendEmail,
   resetError,
   resetPassword,
+  changePassword
 };
