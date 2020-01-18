@@ -18,6 +18,8 @@ CMD cd /mnt \
 	&& echo '{ \
 		"SECRET_KEY": "hello_world", \
 		"DEBUG": true, \
+        "LOG_LEVEL_DEV": "DEBUG", \
+        "LOG_LEVEL_DEFAULT": "INFO", \
 		"ALLOWED_HOSTS": [], \
 		"DATABASES": {"default": {}}, \
 		"EMAIL_BACKEND": "", \
