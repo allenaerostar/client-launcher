@@ -4,7 +4,6 @@ from django.db import transaction
 
 
 def add_all_game_version_update_jobs(job_scheduler):
-
     try:
         print("Starting initialization of jobs.")
 
@@ -16,7 +15,8 @@ def add_all_game_version_update_jobs(job_scheduler):
 
         print("Ending initialization of jobs.")
     except Exception as e:
-        print("Fail to reinitialize all required jobs.")
+        print(e)
+        raise e
 
 
 def update_game_version(major_ver, minor_ver):
@@ -36,6 +36,7 @@ def update_game_version(major_ver, minor_ver):
             print("Updating game version finished.")
     except Exception as e:
         print(e)
+        raise e
 
 
 def add_game_version(major_ver, minor_ver, live_by):
@@ -56,3 +57,4 @@ def add_game_version(major_ver, minor_ver, live_by):
 
     except Exception as e:
         print(e)
+        raise e
