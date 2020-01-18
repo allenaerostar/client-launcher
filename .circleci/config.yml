@@ -22,6 +22,7 @@ protected-only: &protected-only
         - /fix[/].*/
         - /chore[/].*/
         - /deploy[/].*/
+        - /revert-.*/
 
 version: 2
 jobs:
