@@ -446,6 +446,7 @@ class LoginView(views.APIView):
             account = authenticate(username=username, password=password)
             if account is not None:
                 login(request, account)
+                request.session['username'] = username
                 logger.info("Success fully logged in to account: {}".format(username))
                 return JsonResponse(AccountSerializer(account).data, status=status.HTTP_200_OK)
             elif exists is not None:
