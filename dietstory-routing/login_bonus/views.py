@@ -48,7 +48,7 @@ class RewardsView(views.APIView):
         try:
             login_bonus_rewards = LoginBonusRewards.objects.all()
             return JsonResponse([LoginBonusRewardSerializer(login_bonus_reward).data for login_bonus_reward in login_bonus_rewards],
-                                status=status.HTTP_200_OK)
+                                status=status.HTTP_200_OK, safe=False)
         except IOError as e:
             return JsonResponse({'message': "Failed to fetch login rewards"},
                                 status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -66,7 +66,7 @@ class RewardView(views.APIView):
               schema:
                   type: number
               description: >
-                  Reward Number in reward numbers list.
+                  Reward Number.
               required: true
         tags:
             - RewardView
@@ -112,9 +112,11 @@ class RewardView(views.APIView):
         if not params.is_valid():
             return JsonResponse({'message': "Reward number must be between 1 and {}".format(MAX_NUM_REWARDS)},
                                 status=status.HTTP_400_BAD_REQUEST)
+        reward_num = params.cleaned_data.get('reward_number')
         try:
-            login_bonus_reward = LoginBonusRewards.objects.get(reward_num=params.cleaned_data.get('reward_number'))
+            login_bonus_reward = LoginBonusRewards.objects.get(reward_num=reward_num)
             return JsonResponse(LoginBonusRewardSerializer(login_bonus_reward).data, status=status.HTTP_200_OK)
         except IOError as e:
-            return JsonResponse({'message': "Failed to fetch login rewards {}".format(1)},
+            return JsonResponse({'message': "Failed to fetch login rewards {}".format(reward_num)},
                                 status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
