@@ -2,6 +2,7 @@ import React from 'react';
 
 import { connect } from 'react-redux';
 
+import SelfSupport from 'components/SelfSupport/SelfSupport';
 import avatarPlaceholder from 'assets/avatar-placeholder.png';
 
 const UserProfile = props => {
@@ -14,6 +15,9 @@ const UserProfile = props => {
             {props.auth.user.username ? props.auth.user.username : "Placeholder"}
           </h1>
         </div>
+      </div>
+      <div>
+        <SelfSupport/>
       </div>
     </section>
   );

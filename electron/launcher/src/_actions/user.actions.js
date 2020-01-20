@@ -7,6 +7,7 @@ const ipc = window.require('electron').ipcRenderer;
 // API calls should go here?
 const login = (cred) => {
   return (dispatch) => {
+    console.log("Login was clicked.")
     dispatch({type: actionTypes.LOGIN_START});
 
     ipc.send('http-login-credentials', cred);
@@ -153,6 +154,22 @@ const autoLogin = () => {
   }
 }
 
+const disconnect = (postData) => {
+  return (dispatch) => {
+    dispatch({type: actionTypes.DISCONNECT_START});
+    ipc.send('self-help-disconnect', postData);
+
+    ipc.on('self-help-disconnect-success', (e, res) => {
+      dispatch({type: actionTypes.DISCONNECT_SUCCESS});
+      history.push('/');
+    });
+
+    ipc.on('auto-login-fail', (e, err) => {
+      dispatch({type: actionTypes.DISCONNECT_FAILED});
+    });
+  }
+}
+
 export const userActions = {
   autoLogin,
   login,
@@ -160,5 +177,6 @@ export const userActions = {
   register,
   verifyEmail,
   resendEmail,
-  resetError
+  resetError,
+  disconnect
 };
