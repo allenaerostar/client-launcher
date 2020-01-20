@@ -21,7 +21,7 @@ def update_login_bonus(account_id):
             except IOError as e:
                 print("Resetting monthly bonus failed")
                 raise e
-        if login_bonus_for_account.latest_reward_time < current_date.replace(hour=0, minute=0, second=0) and login_bonus_for_account.reward_num < MAX_NUM_REWARDS:
+        if login_bonus_for_account.latest_reward_time < current_date.replace(hour=0, minute=0, second=0) and login_bonus_for_account.reward_num <= MAX_NUM_REWARDS:
             try:
                 with transaction.atomic():
                     login_bonus_reward_item = get_login_reward_item(login_bonus_for_account.reward_num)
@@ -41,7 +41,7 @@ def update_login_bonus(account_id):
         try:
             with transaction.atomic():
                 login_bonus_reward_item = get_login_reward_item(1)
-                
+
                 if login_bonus_reward_item:
                     # current_date.strftime('%d-%m-%Y')
                     # api call requires receiver account ID, sender name, mesos, timestamp(dd-mm-yyyy), item id, item quantity, item stats(optional)
