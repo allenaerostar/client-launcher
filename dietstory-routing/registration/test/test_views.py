@@ -272,8 +272,7 @@ class LoginViewTest(TestCase):
 		self.assertEqual(login_bonus.reward_num, 1)
 
 	def test_successful_login_update_login_bonus_entry(self):
-		account = models.Accounts.objects.create(name='username', password='password', email='pokemon@domain.com',
-												 birthday='1990-01-01', tempban=timezone.localtime(), verified=1)
+		account = models.Accounts.objects.create(name='username', password='password', email='pokemon@domain.com',birthday='1990-01-01', tempban=timezone.localtime(), verified=1)
 		current_date = timezone.localtime()
 		login_bonus = LoginBonus.objects.create(account=account,latest_reward_time=current_date.replace(day=current_date.day-1),reward_month=current_date.month)
 		self.assertEqual(login_bonus.reward_num, 1)
@@ -288,8 +287,7 @@ class LoginViewTest(TestCase):
 		self.assertEqual(login_bonus_after_login.reward_num, 2)
 
 	def test_unsuccessful_login_does_not_create_login_bonus_entry(self):
-		account = models.Accounts.objects.create(name='username', password='password', email='pokemon@domain.com',
-												 birthday='1990-01-01', tempban=timezone.localtime(), verified=1)
+		account = models.Accounts.objects.create(name='username', password='password', email='pokemon@domain.com',birthday='1990-01-01', tempban=timezone.localtime(), verified=1)
 
 		response = self.client.post(LoginViewTest.LOGIN_VIEW_URL,
 									{
@@ -304,8 +302,7 @@ class LoginViewTest(TestCase):
 		self.assertEqual(login_bonus, None)
 
 	def test_unsuccessful_login_does_not_update_login_bonus_entry(self):
-		account = models.Accounts.objects.create(name='username', password='password', email='pokemon@domain.com',
-													 birthday='1990-01-01', tempban=timezone.localtime(), verified=1)
+		account = models.Accounts.objects.create(name='username', password='password', email='pokemon@domain.com',birthday='1990-01-01', tempban=timezone.localtime(), verified=1)
 		current_date = timezone.localtime()
 		LoginBonus.objects.create(account=account, reward_num=1, latest_reward_time=current_date, reward_month=current_date.month)
 		login_bonus = LoginBonus.objects.get(account=account.pk)
