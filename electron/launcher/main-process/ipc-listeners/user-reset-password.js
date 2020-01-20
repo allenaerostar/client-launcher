@@ -1,4 +1,4 @@
-const request = require('request-promise');
+const request = require('helpers/request-wrapper').request;
 const ipc = require('electron').ipcMain;
 
 const config = require('config.json').DJANGO_SERVER;
@@ -44,14 +44,14 @@ THEN SENDS AN HTTP POST REQUEST TO DJANGO WEBSERVER TO CHANGE PASSWORD.
 @param {string} cred.new_password2 - Verification of the new account password.
 ***/
 
-ipc.on('http-change-password', (e, cred) => {
+ipc.on('http-change-password', (e, postData) => {
   let options = {
     method: 'POST',
-    uri: djangoUrl + '/accounts/password/change',
-    headers: { 'content-type': 'application/x-www-form-urlencoded' },
-    form: cred,
+    uri: djangoUrl + '/accounts/password/change/',
+    form: postData,
+    json: true
   }
-
+// when i check with game-file/hashes, i am getting william, with change password i am not
   request(options).then(response => {
     e.reply('http-change-password-success', response);
   }).catch(error => {

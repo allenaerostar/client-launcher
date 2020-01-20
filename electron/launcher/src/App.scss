@@ -91,6 +91,28 @@ h1{
   } 
 }
 
+
+.sub-header{
+  margin-top: 1rem;
+  font-size: 1.125rem;
+  text-decoration: none;
+  * {
+    margin-right: 0.5rem;
+  }
+
+  &__link {
+    color: #8c8c8c;
+    &--active{
+      color: #4A4A4A;
+      border-bottom: 2px solid #F7943A;
+    }
+
+    &:hover{
+      color: #4A4A4A;
+    }
+  }
+}
+
 .play-button{
   width: 144px;
   font-weight: bold;
@@ -187,3 +209,8 @@ h1{
 .btn-resend{
   margin-bottom: 2rem;
 }
+
+.error-text{
+  color: #bb0000;
+}
+

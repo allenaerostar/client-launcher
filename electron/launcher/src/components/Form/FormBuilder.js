@@ -74,7 +74,7 @@ const FormBuilder = ({ formFields, submitFunction, errorMessageGenerator, submit
             </input>
             {
               !!formErrors[input.name] && formErrors[input.name].length > 0 ?
-                <p>{formErrors[input.name]}</p>
+                <p className="error-text">{formErrors[input.name]}</p>
                 : null
             }
           </div>
