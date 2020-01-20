@@ -64,7 +64,7 @@ class AccountsManager(BaseUserManager):
 
 class Accounts(AbstractBaseUser, PermissionsMixin):
     name = models.CharField(unique=True, max_length=13)
-    password = models.CharField(max_length=12)
+    password = models.CharField(max_length=128)
     salt = models.CharField(max_length=128, blank=True, null=True)
     pin = models.CharField(max_length=10, blank=True, null=True)
     pic = models.CharField(max_length=26, blank=True, null=True)
