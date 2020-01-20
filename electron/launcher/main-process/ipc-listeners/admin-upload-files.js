@@ -2,7 +2,11 @@ const ipc = require('electron').ipcMain;
 const fs = require('fs-extra');
 const crypto = require('crypto');
 const path = require('path');
+const async = require('async');
 const request = require('helpers/request-wrapper').request;
+
+const config = require('config.json').DJANGO_SERVER;
+const djangoUrl = config.HOST +":" +config.PORT;
 
 
 /*
@@ -16,35 +20,41 @@ const generateFileInfoArray = (files) => {
   return new Promise((resolve, reject) => {
     let fileInfoArray = [];
 
-    for(fileObject of files){
-      let rs = fileObject.file.stream();
+    async.eachSeries(files, (fileObject, eachSeriesCb) => {
+      let rs = fs.createReadStream(fileObject.file.local_path);
       let hash = crypto.createHash('md5');
 
       rs.on('data', chunk => {
         hash.update(chunk);
       });
       rs.on('error', () => {
-        let error= new Error(`Error: MD5 hash calculation of ${filepath}`);
-        reject(error);
+        let error= new Error(`Error: MD5 hash calculation of ${fileObject.file.local_path}`);
+        eachSeriesCb(error);
       });
       rs.on('end', () => {
-        let fileInfo = {
+        let stat = fs.statSync(fileObject.file.local_path);
+        let size = stat['size'];
+
+        let info = {
           name: fileObject.file.name,
-          data: fileObject,
-          hash: hash.digest('hex')
+          localPath: fileObject.file.local_path,
+          remotePath: fileObject.remote_path,
+          hash: hash.digest('hex'),
+          size: size
         }
 
-        if(fileObject.path === '/'){
-          fileObject.remotePath = fileObject.file.name
-        }
-        else{
-          fileObject.remotePath = path.join(fileObject.path, fileObject.file.name);
-        }
-
-        fileInfoArray.push(fileInfo);
+        fileInfoArray.push(info);
+        eachSeriesCb();
       });
-    }
-    resolve(fileInfoArray);
+
+    }, error => {
+      if(error){
+        reject(error);
+      }
+      else{
+        resolve(fileInfoArray);
+      }
+    });
   });
 };
 
@@ -52,54 +62,61 @@ const generateFileInfoArray = (files) => {
 const uploadFile = (fileInfo, version, event, successList, failedList) => {
   return new Promise((resolve, reject) => {
 
-    const uploadedSize = 0;
-    const rs = fileInfo.data.stream();
+    let uploadedSize = 0;
+    let lastUpdateTime = 0
 
     let options = {
       method: 'POST',
-      uri: djangoUrl + '?????????????',
+      uri: djangoUrl + '/game-files/upload',
       headers: { 'Content-Type': 'multipart/form-data' },
       formData: {
         file_name: fileInfo.remotePath,
-        file_hash: fileIndo.hash,
-        file: rs,
+        file_hash: fileInfo.hash,
+        file: fs.createReadStream(fileInfo.localPath).on('data', chunk => {
+          uploadedSize += chunk.length;
+
+          if(Date.now() - lastUpdateTime > 500){
+            event.reply('upload-patch-files-status', {
+              filename: fileInfo.name,
+              local_path: fileInfo.localPath,
+              size: fileInfo.size,
+              uploadedSize: uploadedSize,
+              message: 'uploading'
+            });
+            lastUpdateTime = Date.now();
+          }
+
+          console.log(uploadedSize);
+        }),
         versionid: version
       }
     }
 
-    // STATUS UPDATES TO REACT FRONT END
-    rs.on('data', chunk => {
+    // MAKING REQUEST TO DJANGO SERVER WITH THE FILE
+    let req = request(options).then(() => {
       event.reply('upload-patch-files-status', {
         filename: fileInfo.name,
-        size: fileInfo.data.size,
-        uploadedSize: uploadedSize + chunk.size,
-        message: 'uploading'
-      });
-    });
-    rs.on('error', error => {
-      event.reply('upload-patch-files-status', {
-        filename: fileInfo.name,
-        size: fileInfo.data.size,
-        uploadedSize: uploadedSize,
-        message: 'failed'
-      });
-    });
-    rs.on('end', () => {
-      event.reply('upload-patch-files-status', {
-        filename: fileInfo.name,
-        size: fileInfo.data.size,
+        local_path: fileInfo.localPath,
+        size: fileInfo.size,
         uploadedSize: uploadedSize,
         message: 'done'
       });
-    });
-
-    // MAKING REQUEST TO DJANGO SERVER WITH THE FILE
-    request(options).then(() => {
-      successList.push(fileInfo.name);
-      resolve(null);
+      successList.push({name: fileInfo.name, path: fileInfo.local_path});
+      setTimeout(() => {
+        resolve(null);
+      }, 500);
     }).catch(error => {
-      failedList.push({error: error, filename: fileInfo.name});
-      resolve(null);
+      event.reply('upload-patch-files-status', {
+        filename: fileInfo.name,
+        local_path: fileInfo.localPath,
+        size: fileInfo.size,
+        uploadedSize: uploadedSize,
+        message: 'failed'
+      });
+      failedList.push({error: error, name: fileInfo.name, path: fileInfo.local_path});
+      setTimeout(() => {
+        resolve(null);
+      }, 2000);
     });
   });
 }
@@ -125,47 +142,30 @@ const sequentialUploadAll = (fileInfoArray, version, event) => {
   });
 }
 
-// QUERY SERVER FOR LIST OF ACTIVE FUTURE PATCH VERSIONS AND CHECK IF VERSION IS UNIQUE
-const isVersionUnique = version => {
+// IF VERSION IS NEW -> POST REQUEST TO BACKEND SERVER, CREATE A NEW FUTURE VERSION
+const createNewFutureVersion = (input) => {
   return new Promise((resolve, reject) => {
-    let options = {
-      method: 'GET',
-      uri: djangoUrl + '?????????????',
-    }
-
-    request(options).then(response => {
-      for(futureVersion in response.futureVersions){
-        if(futureVersion == version){
-          resolve(false);
+    if(input.newVersion){
+      let options = {
+        method: 'POST',
+        uri: djangoUrl + '/game-files/version',
+        headers: {'content-type': 'application/x-www-form-urlencoded'},
+        form: {
+          versionid: input.version,
+          live_by: input.liveByDate.replace('T', ' ') +':00'
         }
       }
-      resolve(true);
-    }).catch(error => {
-      let err = new Error('Error retrieving list of future versions.');
-      reject(err);
-    })
-  })
-}
-
-// POST REQUEST TO BACKEND SERVER, CREATE A NEW FUTURE VERSION
-const createNewFutureVersion = (version, date) => {
-  return new Promise((resolve, reject) => {
-    let options = {
-      method: 'POST',
-      uri: djangoUrl + '/game-files/version',
-      headers: {'content-type': 'application/x-www-form-urlencoded'},
-      form: {
-        versionid: version,
-        livebydate: date
-      }
+  
+      request(options).then(() => {
+        resolve(null);
+      }).catch(error => {
+        let err = new Error('Error creating a new future patch version.');
+        reject(err);
+      });
     }
-
-    request(options).then(() => {
+    else{
       resolve(null);
-    }).catch(error => {
-      let err = new Error('Error creating a new future patch version.');
-      reject(err);
-    })
+    }
   });
 }
 
@@ -176,44 +176,52 @@ const createNewFutureVersion = (version, date) => {
 
 
 /*
-STRUCTURE OF OBJECT FROM REACT:
+========================
+IPC LISTENERS
+========================
 
-  input = {
-    version: 'v1.xxx',
-    files: [
-      {
-        file: FILE-OBJECT,
-        path: '/' 
-      }
-    ]
-  }
 
+
+input: 
+{
+[1]   files: [
+[1]     { file: {local_path, name}, remote_path: 'dietstory IP.txt' },
+[1]     { file: [Object], remote_path: 'test.txt' }
+[1]   ],
+[1]   newVersion: false,
+[1]   version: '1.6'
+[1] }
 */
 
 ipc.on('upload-patch-files', (event, input) => {
-  console.log(input.files)
+  // CHECK IF THE DESIRED VERSION IS A UNIQUE FUTURE VERSION
+  createNewFutureVersion(input).then(() => {
+    // BUILDING LIST TO BE UPLOADED
+    return generateFileInfoArray(input.files);
+  })
+  // UPLOADS FILES ONE AT A TIME
+  .then(fileInfoArray => {
+    return sequentialUploadAll(fileInfoArray, input.version, event);
+  })
+  .then(result => {
+    event.reply('upload-patch-files-result', result);
+  })
+  .catch(error => {
+    console.log(error);
+  }); 
+});
 
 
-  // // CHECK IF THE DESIRED VERSION IS A UNIQUE FUTURE VERSION
-  // isVersionUnique(input.version).then(isUnique => {
-  //   if(isUnique){
-  //     return createNewFutureVersion(input.version).catch(error => {
-  //       throw error;
-  //     });
-  //   }
-  // })
-  // // BUILDING LIST TO BE UPLOADED
-  // .then(() => {
-  //   return generateFileInfoArray(input.files, input.root);
-  // })
-  // // UPLOADS FILES ONE AT A TIME
-  // .then(fileInfoArray => {
-  //   return sequentialUploadAll(fileInfoArray, input.version, event);
-  // })
-  // .then(result => {
-  //   event.reply('upload-patch-files-result', result);
-  // })
-  // .catch(error => {
-  //   console.log(error);
-  // }); 
+ipc.on('get-future-versions', e  => {
+  let options = {
+    method: 'GET',
+    uri: djangoUrl + '/game-files/future-versions',
+    json: true
+  }
+
+  request(options).then(response => {
+    e.reply('get-future-versions-response', response);
+  }).catch(error => {
+    e.reply('get-future-versions-failed', error);
+  })
 });

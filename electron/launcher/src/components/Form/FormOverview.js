@@ -23,15 +23,7 @@ const FormOverview = ({ inputs, files }) => {
     <div className="row">
       <div className="col-12">
         <h1>Overview</h1>
-        {
-          inputs ?
-          Object.keys(inputs).map((input,index) => (
-              <div key="index">
-                <h3>{input}: {inputs[input]}</h3>
-              </div>
-          ))
-          : null
-        }
+        <h3>version: {inputs.version}</h3>
         {
           displayFileMetaData()
         }
