@@ -17,7 +17,7 @@ class LoginBonus(models.Model):
 
 
 class LoginBonusRewards(models.Model):
-    reward_num = models.AutoField(primary_key=True, validators=[MinValueValidator(0)])
+    reward_num = models.IntegerField(primary_key=True, validators=[MinValueValidator(0)])
     item_id = models.IntegerField(validators=[MinValueValidator(0)])
     item_name = models.TextField(null=True)
     quantity = models.IntegerField(default=1, validators=[MinValueValidator(1)])

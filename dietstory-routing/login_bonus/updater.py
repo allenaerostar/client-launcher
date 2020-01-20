@@ -25,13 +25,15 @@ def update_login_bonus(account_id):
             try:
                 with transaction.atomic():
                     login_bonus_reward_item = get_login_reward_item(login_bonus_for_account.reward_num)
-                    # current_date.strftime('%d-%m-%Y')
-                    # api call requires receiver account ID, sender name, mesos, timestamp(dd-mm-yyyy), item id, item quantity, item stats(optional)
-                    # do api call to game server to get duey to send reward of reward_num + 1
-                    # upon successful update update reward_num and latest_reward_time
-                    login_bonus_for_account.reward_num += 1
-                    login_bonus_for_account.latest_reward_time = current_date
-                    login_bonus_for_account.save()
+
+                    if login_bonus_reward_item:
+                        # current_date.strftime('%d-%m-%Y')
+                        # api call requires receiver account ID, sender name, mesos, timestamp(dd-mm-yyyy), item id, item quantity, item stats(optional)
+                        # do api call to game server to get duey to send reward of reward_num + 1
+                        # upon successful update update reward_num and latest_reward_time
+                        login_bonus_for_account.reward_num += 1
+                        login_bonus_for_account.latest_reward_time = current_date
+                        login_bonus_for_account.save()
             except IOError as e:
                 print("Saving login bonus failed")
                 raise e
@@ -39,12 +41,14 @@ def update_login_bonus(account_id):
         try:
             with transaction.atomic():
                 login_bonus_reward_item = get_login_reward_item(1)
-                # current_date.strftime('%d-%m-%Y')
-                # api call requires receiver account ID, sender name, mesos, timestamp(dd-mm-yyyy), item id, item quantity, item stats(optional)
-                # do api call to game server to get duey to send reward_num 1
-                # upon successful update add new entry to logins_bonus
-                login_bonus_for_account = LoginBonus(account_id=account_id, latest_reward_time=current_date, reward_month=current_month)
-                login_bonus_for_account.save()
+                
+                if login_bonus_reward_item:
+                    # current_date.strftime('%d-%m-%Y')
+                    # api call requires receiver account ID, sender name, mesos, timestamp(dd-mm-yyyy), item id, item quantity, item stats(optional)
+                    # do api call to game server to get duey to send reward_num 1
+                    # upon successful update add new entry to logins_bonus
+                    login_bonus_for_account = LoginBonus(account_id=account_id, latest_reward_time=current_date, reward_month=current_month)
+                    login_bonus_for_account.save()
         except IOError as e:
             print("Failed to create login bonus entry associated with the account id")
             raise e
@@ -53,7 +57,8 @@ def update_login_bonus(account_id):
 def get_login_reward_item(reward_num):
     try:
         login_bonus_reward = LoginBonusRewards.objects.get(reward_num=reward_num)
-        return login_bonus_reward
-    except IOError as e:
+    except (IOError, LoginBonusRewards.DoesNotExist) as e:
+        login_bonus_reward = None
         print("Failed to retrieve the item id associated with the reward num")
-        raise e
+
+    return login_bonus_reward

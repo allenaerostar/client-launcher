@@ -114,8 +114,11 @@ class RewardView(views.APIView):
                                 status=status.HTTP_400_BAD_REQUEST)
         reward_num = params.cleaned_data.get('reward_number')
         try:
-            login_bonus_reward = LoginBonusRewards.objects.get(reward_num=reward_num)
-            return JsonResponse(LoginBonusRewardSerializer(login_bonus_reward).data, status=status.HTTP_200_OK)
+            login_bonus_reward = LoginBonusRewards.objects.filter(reward_num=reward_num)
+            if not login_bonus_reward:
+                return JsonResponse({}, status=status.HTTP_200_OK)
+            return JsonResponse(LoginBonusRewardSerializer(login_bonus_reward[0]).data, status=status.HTTP_200_OK)
+
         except IOError as e:
             return JsonResponse({'message': "Failed to fetch login rewards {}".format(reward_num)},
                                 status=status.HTTP_500_INTERNAL_SERVER_ERROR)
