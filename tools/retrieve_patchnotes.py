@@ -54,16 +54,15 @@ DIESTORY_SERVER_GITHUB_URL =  "https://api.github.com/repos/BenjixD/MapleSolaxia
 
 PARAMS = {"state" : args.state}
 
-def retrieve_patchnotes():
-    r = requests.get(url = CLIENT_LAUNCHER_GITHUB_URL, params = PARAMS)
+def retrieve_patchnotes(github_url):
+    r = requests.get(url = github_url, params = PARAMS)
 
     data = r.json()
 
     for pull_request in data:
         # We take the first 10 characters so the date format is in %YYYY-%MM-%DD.
         closed_date = datetime.strptime(pull_request["closed_at"][:10], "%Y-%m-%d")
-        idx = pull_request["body"].find("PATCHNOTES:")
-        idx = 1
+        idx = pull_request["body"].find(KEYWORD)
         if (idx != -1 and START_DATE <= closed_date and closed_date <= END_DATE):
             print("_________________________")
             print(pull_request["body"][idx:])
@@ -72,4 +71,8 @@ if __name__ == "__main__":
     print("Retrieving patchnotes between {} and {}".format(START_DATE, END_DATE))
     print("Looking for keyword: {}".format(KEYWORD))
 
-    retrieve_patchnotes()
+    print("Retrieving patchnotes for the client launcher...")
+    retrieve_patchnotes(CLIENT_LAUNCHER_GITHUB_URL)
+
+    print("Retrieving patchnotes for the Dietstory server...")
+    retrieve_patchnotes(DIESTORY_SERVER_GITHUB_URL)
