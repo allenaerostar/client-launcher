@@ -15,13 +15,37 @@ logger = logging.getLogger(__name__)
 parser = argparse.ArgumentParser(description='Retrieves patchnotes from Github pull requests.')
 parser.add_argument('--state', default='closed',
                     help='State that pull requsts should be in eg. (open, closed etc).')
+parser.add_argument('--startdate', default='',
+                    help='Earliest date for pull requests that the script '
+                    'should scrape patchnotes from.')
+parser.add_argument('--enddate', default='',
+                    help='Latest date for pull requests that the script '
+                    'should scrape patchnotes from.')
 parser.add_argument('--keyword', default='PATCHNOTES:',
                     help='Keyword to parse pull requests for.')
 
 args = parser.parse_args()
 
-START_DATE = datetime.today() - timedelta(days=7)
-END_DATE = datetime.today()
+if len(args.startdate) != 0:
+    try:
+        START_DATE = datetime.strptime(args.startdate, '%m-%d-%y')
+    except:
+        raise ValueError("Unable to parse given start date. Please enter the date "
+              "using the format '%m-%d-%y' eg. 01-02-20.")
+else:
+    START_DATE = datetime.today() - timedelta(days=7)
+
+if len(args.enddate) !=0:
+    try:
+        END_DATE = datetime.strptime(args.enddate, '%m-%d-%y')
+    except:
+        raise ValueError("Unable to parse given end date. Please enter the date "
+              "using the format '%m-%d-%y' eg. 01-02-20.")
+else:
+    END_DATE = datetime.today()
+
+if (START_DATE > END_DATE):
+    raise ValueError("Start date must be before the end date.")
         
 KEYWORD = args.keyword
 
