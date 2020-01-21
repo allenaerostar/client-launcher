@@ -21,19 +21,6 @@ If you will be using GitHub to host your releases, you must set an environmental
 2. Create a new personal access token, making sure to select the "repo" scope.
 3. Create an environmental variable `GH_TOKEN` with the value of your personal access token.
 
-## Troubleshooting
-If you run into the error `electron module did not self-register` you may have verion incompatibilities between the V8 engine running in the Node binary installed in your system and Electron. To fix this you may need to rebuild your node modules to work with Electron. 
-
-In `./electron/launcher` run:
-
-On Mac/Linux:
-`./node_modules/.bin/electron-rebuild`
-
-On Windows:
-`.\node_modules\.bin\electron-rebuild.cmd`
-
-See [native node modules](https://github.com/electron/electron/blob/master/docs/tutorial/using-native-node-modules.md) for more information.
-
 ## Build Instructions
 Currently only building for Window platform is supported. Build for other operating systems at your own peril!
 
