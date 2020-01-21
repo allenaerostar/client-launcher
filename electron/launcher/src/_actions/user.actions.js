@@ -170,6 +170,22 @@ const disconnect = (postData) => {
   }
 }
 
+const delete_cache = () => {
+  return (dispatch) => {
+    dispatch({type: actionTypes.DELETE_CACHE_START});
+    ipc.send('self-help-delete-cache');
+
+    ipc.on('self-help-delete_cache-success', (e, res) => {
+      dispatch({type: actionTypes.DELETE_CACHE_SUCCESS});
+      history.push('/');
+    });
+
+    ipc.on('self-help-delete-cache-fail', (e, err) => {
+      dispatch({type: actionTypes.DELETE_CACHE_FAILED});
+    });
+  }
+}
+
 export const userActions = {
   autoLogin,
   login,
@@ -178,5 +194,6 @@ export const userActions = {
   verifyEmail,
   resendEmail,
   resetError,
-  disconnect
+  disconnect,
+  delete_cache
 };
