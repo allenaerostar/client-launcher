@@ -1,4 +1,5 @@
-const request = require('helpers/request-wrapper').request;
+const request = require('request-promise');
+const authRequest = require('helpers/request-wrapper').request;
 const ipc = require('electron').ipcMain;
 
 const config = require('config.json').DJANGO_SERVER;
@@ -52,7 +53,7 @@ ipc.on('http-change-password', (e, postData) => {
     json: true
   }
 // when i check with game-file/hashes, i am getting william, with change password i am not
-  request(options).then(response => {
+  authRequest(options).then(response => {
     e.reply('http-change-password-success', response);
   }).catch(error => {
     e.reply('http-change-password-fail', error);
