@@ -26,7 +26,7 @@ ipc.on('http-logout', (e, postData) => {
   let options = {
     method: 'POST',
     uri: djangoUrl +'/accounts/logout/',
-    header: { 'content-type': 'application/x-www-form-urlencoded' },
+    headers: { 'content-type': 'application/x-www-form-urlencoded' },
     form: postData
   };
 
