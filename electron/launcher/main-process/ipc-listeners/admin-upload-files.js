@@ -4,6 +4,8 @@ const crypto = require('crypto');
 const path = require('path');
 const async = require('async');
 const request = require('helpers/request-wrapper').request;
+const axios = require('axios');
+const FormData = require('form-data');
 
 const config = require('config.json').DJANGO_SERVER;
 const djangoUrl = config.HOST +":" +config.PORT;
@@ -63,37 +65,69 @@ const uploadFile = (fileInfo, version, event, successList, failedList) => {
   return new Promise((resolve, reject) => {
 
     let uploadedSize = 0;
-    let lastUpdateTime = 0
 
-    let options = {
-      method: 'POST',
-      uri: djangoUrl + '/game-files/upload',
-      headers: { 'Content-Type': 'multipart/form-data' },
-      formData: {
-        file_name: fileInfo.remotePath,
-        file_hash: fileInfo.hash,
-        file: fs.createReadStream(fileInfo.localPath).on('data', chunk => {
-          uploadedSize += chunk.length;
+    // let options = {
+    //   method: 'POST',
+    //   uri: djangoUrl + '/game-files/upload',
+    //   headers: { 
+    //     'Content-Type': 'multipart/form-data',
+    //     'X-CSRFToken': csrfToken, // GLOBAL VARIABLE
+    //     'Cookie': `csrftoken=${csrfToken}; sessionid=${sessionKey}` // GLOBAL VARIABLE
+    //   },
+    //   formData: {
+    //     file_name: fileInfo.remotePath,
+    //     file_hash: fileInfo.hash,
+    //     file: fs.createReadStream(fileInfo.localPath),
+    //     versionid: version
+    //   }
+    // }
 
-          if(Date.now() - lastUpdateTime > 500){
-            event.reply('upload-patch-files-status', {
-              filename: fileInfo.name,
-              local_path: fileInfo.localPath,
-              size: fileInfo.size,
-              uploadedSize: uploadedSize,
-              message: 'uploading'
-            });
-            lastUpdateTime = Date.now();
-          }
 
-          console.log(uploadedSize);
-        }),
-        versionid: version
-      }
-    }
+
+
+
+    // uploadedSize += chunk.length;
+
+    // if(Date.now() - lastUpdateTime > 500){
+    //   event.reply('upload-patch-files-status', {
+    //     filename: fileInfo.name,
+    //     local_path: fileInfo.localPath,
+    //     size: fileInfo.size,
+    //     uploadedSize: uploadedSize,
+    //     message: 'uploading'
+    //   });
+    //   lastUpdateTime = Date.now();
+    // }
+
+    
+
+
+    // let intervalId = setInterval(() => {
+
+    //   console.log(`Uploaded: ${req.req.connection.bytesWritten}`);
+
+    // }, 500);
 
     // MAKING REQUEST TO DJANGO SERVER WITH THE FILE
-    let req = request(options).then(() => {
+    const form = new FormData();
+    form.append('file_name', fileInfo.remotePath);
+    form.append('file_hash', fileInfo.hash);
+    form.append('file', fs.createReadStream(fileInfo.localPath), { knownLength: fileInfo.size });
+    form.append('versionid', version);
+
+    axios.post(`${djangoUrl}/game-files/upload`, form, {
+      headers: {
+        ...form.getHeaders(),
+        'Content-Type': 'multipart/form-data',
+        'X-CSRFToken': csrfToken, // GLOBAL VARIABLE
+        'Cookie': `csrftoken=${csrfToken}; sessionid=${sessionKey}`, // GLOBAL VARIABLE
+        'Content-Length': form.getLengthSync()
+      },
+      onUploadProgress: progressEvent => {
+        console.log(progressEvent.loaded);
+      }
+    })
+    .then(response => {
       event.reply('upload-patch-files-status', {
         filename: fileInfo.name,
         local_path: fileInfo.localPath,
@@ -105,7 +139,9 @@ const uploadFile = (fileInfo, version, event, successList, failedList) => {
       setTimeout(() => {
         resolve(null);
       }, 500);
-    }).catch(error => {
+    })
+    .catch(error => {
+      console.log(error);
       event.reply('upload-patch-files-status', {
         filename: fileInfo.name,
         local_path: fileInfo.localPath,
@@ -117,7 +153,7 @@ const uploadFile = (fileInfo, version, event, successList, failedList) => {
       setTimeout(() => {
         resolve(null);
       }, 2000);
-    });
+    })
   });
 }
 
