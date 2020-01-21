@@ -17,10 +17,10 @@ parser.add_argument('--state', default='closed',
                     help='State that pull requsts should be in eg. (open, closed etc).')
 parser.add_argument('--startdate', default='',
                     help='Earliest date for pull requests that the script '
-                    'should scrape patchnotes from.')
+                    'should scrape patchnotes from in the format "MM-DD-YY", eg. "01-15-20.')
 parser.add_argument('--enddate', default='',
                     help='Latest date for pull requests that the script '
-                    'should scrape patchnotes from.')
+                    'should scrape patchnotes from in the format "MM-DD-YY", eg. "01-15-20.')
 parser.add_argument('--keyword', default='PATCHNOTES:',
                     help='Keyword to parse pull requests for.')
 
