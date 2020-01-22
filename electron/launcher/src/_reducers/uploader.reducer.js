@@ -25,7 +25,9 @@ export default (state = INITIAL_STATE, action) => {
     case types.SET_STATUS:
       return { ...state, status: action.payload};
     case types.SET_RESULT:
-      return { ...state, result: action.payload, isUploading: false };
+      return { ...state, uploadResults: action.payload, isUploading: false };
+    case types.RESET_STATE:
+      return { ...INITIAL_STATE };
     default:
       return state;
   }

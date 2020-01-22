@@ -64,48 +64,7 @@ const uploadFile = (fileInfo, version, event, successList, failedList) => {
   return new Promise((resolve, reject) => {
 
     let uploadedSize = 0;
-
-    // let options = {
-    //   method: 'POST',
-    //   uri: djangoUrl + '/game-files/upload',
-    //   headers: { 
-    //     'Content-Type': 'multipart/form-data',
-    //     'X-CSRFToken': csrfToken, // GLOBAL VARIABLE
-    //     'Cookie': `csrftoken=${csrfToken}; sessionid=${sessionKey}` // GLOBAL VARIABLE
-    //   },
-    //   formData: {
-    //     file_name: fileInfo.remotePath,
-    //     file_hash: fileInfo.hash,
-    //     file: fs.createReadStream(fileInfo.localPath),
-    //     versionid: version
-    //   }
-    // }
-
-
-
-
-
-    // uploadedSize += chunk.length;
-
-    // if(Date.now() - lastUpdateTime > 500){
-    //   event.reply('upload-patch-files-status', {
-    //     filename: fileInfo.name,
-    //     local_path: fileInfo.localPath,
-    //     size: fileInfo.size,
-    //     uploadedSize: uploadedSize,
-    //     message: 'uploading'
-    //   });
-    //   lastUpdateTime = Date.now();
-    // }
-
-    
-
-
-    // let intervalId = setInterval(() => {
-
-    //   console.log(`Uploaded: ${req.req.connection.bytesWritten}`);
-
-    // }, 500);
+    let lastUpdateTime = 0;
 
     // MAKING REQUEST TO DJANGO SERVER WITH THE FILE
     let form = new FormData();
@@ -129,15 +88,14 @@ const uploadFile = (fileInfo, version, event, successList, failedList) => {
 
     form.submit(options, (error, response) => {
       if(error){
-        console.log(error);
         event.reply('upload-patch-files-status', {
           filename: fileInfo.name,
           local_path: fileInfo.localPath,
           size: formSize,
           uploadedSize: uploadedSize,
-          message: 'failed'
+          message: 'Failed!'
         });
-        failedList.push({error: error, name: fileInfo.name, path: fileInfo.local_path});
+        failedList.push({error: error, name: fileInfo.name, local_path: fileInfo.localPath, remote_path: fileInfo.remotePath});
         setTimeout(() => {
           resolve(null);
         }, 2000);
@@ -148,9 +106,9 @@ const uploadFile = (fileInfo, version, event, successList, failedList) => {
           local_path: fileInfo.localPath,
           size: formSize,
           uploadedSize: uploadedSize,
-          message: 'done'
+          message: 'Done!'
         });
-        successList.push({name: fileInfo.name, path: fileInfo.local_path});
+        successList.push({name: fileInfo.name, local_path: fileInfo.localPath, remote_path: fileInfo.remotePath});
         setTimeout(() => {
           resolve(null);
         }, 500);
@@ -159,29 +117,29 @@ const uploadFile = (fileInfo, version, event, successList, failedList) => {
 
     form.on('data', chunk => {
       uploadedSize += chunk.length; 
-      console.log(uploadedSize);
+      
+      if(Date.now() - lastUpdateTime > 250){
+      event.reply('upload-patch-files-status', {
+        filename: fileInfo.name,
+        local_path: fileInfo.localPath,
+        size: formSize,
+        uploadedSize: uploadedSize,
+        message: 'Uploading...'
+      });
+        lastUpdateTime = Date.now();
+      }
+
+      if(uploadedSize === formSize){
+        event.reply('upload-patch-files-status', {
+          filename: fileInfo.name,
+          local_path: fileInfo.localPath,
+          size: formSize,
+          uploadedSize: uploadedSize,
+          message: 'File Processing...'
+        })
+      }
     })
-
-    // axios.post(`${djangoUrl}/game-files/upload`, form, {
-    //   headers: {
-    //     ...form.getHeaders(),
-    //     'X-CSRFToken': csrfToken, // GLOBAL VARIABLE
-    //     'Cookie': `csrftoken=${csrfToken}; sessionid=${sessionKey}`, // GLOBAL VARIABLE
-    //     'Content-Length': form.getLengthSync()
-    //   },
-    //   onUploadProgress: progressEvent => {
-    //     console.log(progressEvent.loaded);
-    //   }
-    // })
-    // .then(response => {
-
-    // })
-    // .catch(error => {
-
-    // })
   });
-
-
 }
 
 // UPLOAD ALL FILE IN THE ARRAY IN SEQUENTIAL ORDER
@@ -242,18 +200,6 @@ const createNewFutureVersion = (input) => {
 ========================
 IPC LISTENERS
 ========================
-
-
-
-input: 
-{
-[1]   files: [
-[1]     { file: {local_path, name}, remote_path: 'dietstory IP.txt' },
-[1]     { file: [Object], remote_path: 'test.txt' }
-[1]   ],
-[1]   newVersion: false,
-[1]   version: '1.6'
-[1] }
 */
 
 ipc.on('upload-patch-files', (event, input) => {

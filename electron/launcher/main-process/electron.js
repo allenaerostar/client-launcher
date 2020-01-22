@@ -30,8 +30,7 @@ function createWindow() {
     if(isDev){
         options = { 
             ...options,
-            resizable: true,
-            height: 637
+            resizable: true
         }
     }
 

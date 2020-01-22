@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { uploaderActions } from '_actions';
 
-import FormStepNavigator from 'components/Form/FormStepNavigator';
 import FormStepButtons from 'components/Form/FormStepButtons';
 import FormOverview from 'components/Form/FormOverview';
 import UploadStatus from 'components/Uploader/UploadStatus';
+import UploadResult from 'components/Uploader/UploadResult';
 
 import Uploader from 'components/Uploader/Uploader';
 
@@ -17,7 +17,7 @@ const UploaderContainer = props => {
     if (props.uploader.futureVersions.length === 0){
       ipc.send('get-future-versions');
     }
-  }, []);
+  }, [props.uploader.futureVersions]);
 
   useEffect(() => {
     ipc.on('get-future-versions-response', (e, res) => {
@@ -27,8 +27,7 @@ const UploaderContainer = props => {
       props.setStatus(status);
     });
     ipc.on('upload-patch-files-result', (e, result) => {
-      //props.setResult(result);
-      console.log(result)
+      props.setResult(result);
     })
 
     return () => {
@@ -148,6 +147,18 @@ const UploaderContainer = props => {
     setFiles(updatedFiles);
   };
 
+  const reset = () => {
+    setInputs({newVersion: true});
+    setFiles([]);
+    setCurrentStep(1);
+    setVersionInputClass({
+      default: "form-control col-md-2 offset-md-2",
+      invalid: "form-control col-md-2 offset-md-2 is-invalid",
+      current: "form-control col-md-2 offset-md-2"
+    });
+    props.returnToAdmin();
+  }
+
   const renderFormContent = () => {
     switch (currentStep) {
       case 1:
@@ -196,12 +207,11 @@ const UploaderContainer = props => {
         </>
       case 3:
         return <>
-          {/* {(props.uploader.isUploading)?
+          {(props.uploader.isUploading)?
             <UploadStatus status={props.uploader.status} />
             :
-            <UploadResult result={props.uploader.uploadResults} />
-          } */}
-          <UploadStatus status={props.uploader.status} />
+            <UploadResult results={props.uploader.uploadResults} returnBtn={reset} newVersion={inputs.newVersion} version={inputs.version}/>
+          }
         </>
       default:
         return <Uploader uploadFiles={uploadFiles} changeFileInfo={changeFileInfo} files={files}/>
@@ -210,11 +220,6 @@ const UploaderContainer = props => {
   
   return (
     <div className="container">
-      {/*<FormStepNavigator
-        steps={steps}
-        changeStep={setCurrentStep}
-        currentStep={currentStep}
-      />*/}
       <section className="hero-card">
         <form>
           {

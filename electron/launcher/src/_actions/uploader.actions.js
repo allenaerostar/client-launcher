@@ -38,6 +38,13 @@ const setResult = result => {
   }
 }
 
+const returnToAdmin = () => {
+  return (dispatch) => {
+    dispatch({type: uploaderTypes.RESET_STATE});
+    history.push('/admin');
+  }
+}
+
 
 
 
@@ -45,5 +52,6 @@ export const uploaderActions = {
   uploadFiles,
   setFutureVersions,
   setStatus,
-  setResult
+  setResult,
+  returnToAdmin
 };
