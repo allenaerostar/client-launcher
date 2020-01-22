@@ -4,7 +4,6 @@ const crypto = require('crypto');
 const path = require('path');
 const async = require('async');
 const request = require('helpers/request-wrapper').request;
-const axios = require('axios');
 const FormData = require('form-data');
 
 const config = require('config.json').DJANGO_SERVER;
@@ -109,52 +108,80 @@ const uploadFile = (fileInfo, version, event, successList, failedList) => {
     // }, 500);
 
     // MAKING REQUEST TO DJANGO SERVER WITH THE FILE
-    const form = new FormData();
+    let form = new FormData();
     form.append('file_name', fileInfo.remotePath);
     form.append('file_hash', fileInfo.hash);
     form.append('file', fs.createReadStream(fileInfo.localPath), { knownLength: fileInfo.size });
     form.append('versionid', version);
+    let formSize = form.getLengthSync();
 
-    axios.post(`${djangoUrl}/game-files/upload`, form, {
+    let options = {
+      host: config.HOST.replace('http://', ''),
+      port: config.PORT,
+      path: '/game-files/upload',
+      method: 'POST',
       headers: {
-        ...form.getHeaders(),
-        'Content-Type': 'multipart/form-data',
         'X-CSRFToken': csrfToken, // GLOBAL VARIABLE
         'Cookie': `csrftoken=${csrfToken}; sessionid=${sessionKey}`, // GLOBAL VARIABLE
-        'Content-Length': form.getLengthSync()
-      },
-      onUploadProgress: progressEvent => {
-        console.log(progressEvent.loaded);
+        'Content-Length': formSize
       }
+    }
+
+    form.submit(options, (error, response) => {
+      if(error){
+        console.log(error);
+        event.reply('upload-patch-files-status', {
+          filename: fileInfo.name,
+          local_path: fileInfo.localPath,
+          size: formSize,
+          uploadedSize: uploadedSize,
+          message: 'failed'
+        });
+        failedList.push({error: error, name: fileInfo.name, path: fileInfo.local_path});
+        setTimeout(() => {
+          resolve(null);
+        }, 2000);
+      }
+      else{
+        event.reply('upload-patch-files-status', {
+          filename: fileInfo.name,
+          local_path: fileInfo.localPath,
+          size: formSize,
+          uploadedSize: uploadedSize,
+          message: 'done'
+        });
+        successList.push({name: fileInfo.name, path: fileInfo.local_path});
+        setTimeout(() => {
+          resolve(null);
+        }, 500);
+      }
+    });
+
+    form.on('data', chunk => {
+      uploadedSize += chunk.length; 
+      console.log(uploadedSize);
     })
-    .then(response => {
-      event.reply('upload-patch-files-status', {
-        filename: fileInfo.name,
-        local_path: fileInfo.localPath,
-        size: fileInfo.size,
-        uploadedSize: uploadedSize,
-        message: 'done'
-      });
-      successList.push({name: fileInfo.name, path: fileInfo.local_path});
-      setTimeout(() => {
-        resolve(null);
-      }, 500);
-    })
-    .catch(error => {
-      console.log(error);
-      event.reply('upload-patch-files-status', {
-        filename: fileInfo.name,
-        local_path: fileInfo.localPath,
-        size: fileInfo.size,
-        uploadedSize: uploadedSize,
-        message: 'failed'
-      });
-      failedList.push({error: error, name: fileInfo.name, path: fileInfo.local_path});
-      setTimeout(() => {
-        resolve(null);
-      }, 2000);
-    })
+
+    // axios.post(`${djangoUrl}/game-files/upload`, form, {
+    //   headers: {
+    //     ...form.getHeaders(),
+    //     'X-CSRFToken': csrfToken, // GLOBAL VARIABLE
+    //     'Cookie': `csrftoken=${csrfToken}; sessionid=${sessionKey}`, // GLOBAL VARIABLE
+    //     'Content-Length': form.getLengthSync()
+    //   },
+    //   onUploadProgress: progressEvent => {
+    //     console.log(progressEvent.loaded);
+    //   }
+    // })
+    // .then(response => {
+
+    // })
+    // .catch(error => {
+
+    // })
   });
+
+
 }
 
 // UPLOAD ALL FILE IN THE ARRAY IN SEQUENTIAL ORDER
