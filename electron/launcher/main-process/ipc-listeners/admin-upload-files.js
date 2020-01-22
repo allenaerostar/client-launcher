@@ -1,7 +1,6 @@
 const ipc = require('electron').ipcMain;
 const fs = require('fs-extra');
 const crypto = require('crypto');
-const path = require('path');
 const async = require('async');
 const request = require('helpers/request-wrapper').request;
 const FormData = require('form-data');
