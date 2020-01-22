@@ -5,17 +5,6 @@ import FileInputs from 'components/Uploader/FileInputs';
 
 import upload_icon from 'assets/icons/upload_icon.svg';
 
-// {
-//   version: 'v1.1',
-//     root: 'C:\Nexon',
-//       files: [
-//         'C:\Nexon\Map.wz',
-//         'C:\Nexon\Character.wz'
-//       ]
-// }
-
-// const { remote } = window.require('electron')
-
 const Uploader = ({uploadFiles, changeFileInfo, files}) => {
   return (
     <>

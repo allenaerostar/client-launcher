@@ -127,8 +127,9 @@ h1{
 .hero-card {
  background-color: white;
  border: 2px solid #F7943A;
- padding: 2rem;
+ padding: 2rem 2rem;
  margin-top: 2rem;
+ margin-bottom: 2rem;
  box-shadow: 0 2px 1px -1px rgba(0,0,0,.2), 0 1px 1px 0 rgba(0,0,0,.14), 0 1px 3px 0 rgba(0,0,0,.12);
 }
 .profile{
@@ -234,6 +235,10 @@ h1{
 
 .container{
   padding-top: 128px;
+}
+
+.container.upload{
+  padding-top: 0px;
 }
 
 .file-inputs{
