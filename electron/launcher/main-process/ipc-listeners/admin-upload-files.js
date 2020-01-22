@@ -87,7 +87,7 @@ const uploadFile = (fileInfo, version, event, successList, failedList) => {
     }
 
     form.submit(options, (error, response) => {
-      if(error){
+      if(error || response.statusCode >= 400){
         event.reply('upload-patch-files-status', {
           filename: fileInfo.name,
           local_path: fileInfo.localPath,
@@ -213,6 +213,7 @@ ipc.on('upload-patch-files', (event, input) => {
     return sequentialUploadAll(fileInfoArray, input.version, event);
   })
   .then(result => {
+    //console.log(result);
     event.reply('upload-patch-files-result', result);
   })
   .catch(error => {

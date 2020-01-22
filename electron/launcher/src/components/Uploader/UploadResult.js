@@ -1,6 +1,7 @@
 import React from 'react';
 
 const UploadResult = ({ results, returnBtn, newVersion, version}) => {
+  console.log(results);
   const generateTableRows = () => {
     return <> 
       {
