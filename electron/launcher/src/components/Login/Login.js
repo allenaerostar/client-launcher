@@ -44,7 +44,7 @@ const Login = props => {
           <img src={logo} className="img-fluid" width="228" height="96" alt="dietstory"/>
         </section>
         <section className="col-4 form__container">
-          <h1>Sign In</h1>
+          <h1>Login</h1>
           <FormBuilder
             formFields={formFields}
             submitFunction={props.login}

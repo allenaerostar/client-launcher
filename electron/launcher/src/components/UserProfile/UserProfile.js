@@ -64,7 +64,6 @@ const UserProfile = props => {
           </Switch>
         </div>
       </div>
-      
     </section>
   );
 }

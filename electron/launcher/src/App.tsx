@@ -14,6 +14,7 @@ import Uploader from 'components/Uploader/Uploader';
 import Patcher from 'components/Patcher/Patcher';
 import PrivateRoute from 'components/PrivateRoute';
 import UpgradePrompt from 'components/Toasts/UpgradePrompt';
+import Spinner from 'components/Spinner';
 import history from '_helpers/history';
 import { patcherActions } from '_actions';
 
@@ -26,7 +27,6 @@ import 'react-toastify/dist/ReactToastify.min.css';
 const ipc = window.require('electron').ipcRenderer;
   
 const App = props => {
-
   // LISTENS FOR UPDATE FROM MAIN PROCESS
   ipc.on('launcher-update-ready', e => {
     toast.info(<UpgradePrompt />, {
@@ -45,6 +45,7 @@ const App = props => {
   return ( 
     <div className={props.auth.isAuthenticated ? "app-container--loggedin" : ""}>
       <TitleBar />
+      <Spinner />
       <Router history={history}>
         {
           props.auth.isAuthenticated ? 
