@@ -3,31 +3,12 @@ import { userActions } from '_actions';
 import { Route, Switch } from 'react-router-dom';
 import SubHeader from 'components/SubHeader/SubHeader';
 import UserInfo from 'components/UserProfile/UserInfo';
-import FormBuilder from 'components/Form/FormBuilder';
+import Alert from 'components/Alert';
+import ChangePassword from 'components/UserProfile/ChangePassword';
 import { connect } from 'react-redux';
 
+// Container component for holding user functionality 
 const UserProfile = props => {
-
-  const formFields = [
-    {
-      name: 'old_password',
-      label: 'Current password',
-      type: 'password',
-      required: true
-    },
-    {
-      name: 'new_password1',
-      label: 'New password',
-      type: 'password',
-      required: true
-    },
-    {
-      name: 'new_password2',
-      label: 'Confirm new password',
-      type: 'password',
-      required: true
-    }
-  ];
 
   const nestedRoutes = [
     {
@@ -48,18 +29,9 @@ const UserProfile = props => {
       </div>
       <div className="row">
         <div className="hero-card col-9">
+          <Alert />
           <Switch>
-            <Route path={`${props.match.url}/change-password`} component={() =>
-              <>
-                <h1>Change Password</h1>
-                <FormBuilder
-                  formFields={formFields}
-                  submitFunction={props.changePassword}
-                  errorMessageGenerator={false}
-                  submitText={"Change Password"}
-                /> 
-              </>}
-            />
+            <Route path={`${props.match.url}/change-password`} component={ChangePassword} />
             <Route path="/profile" component={UserInfo} exact/>
           </Switch>
         </div>

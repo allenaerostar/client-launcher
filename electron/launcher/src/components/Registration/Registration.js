@@ -1,21 +1,11 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { userActions } from '_actions';
 import FormBuilder from 'components/Form/FormBuilder';
-import logo from 'assets/dietstory_logo.png';
+import PreAuthContainer from 'components/PreAuthContainer';
 
 const Registration = props => {
-
-  // Error handling
-  useEffect(() => {
-    if(props.auth.error !== null){
-      let error = JSON.parse(props.auth.error.error);
-      alert(error.message);
-      props.resetError();
-    }
-    // eslint-disable-next-line
-  }, [props.auth.error]);
 
   const formFields = [
     {
@@ -78,11 +68,7 @@ const Registration = props => {
   }
 
   return (
-    <div className="row no-gutters">
-      <section className="hero-image col-8">
-        <img src={logo} className="img-fluid" width="228" height="96" alt="dietstory-logo"/>
-      </section>
-      <section className="col-4 form__container">
+    <PreAuthContainer>
         <h1>Registration</h1>
         <FormBuilder 
           formFields={formFields}
@@ -93,8 +79,7 @@ const Registration = props => {
         <Link to="/login">
           > Login
         </Link>
-      </section>
-    </div>
+    </PreAuthContainer>
   );
 }
 

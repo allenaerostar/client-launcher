@@ -40,7 +40,9 @@ h1{
 
 .form__container{
   border-left: 3px solid #F7943A;
+  height: 578px;
   padding: 4rem 2rem 0 2rem !important;
+  overflow: scroll;
   a{
     display: block;
   }
@@ -55,7 +57,7 @@ h1{
 .hero-image{
   background: url('../src/assets/dietstory_login_background.png') no-repeat center;
   background-size: cover;
-  min-height: 578px;
+  height: 578px;
   padding: 1.5rem 3rem !important;
 }
 
@@ -175,7 +177,7 @@ h1{
     -webkit-app-region: no-drag;
     & button{
       overflow: hidden;
-      background-color:white;
+      background-color: transparent;
       -webkit-appearance: none;
       border: none;
       &:hover{

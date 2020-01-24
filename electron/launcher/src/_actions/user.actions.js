@@ -57,19 +57,31 @@ const logout = (user) => {
   }
 }
 
-const resetPassword = (email) => {
+const resetPassword = (postData) => {
   return (dispatch) => {
     dispatch({ type: loadingTypes.FETCHING_START });
-    ipc.send('http-reset-password', email);
+    ipc.send('http-reset-password', postData);
 
     ipc.on('http-reset-password-success', (e, res) => {
       dispatch({ type: loadingTypes.FETCHING_FINISH });
-      dispatch({ type: actionTypes.RESET_PASSWORD_SUCCESS, payload: { message: res }  });
+      dispatch({
+        type: actionTypes.RESET_PASSWORD_SUCCESS,
+        payload: { 
+          message: `A new password has been sent to ${postData.email}.` ,
+          type: 'success'
+        }  
+      });
     });
 
     ipc.on('http-reset-password-fail', (e, err) => {
       dispatch({ type: loadingTypes.FETCHING_FINISH });
-      dispatch({ type: actionTypes.RESET_PASSWORD_FAILED, payload: { error: err } });
+      dispatch({ 
+        type: actionTypes.RESET_PASSWORD_FAILED, 
+        payload: { 
+          message: 'Failed to reset password.',
+          type: 'danger'
+        } 
+      });
     });
   }
 }
@@ -81,12 +93,24 @@ const changePassword = (user) => {
 
     ipc.on('http-change-password-success', (e, res) => {
       dispatch({ type: loadingTypes.FETCHING_FINISH });
-      dispatch({ type: actionTypes.CHANGE_PASSWORD_SUCCESS, payload: { message: res } });
+      dispatch({
+        type: actionTypes.CHANGE_PASSWORD_SUCCESS,
+        payload: {
+          message: 'Your password has been changed.',
+          type: 'success'
+        }
+      });
     });
 
     ipc.on('http-change-password-fail', (e, err) => {
       dispatch({ type: loadingTypes.FETCHING_FINISH });
-      dispatch({ type: actionTypes.CHANGE_PASSWORD_FAILED, payload: { error: err } });
+      dispatch({ 
+        type: actionTypes.CHANGE_PASSWORD_FAILED,
+        payload: {
+          message: 'Failed to change password.',
+          type: 'danger'
+        }
+      });
     });
   }
 }
@@ -110,7 +134,9 @@ const register = (user) => {
             birthday: user.birthday,
             isActive: false,
             isAdmin: false
-          }
+          },
+          message: `A verification email has been sent to ${user.email}.`,
+          type: 'success'
         }
       });
 
@@ -119,7 +145,13 @@ const register = (user) => {
 
     ipc.on('http-registration-fail', (e, err) => {
       dispatch({ type: loadingTypes.FETCHING_FINISH });
-      dispatch({type: actionTypes.REGISTER_FAILED, payload: {error: err}});
+      dispatch({ 
+        type: actionTypes.REGISTER_FAILED,
+        payload: {
+          message: `Failed to register`,
+          type: 'danger'
+        }
+      });
     });
   }
 }
@@ -133,12 +165,23 @@ const verifyEmail = (postData) => {
 
     ipc.on('http-verify-email-success', (e, res) => {
       dispatch({ type: loadingTypes.FETCHING_FINISH });
-      dispatch({type: actionTypes.VERIFY_EMAIL_SUCCESS});
+      dispatch({
+        type: actionTypes.VERIFY_EMAIL_SUCCESS,
+        payload: {
+          message: `You are now verified!`,
+          type: 'success'
+        }});
       history.push('/login');
     });
     ipc.on('http-verify-email-fail', (e, err) => {
       dispatch({ type: loadingTypes.FETCHING_FINISH });
-      dispatch({type: actionTypes.VERIFY_EMAIL_FAILED, payload: {error: err}});
+      dispatch({ 
+        type: actionTypes.VERIFY_EMAIL_FAILED,
+        payload: {
+          message: err.detail,
+          type: 'danger'
+        }
+      });
     });
   }
 }
@@ -150,18 +193,24 @@ const resendEmail = (postData) => {
 
     ipc.on('http-resend-verification-email-success', (e, res) => {
       dispatch({ type: loadingTypes.FETCHING_FINISH });
-      dispatch({type: actionTypes.RESEND_VERIFICATION_EMAIL_SUCCESS});
+      dispatch({
+        type: actionTypes.RESEND_VERIFICATION_EMAIL_SUCCESS,
+        payload: {
+          message: `An email has been sent to ${postData.email}`,
+          type: 'success'
+        }
+      });
     });
     ipc.on('http-resend-verification-email-fail', (e, res) => {
       dispatch({ type: loadingTypes.FETCHING_FINISH });
-      dispatch({type: actionTypes.RESEND_VERIFICATION_EMAIL_FAILED});
+      dispatch({
+        type: actionTypes.RESEND_VERIFICATION_EMAIL_FAILED,
+        payload: {
+          message: `An email has been sent to ${postData.email}`,
+          type: 'danger'
+        }
+      });
     });
-  }
-}
-
-const resetError = (dispatch) => {
-  return {
-    type: actionTypes.RESET_ERROR
   }
 }
 
@@ -203,7 +252,6 @@ export const userActions = {
   register,
   verifyEmail,
   resendEmail,
-  resetError,
   resetPassword,
   changePassword
 };

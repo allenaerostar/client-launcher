@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { userActions } from '_actions';
 import FormBuilder from 'components/Form/FormBuilder';
-import logo from 'assets/dietstory_logo.png';
+import PreAuthContainer from 'components/PreAuthContainer';
 
 // Future iterations will an action pulled from redux instead of from App
 const Login = props => {
@@ -13,15 +13,6 @@ const Login = props => {
     props.autoLogin();
     // eslint-disable-next-line
   });
-
-  // Error handling 
-  useEffect(() => {
-    if(props.auth.error !== null){
-      alert(props.auth.error.message);
-      props.resetError();
-    }
-    // eslint-disable-next-line
-  }, [props.auth.error]);
 
   const formFields = [
     {
@@ -39,29 +30,24 @@ const Login = props => {
   ];
 
   return (
-      <div className="row no-gutters">
-        <section className="hero-image col-8">
-          <img src={logo} className="img-fluid" width="228" height="96" alt="dietstory"/>
-        </section>
-        <section className="col-4 form__container">
-          <h1>Login</h1>
-          <FormBuilder
-            formFields={formFields}
-            submitFunction={props.login}
-            errorMessageGenerator={false}
-            submitText={"Login"}
-          />
-          <Link to="/registration">
-            > Create an account
-          </Link>
-          <Link to="/reset-password">
-            > Forgot your password?
-          </Link>
-          <Link to="/verify-email">
-            > Verify your email
-          </Link>
-        </section>
-      </div>
+      <PreAuthContainer>
+        <h1>Login</h1>
+        <FormBuilder
+          formFields={formFields}
+          submitFunction={props.login}
+          errorMessageGenerator={false}
+          submitText={"Login"}
+        />
+        <Link to="/registration">
+          > Create an account
+        </Link>
+        <Link to="/reset-password">
+          > Forgot your password?
+        </Link>
+        <Link to="/verify-email">
+          > Verify your email
+        </Link>
+    </PreAuthContainer>
   );
 };
 
