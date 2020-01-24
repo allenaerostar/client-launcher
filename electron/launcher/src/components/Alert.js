@@ -5,10 +5,12 @@ import { alertActions } from '_actions';
 const Alert = props => {
   const { alert, clearAlert } = props;
 
+  useEffect(() => {
+    setTimeout(clearAlert, 5000);
+  },[alert.message, clearAlert])
+
   if (!alert.message) return null;
 
-  // setTimeout(clearAlert(), 5000);
-  
   return (
       <div className={`alert alert-${alert.type}`} role="alert">
         { alert.message }
