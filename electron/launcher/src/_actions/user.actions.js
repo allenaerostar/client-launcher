@@ -7,7 +7,6 @@ const ipc = window.require('electron').ipcRenderer;
 // API calls should go here?
 const login = (cred) => {
   return (dispatch) => {
-    console.log("Login was clicked.")
     dispatch({type: actionTypes.LOGIN_START});
 
     ipc.send('http-login-credentials', cred);
@@ -175,7 +174,7 @@ const delete_cache = () => {
     dispatch({type: actionTypes.DELETE_CACHE_START});
     ipc.send('self-help-delete-cache');
 
-    ipc.on('self-help-delete_cache-success', (e, res) => {
+    ipc.on('self-help-delete-cache-success', (e, res) => {
       dispatch({type: actionTypes.DELETE_CACHE_SUCCESS});
       history.push('/');
     });
