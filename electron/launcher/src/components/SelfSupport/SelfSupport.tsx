@@ -15,12 +15,12 @@ const characterForm = [
 const SelfSupport = props => {
   return (
     <div>
-        {<FormBuilder
+        {/* {<FormBuilder
           formFields={characterForm}
           submitFunction={props.disconnect}
           errorMessageGenerator={false}
           submitText={"Disconnect Character"}
-        />}
+        />} */}
         {<FormBuilder
           formFields={[]}
           submitFunction={props.delete_cache}
