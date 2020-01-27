@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="91px" height="85px" viewBox="0 0 91 85" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 43.1 (39012) - http://www.bohemiancoding.com/sketch -->
+    <title>Group 2</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Welcome" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="File-upload" transform="translate(-351.000000, -321.000000)">
+            <g id="Group" transform="translate(38.000000, 207.000000)">
+                <g id="Group-2" transform="translate(312.855110, 115.000000)">
+                    <path d="M19.6727038,58.7822699 C10.2462512,57.2919217 3,48.3313066 3,37.5 C3,25.9194343 11.2834497,16.4773231 21.6585588,16.0175384 C26.0399092,6.50567131 34.9125363,0 45.14489,0 C57.73935,0 68.273846,9.85598711 70.9089359,23.0424436 C80.0603324,23.6823285 87.2897801,31.4776617 87.2897801,41 C87.2897801,50.3011978 80.3922172,57.9546728 71.5433376,58.9014663 L71.5433376,59 L19.6727038,59 L19.6727038,58.7822699 Z" id="cloud" stroke="#979797" fill="#6CD6F8"></path>
+                    <path d="M49.559179,27.8476267 L56.8194538,20.587352 L31.8194538,20.587352 L31.8194538,45.587352 L39.0797285,38.3270773 L49.4971233,48.7444721 L59.9765738,38.2650215 L49.559179,27.8476267 Z" id="Rectangle-6" fill="#FFFFFF" transform="translate(45.898014, 34.665912) rotate(45.000000) translate(-45.898014, -34.665912) "></path>
+                    <ellipse id="Oval" fill-opacity="0.400220788" fill="#A1A1A1" cx="45.64489" cy="77" rx="45.5" ry="7"></ellipse>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

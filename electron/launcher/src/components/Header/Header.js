@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import logo from '../../assets/small_logo.png';
 import { NavLink, Link } from 'react-router-dom';
 import { patcherActions, userActions } from '_actions';
@@ -49,14 +49,14 @@ const Header = props => {
           LOGOUT
         </button>
         {
-          props.auth.user.isAdmin ?
+          // props.auth.user.isAdmin ?
           <NavLink to="/admin"
             className="main-header__link"
             activeClassName="main-header__link--active"
           >
             ADMIN
           </NavLink>
-           : null
+          //  : null
         }
       </nav>
     </header>

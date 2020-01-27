@@ -68,6 +68,9 @@ h1{
 }
 
 .main-header{
+  position: fixed;
+  width: 100%;
+  z-index: 98;
   background-color: white;
   border-bottom: 2px solid #F7943A;
   box-shadow: 0 2px 4px 0 rgba(0,0,0,0.24);
@@ -124,8 +127,9 @@ h1{
 .hero-card {
  background-color: white;
  border: 2px solid #F7943A;
- padding: 2rem;
+ padding: 2rem 2rem;
  margin-top: 2rem;
+ margin-bottom: 2rem;
  box-shadow: 0 2px 1px -1px rgba(0,0,0,.2), 0 1px 1px 0 rgba(0,0,0,.14), 0 1px 3px 0 rgba(0,0,0,.12);
 }
 .profile{
@@ -187,3 +191,68 @@ h1{
 .btn-resend{
   margin-bottom: 2rem;
 }
+
+.dropzone {
+  background-color: #D9F4FD;
+  border: 1px solid #6CD6F8;
+  text-align: center;
+  padding-top: 100px;
+  padding-bottom: 100px;
+  // height: 500px;
+}
+
+.form-step {
+  background-color:white;
+  -webkit-appearance: none;
+  position:relative;
+  // &:after {
+  //   content: '';
+  //   position: absolute;
+  //   width: 24px;
+  //   height: 28px;
+  //   top: 0;
+  //   // bottom: 0;
+  //   right: -32px;
+  //   border-top: 14px solid transparent;
+	//   border-left: 32px solid white;
+	//   border-bottom: 14px solid transparent;
+  //   // transform: rotate(45deg);
+  // }
+  // &:before {
+  //   content: '';
+  //   position: absolute;
+  //   width: 24px;
+  //   height: 28px;
+  //   top: 0;
+  //   // bottom: 0;
+  //   left: -32px;
+  //   border-top: 14px solid white;
+	//   border-left: 32px solid transparent;
+	//   border-bottom: 14px solid white;
+  //   // transform: rotate(45deg);
+  // }  
+}
+
+.container{
+  padding-top: 128px;
+}
+
+.container.upload{
+  padding-top: 0px;
+}
+
+.file-inputs{
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  input {
+    border: 1px solid #66AFE9;
+  }
+}
+
+.uploader-ver-input{
+  margin-left: 0;
+  margin-right: 0;
+}
+
+// if currentstep - 1 is not 0, show prev step button
+// if currentStep + 1
