@@ -166,7 +166,7 @@ const UploaderContainer = props => {
           <h1>Upload Files</h1>
           <div className="row uploader-ver-input">
             <select className="form-control col-3" onChange={handleSelectChange}>
-              <option selected value="new">New Version</option>
+              <option defaultValue="new" value="new">New Version</option>
               {props.uploader.futureVersions.map(futureVersion => {
                 let versionString = `v${futureVersion.major_ver}.${futureVersion.minor_ver}`;
                 let versionValue = `${futureVersion.major_ver}.${futureVersion.minor_ver}`;

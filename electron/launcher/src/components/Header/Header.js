@@ -49,14 +49,14 @@ const Header = props => {
           LOGOUT
         </button>
         {
-          // props.auth.user.isAdmin ?
+          props.auth.user.isAdmin ?
           <NavLink to="/admin"
             className="main-header__link"
             activeClassName="main-header__link--active"
           >
             ADMIN
           </NavLink>
-          //  : null
+           : null
         }
       </nav>
     </header>

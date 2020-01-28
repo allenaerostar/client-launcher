@@ -8,11 +8,13 @@ import Header from 'components/Header/Header';
 import UserProfile from 'components/UserProfile/UserProfile';
 import TitleBar from 'components/TitleBar';
 import Registration from 'components/Registration/Registration';
+import ResetPassword from 'components/PasswordReset/PasswordReset';
 import VerifyEmail from 'components/Registration/VerifyEmail';
 import UploaderContainer from 'components/Uploader/UploaderContainer';
 import Patcher from 'components/Patcher/Patcher';
 import PrivateRoute from 'components/PrivateRoute';
 import UpgradePrompt from 'components/Toasts/UpgradePrompt';
+import Spinner from 'components/Spinner';
 import history from '_helpers/history';
 import { patcherActions } from '_actions';
 
@@ -54,6 +56,7 @@ const App = props => {
   return ( 
     <div className={props.auth.isAuthenticated ? "app-container--loggedin" : ""}>
       <TitleBar />
+      <Spinner />
       <Router history={history}>
         {
           props.auth.isAuthenticated ? 
@@ -68,8 +71,8 @@ const App = props => {
             <PrivateRoute path="/profile" component={UserProfile} isAuthenticated={props.auth.isAuthenticated}/>
             <Route path="/registration" component={Registration} />
             <Route path="/verify-email" component={VerifyEmail} />
-          <PrivateRoute path="/admin" component={UploaderContainer} isAuthenticated={props.auth.isAuthenticated} />
-            {/* <PrivateRoute path="/admin" component={Uploader} isAuthenticated={props.auth.user.isAdmin}/> */}
+            <Route path="/reset-password" component={ResetPassword} />
+            <PrivateRoute path="/admin" component={UploaderContainer} isAuthenticated={props.auth.isAuthenticated} />
           </Switch>
       </Router>
       {
