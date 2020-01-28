@@ -30,8 +30,7 @@ function createWindow() {
     if(isDev){
         options = { 
             ...options,
-            resizable: true,
-            height: 637
+            resizable: true
         }
     }
 
@@ -67,6 +66,9 @@ require('ipc-listeners/user-logout');
 require('ipc-listeners/user-registration');
 require('ipc-listeners/file-manager');
 require('ipc-listeners/game-client-start');
+require('ipc-listeners/user-reset-password');
+require('ipc-listeners/user-self-help');
+require('ipc-listeners/admin-upload-files');
 
 // ONCE UPDATE IS DOWNLOADED, NOTIFY USER
 autoUpdater.on('update-downloaded', () => {
