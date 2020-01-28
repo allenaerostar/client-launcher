@@ -48,8 +48,8 @@ const Registration = props => {
         }
         break;
       case 'password1':
-        if (value.length < 6) {
-          return "Password length must be at least 6 characters.";
+        if (value.length < 6 || value.length > 12) {
+          return "Password length must be between 6-12 characters.";
         }
         break;
       case 'password2':        

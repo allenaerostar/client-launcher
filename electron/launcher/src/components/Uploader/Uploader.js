@@ -1,80 +1,46 @@
-import React, { useState } from 'react';
-import { connect } from 'react-redux';
+import React from 'react';
+import Dropzone from 'react-dropzone';
 
-import FormStepNavigator from 'components/Form/FormStepNavigator';
-import FormBuilder from 'components/Form/FormBuilder';
-import FormOverview from 'components/Form/FormOverview';
+import FileInputs from 'components/Uploader/FileInputs';
 
-const Uploader = props => {
-  const [inputs, setInputs] = useState({});
+import upload_icon from 'assets/icons/upload_icon.svg';
 
-  const [currentStep, setCurrentStep] = useState(1);
-
-  const steps = [
-    {
-      name: "Upload Files"
-    },
-    {
-      name: "Patch Information"
-    },
-    {
-      name: "Overview",
-    }
-  ];
-
-  const formFields = [
-    {
-      name: 'patch-version',
-      label: 'Patch Version',
-      type: 'text',
-      required: true
-    },
-    {
-      name: 'patch-notes',
-      label: 'Patch Notes',
-      type: 'textarea',
-      required: false
-    }
-  ];
-  
-  const setNextStep = () => {
-    setCurrentStep(currentStep+1);
-  };
-
-  const setPrevStep = () => {
-    setCurrentStep(currentStep-1);
-  };
-
-  const renderFormContent = () => {
-    switch (currentStep) {
-      case 1:
-        return <div>test</div>
-      case 2:
-        return <></>
-      case 3:
-        return <FormOverview inputs={inputs}/>
-      default:
-        break;
-    }
-  };
+const Uploader = ({uploadFiles, changeFileInfo, files}) => {
   return (
-    <div>
-      <FormStepNavigator
-        steps={steps}
-        changeStep={setCurrentStep}
-        currentStep={currentStep}
-      />
-      <form>
-        {
-          renderFormContent
-        }
-      </form>
-    </div>
+    <>
+      <div className="row mt-4">
+        <div className="col-12">
+          <Dropzone onDrop={acceptedFiles => uploadFiles(acceptedFiles)} >
+            {({ getRootProps, getInputProps }) => (
+              <div {...getRootProps()} className="dropzone">
+                <input {...getInputProps()} />
+                <img src={upload_icon} alt="cloud with arrow" />
+                <h2>Drag and drop or click here to upload files</h2>
+              </div>
+            )}
+          </Dropzone>
+        </div>
+      </div>
+      {
+        files ?
+          <div className="row">
+            <div className="col-12">
+              {
+                files.map((fileData, index) => (
+                  <FileInputs
+                    handleChange={changeFileInfo}
+                    fileData={fileData}
+                    index={index}
+                    key={index}
+                  />
+                ))
+              }
+            </div>
+          </div>
+          : null
+      }
+    </>
   );
 }
 
-const mapStateToProps = (state) => {
-  return state;
-}
-
-export default connect(mapStateToProps)(Uploader);
+export default Uploader;

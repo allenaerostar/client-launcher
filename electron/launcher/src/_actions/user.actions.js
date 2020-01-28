@@ -36,7 +36,13 @@ const login = (cred) => {
 
     ipc.on('http-login-credentials-fail', (e, err) => {
       dispatch({ type: loadingTypes.FETCHING_FINISH });
-      dispatch({type: actionTypes.LOGIN_FAILED, payload: {error: err}});
+      dispatch({ 
+        type: actionTypes.LOGIN_FAILED,
+        payload: {
+          message: `Failed to sign in.`,
+          type: 'danger'
+        }
+      });
     });
   }
 }
@@ -239,9 +245,9 @@ const autoLogin = () => {
       }
     });
 
-    ipc.on('auto-login-fail', (e, err) => {
-      // DO NOTHING IF AUTO LOGIN FAILS?
-    });
+    // ipc.on('auto-login-fail', (e, err) => {
+    //   // DO NOTHING IF AUTO LOGIN FAILS?
+    // });
   }
 }
 
