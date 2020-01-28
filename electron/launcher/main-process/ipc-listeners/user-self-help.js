@@ -1,4 +1,4 @@
-const request = require('request-promise');
+const request = require('helpers/request-wrapper').request;
 const ipc = require('electron').ipcMain;
 
 const deleteCache = require('helpers/update-game-files').deleteCache;
