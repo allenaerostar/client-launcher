@@ -8,6 +8,7 @@ import ChangePassword from 'components/UserProfile/ChangePassword';
 import { connect } from 'react-redux';
 
 // Container component for holding user functionality 
+
 const UserProfile = props => {
 
   const nestedRoutes = [
@@ -35,6 +36,8 @@ const UserProfile = props => {
             <Route path="/profile" component={UserInfo} exact/>
           </Switch>
         </div>
+      </div>
+      <div>
       </div>
     </section>
   );

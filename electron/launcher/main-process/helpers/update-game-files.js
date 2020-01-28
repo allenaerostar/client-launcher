@@ -215,7 +215,7 @@ const checkForUpdateAndDownload = (event) => {
         localHashes = new Map(JSON.parse(cacheFileData));
         return false;
       }, error => {
-        if(error.code === 'ENOENT'){
+        if(error.code !== 'ENOENT'){
           return true;
         }
         else{
@@ -231,6 +231,7 @@ const checkForUpdateAndDownload = (event) => {
           fs.writeFileSync(cacheFilePath, JSON.stringify([...localHashes]), 'utf8');
         }, () => {
           // DO NOTHING IF FAILED TO WRITE CACHE FILE
+          console.log("Failed to write cache file.");
         });
       }
     })
@@ -342,5 +343,18 @@ const checkForUpdateAndDownload = (event) => {
   });
 }
 
+const deleteCache = () => {
+  return new Promise((resolve, reject) => {
+    let cacheFilePath = path.join(app.getPath('userData'), 'hash_cache.json');
+    fs.unlink(cacheFilePath, error => {
+      if (error) {
+        console.log("Unable to delete hash_cash.json.");
+        throw error;
+      }
+      console.log("Successfully deleted hash_cache.json");
+    });
+  });
+}
 
 module.exports.checkForUpdateAndDownload = checkForUpdateAndDownload;
+module.exports.deleteCache = deleteCache;

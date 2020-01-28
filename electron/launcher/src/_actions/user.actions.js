@@ -251,6 +251,38 @@ const autoLogin = () => {
   }
 }
 
+const disconnect = (postData) => {
+  return (dispatch) => {
+    dispatch({type: actionTypes.DISCONNECT_START});
+    ipc.send('self-help-disconnect', postData);
+
+    ipc.on('self-help-disconnect-success', (e, res) => {
+      dispatch({type: actionTypes.DISCONNECT_SUCCESS});
+      history.push('/');
+    });
+
+    ipc.on('auto-login-fail', (e, err) => {
+      dispatch({type: actionTypes.DISCONNECT_FAILED});
+    });
+  }
+}
+
+const delete_cache = () => {
+  return (dispatch) => {
+    dispatch({type: actionTypes.DELETE_CACHE_START});
+    ipc.send('self-help-delete-cache');
+
+    ipc.on('self-help-delete-cache-success', (e, res) => {
+      dispatch({type: actionTypes.DELETE_CACHE_SUCCESS});
+      history.push('/');
+    });
+
+    ipc.on('self-help-delete-cache-fail', (e, err) => {
+      dispatch({type: actionTypes.DELETE_CACHE_FAILED});
+    });
+  }
+}
+
 export const userActions = {
   autoLogin,
   login,
@@ -259,5 +291,7 @@ export const userActions = {
   verifyEmail,
   resendEmail,
   resetPassword,
-  changePassword
+  changePassword,
+  disconnect,
+  delete_cache
 };
