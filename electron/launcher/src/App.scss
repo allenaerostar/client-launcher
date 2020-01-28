@@ -64,6 +64,7 @@ h1{
 .app-container{
   &--loggedin{
     background: url('../src/assets/main_background.png') no-repeat center;
+    background-attachment: fixed;
     background-size: cover;
     min-height: 578px;
   }
@@ -274,6 +275,7 @@ h1{
 
 .container{
   padding-top: 128px;
+  padding-bottom: 1.5rem;
 }
 
 .container.upload{
