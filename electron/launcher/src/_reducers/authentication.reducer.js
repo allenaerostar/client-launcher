@@ -43,6 +43,10 @@ export default (state = INITIAL_STATE, action) => {
       return { ...state, user: {...state.user, isActive: true}};
     case actionTypes.VERIFY_EMAIL_FAILED: 
       return { ...state, error: action.payload.error};
+    case actionTypes.RESET_PASSWORD_SUCCESS:
+      return { ...state, error: action.payload.message };
+    case actionTypes.RESET_PASSWORD_FAILED:
+      return { ...state, error: action.payload.error };
     case actionTypes.RESET_ERROR:
       return { ...state, error: null};
     default:

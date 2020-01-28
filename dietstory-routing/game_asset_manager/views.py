@@ -104,6 +104,46 @@ class DownloadView(views.APIView):
                 {'message': 'File not found.'},
                 status=status.HTTP_404_NOT_FOUND)
 
+
+class FutureVersionView(views.APIView):
+    permission_classes = (permissions.IsAdminUser,)
+
+    def get(self, request, *args, **kwargs):
+        """
+        summary: Provides all future versions greater than live
+        description: Returns a list version numbers that are in the future
+        """
+        params = GameMetadataForm(request.GET)
+
+        if not params.is_valid():
+            return JsonResponse(
+                {'message': 'Invalid version reference'},
+                status=status.HTTP_400_BAD_REQUEST)
+
+        # Get the base referenced version
+        major, minor = params.get_version_values()
+        try:
+            if major == None and minor == None:
+                ref_game_version = GameVersions.objects.get(is_live=True)
+            else:
+                ref_game_version = GameVersions.objects.get(major_ver=major, minor_ver=minor)
+        except GameVersions.DoesNotExist:
+            ref_game_version = None
+
+        if ref_game_version == None:
+            return JsonResponse(
+                {'message': 'No referenced game version found.'},
+                status=status.HTTP_400_BAD_REQUEST)
+
+        # Filter for all versions greater than referenced version
+        version_queryset = GameVersions.objects.filter(major_ver__gt=ref_game_version.major_ver) | GameVersions.objects.filter(major_ver=ref_game_version.major_ver, minor_ver__gt=ref_game_version.minor_ver)
+        res = [ {'major_ver': version.major_ver, 'minor_ver': version.minor_ver} for version in version_queryset ]
+
+        return JsonResponse(
+            {'future_versions': res},
+            status=status.HTTP_200_OK)
+
+
 class GameVersionView(views.APIView):
     def has_permissions(self, request, view):
 
@@ -160,6 +200,18 @@ class GameVersionView(views.APIView):
         """
         summary: Post Game Version
         description: Submit game version with live by time.
+        parameters:
+            - name: versionid
+              schema:
+                  type: string
+              description: >
+                  versionid is in the form of ^[vV]?([0-9]*)[.]([0-9]*)$.
+            - name: live_by
+              schema:
+                  type: string
+                  format: date-time
+              description: >
+                  live_by is in the form of YYYY-MM-DD hh:mm:ss.
         tags:
             - GameVersionView
         responses:
@@ -229,7 +281,8 @@ class GameVersionView(views.APIView):
                     {'message': 'Invalid live by time requested'},
                     status=status.HTTP_400_BAD_REQUEST)
 
-                version_update_scheduler.add_job(update_game_version, 'date', run_date=game_version.live_by, args=[game_version.major_ver, game_version.minor_ver])
+            elif live_by:
+                version_update_scheduler.add_job(update_game_version, 'date', run_date=live_by, args=[major_ver, minor_ver])
 
             add_game_version(major_ver, minor_ver, live_by)
 
@@ -300,7 +353,7 @@ class ReturnHashesView(views.APIView):
                                     description: Invalid Version Id provided
         """
 
-        params = GameMetadataForm(request.data)
+        params = GameMetadataForm(request.GET)
 
         # Check for valid parameters
         if not params.is_valid():

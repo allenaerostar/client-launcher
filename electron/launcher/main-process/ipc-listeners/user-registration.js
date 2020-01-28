@@ -24,7 +24,7 @@ ipc.on('http-registration', (e, user) => {
   let options = {
     method: 'POST',
     uri: djangoUrl +'/accounts/signup/',
-    header: {'content-type': 'application/x-www-form-urlencoded'},
+    headers: {'content-type': 'application/x-www-form-urlencoded'},
     form: user,
   }
 
@@ -54,7 +54,7 @@ ipc.on('http-verify-email', (e, postData) => {
   let options = {
     method: 'POST',
     uri: djangoUrl +'/accounts/verification/',
-    header: {'content-type': 'application/x-www-form-urlencoded'},
+    headers: {'content-type': 'application/x-www-form-urlencoded'},
     form: postData,
   }
 
@@ -84,7 +84,7 @@ ipc.on('http-resend-verification-email', (e, email) => {
   let options = {
     method: 'POST',
     uri: djangoUrl +'/accounts/resend-verification-code/',
-    header: {'content-type': 'application/x-www-form-urlencoded'},
+    headers: {'content-type': 'application/x-www-form-urlencoded'},
     form: email,
   }
 

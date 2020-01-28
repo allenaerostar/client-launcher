@@ -85,7 +85,7 @@ class RequestGameAssetForm(GameMetadataForm):
 
 
 class SubmitGameVersionForm(GameMetadataForm):
-	live_by = forms.DateTimeField(required=False)
+	live_by = forms.DateTimeField(input_formats=['%Y-%m-%d %H:%M:%S'], required=False)
 
 class SubmitGameFileForm(GameMetadataForm):
     file_hash = forms.CharField(max_length=50)

@@ -1,19 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { userActions } from '_actions';
-import logo from 'assets/dietstory_logo.png';
+import PreAuthContainer from 'components/PreAuthContainer';
 
 const VerifiedEmail = props => {
-
-  useEffect(() => {
-    if(props.auth.error !== null){
-      let error = JSON.parse(props.auth.error.error);
-      alert(error.message);
-      props.resetError();
-    }
-    // eslint-disable-next-line
-  }, [props.auth.error]);
 
   const [postData, setPostData] = useState({
     'email': props.auth.user.email,
@@ -38,11 +29,7 @@ const VerifiedEmail = props => {
   }
 
   return (
-    <div className="row no-gutters">
-      <section className="hero-image col-8">
-        <img src={logo} className="img-fluid" width="228" height="96" alt="dietstory" />
-      </section>
-      <section className="col-4 form__container">
+    <PreAuthContainer>
         <h1>Verify Account</h1>
         <form onSubmit={handleSubmit} className="form-inline">
           <label htmlFor="verify_token">Verification Code: </label>
@@ -60,8 +47,7 @@ const VerifiedEmail = props => {
         <Link to="/login">
           > Login
         </Link>
-      </section>
-    </div>
+    </PreAuthContainer>
   );
 }
 const mapStateToProps = (state) => {
