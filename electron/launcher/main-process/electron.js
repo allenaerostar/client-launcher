@@ -66,15 +66,9 @@ require('ipc-listeners/user-logout');
 require('ipc-listeners/user-registration');
 require('ipc-listeners/file-manager');
 require('ipc-listeners/game-client-start');
-<<<<<<< HEAD
-<<<<<<< HEAD
 require('ipc-listeners/user-reset-password');
-=======
-=======
 require('ipc-listeners/user-self-help');
->>>>>>> 8f8defe8f2fc70ded7f9103a13063f447a275422
 require('ipc-listeners/admin-upload-files');
->>>>>>> 732e8ae85ab18576b22147deaaf7e2748bd9d940
 
 // ONCE UPDATE IS DOWNLOADED, NOTIFY USER
 autoUpdater.on('update-downloaded', () => {
