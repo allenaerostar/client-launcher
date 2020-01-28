@@ -215,7 +215,7 @@ const checkForUpdateAndDownload = (event) => {
         localHashes = new Map(JSON.parse(cacheFileData));
         return false;
       }, error => {
-        if(error.code !== 'ENOENT'){
+        if(error.code === 'ENOENT'){
           return true;
         }
         else{
