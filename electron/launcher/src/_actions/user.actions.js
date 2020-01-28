@@ -147,9 +147,9 @@ const autoLogin = () => {
       }
     });
 
-    ipc.on('auto-login-fail', (e, err) => {
-      // DO NOTHING IF AUTO LOGIN FAILS?
-    });
+    // ipc.on('auto-login-fail', (e, err) => {
+    //   // DO NOTHING IF AUTO LOGIN FAILS?
+    // });
   }
 }
 
