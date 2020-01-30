@@ -312,67 +312,6 @@ class LoginViewTest(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(session['username'], 'test_username')
 
-    def test_successful_login_create_login_bonus_entry(self):
-        account = models.Accounts.objects.create(name='username', password='password', email='pokemon@domain.com',birthday='1990-01-01', tempban=timezone.localtime(), verified = 1)
-        login_bonus_reward = LoginBonusRewards.objects.create(reward_num=1, item_id=5, item_name="Onyx Apple", quantity=5,
-                                        time_to_expire=7200000)
-        response = self.client.post(LoginViewTest.LOGIN_VIEW_URL,
-            {
-                'username': 'username',
-                'password': 'password'
-            })
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(loads(response.content)["is_active"], True)
-        login_bonus = LoginBonus.objects.get(account=account.pk)
-        self.assertEqual(login_bonus.reward_num, 1)
-
-    def test_successful_login_does_not_update_login_bonus_entry(self):
-        account = models.Accounts.objects.create(name='username', password='password', email='pokemon@domain.com',birthday='1990-01-01', tempban=timezone.localtime(), verified=1)
-        current_date = timezone.localtime()
-        login_bonus = LoginBonus.objects.create(account=account,latest_reward_time=current_date,reward_month=current_date.month)
-        self.assertEqual(login_bonus.reward_num, 1)
-        response = self.client.post(LoginViewTest.LOGIN_VIEW_URL,
-                                    {
-                                        'username': 'username',
-                                        'password': 'password'
-                                    })
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(loads(response.content)["is_active"], True)
-        login_bonus_after_login = LoginBonus.objects.get(account=account.pk)
-        self.assertEqual(login_bonus_after_login.reward_num, 1)
-
-    def test_unsuccessful_login_does_not_create_login_bonus_entry(self):
-        account = models.Accounts.objects.create(name='username', password='password', email='pokemon@domain.com',birthday='1990-01-01', tempban=timezone.localtime(), verified=1)
-
-        response = self.client.post(LoginViewTest.LOGIN_VIEW_URL,
-                                    {
-                                        'username': 'username',
-                                        'password': 'password1'
-                                    })
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        try:
-            login_bonus = LoginBonus.objects.get(account=account.pk)
-        except LoginBonus.DoesNotExist:
-            login_bonus = None
-        self.assertEqual(login_bonus, None)
-
-    def test_unsuccessful_login_does_not_update_login_bonus_entry(self):
-        account = models.Accounts.objects.create(name='username', password='password', email='pokemon@domain.com',birthday='1990-01-01', tempban=timezone.localtime(), verified=1)
-        current_date = timezone.localtime()
-        LoginBonus.objects.create(account=account, reward_num=1, latest_reward_time=current_date, reward_month=current_date.month)
-        login_bonus = LoginBonus.objects.get(account=account.pk)
-        self.assertEqual(login_bonus.reward_num, 1)
-
-        response = self.client.post(LoginViewTest.LOGIN_VIEW_URL,
-                                    {
-                                        'username': 'username',
-                                        'password': 'password1'
-                                    })
-
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        login_bonus_after_login = LoginBonus.objects.get(account=account.pk)
-        self.assertEqual(login_bonus_after_login.reward_num, 1)
-
 
 class LogoutViewTest(TestCase):
     LOGOUT_VIEW_URL = '/accounts/logout/'

@@ -1,8 +1,11 @@
 from django.http import JsonResponse
+from django.utils import timezone
 from rest_framework import views, permissions, status
 from .models import LoginBonusRewards, MAX_NUM_REWARDS
 from .serializers import LoginBonusRewardSerializer
 from .validate_forms import RewardForm
+from django.db import transaction
+import csv
 
 
 class RewardsView(views.APIView):
@@ -46,7 +49,7 @@ class RewardsView(views.APIView):
                                     description: Failed to fetch login bonus rewards.
         """
         try:
-            login_bonus_rewards = LoginBonusRewards.objects.all()
+            login_bonus_rewards = LoginBonusRewards.objects.filter(reward_month=timezone.localtime().month)
             return JsonResponse([LoginBonusRewardSerializer(login_bonus_reward).data for login_bonus_reward in login_bonus_rewards],
                                 status=status.HTTP_200_OK, safe=False)
         except IOError as e:
@@ -57,17 +60,10 @@ class RewardsView(views.APIView):
 class RewardView(views.APIView):
     permission_classes = (permissions.AllowAny,)
 
-    def get(self, request, *args, **kwargs):
+    def get(self, request, reward_number):
         """
         summary: Get Reward description
-        description: Returns the reward associated with reward number
-        parameters:
-            - name: reward_number
-              schema:
-                  type: number
-              description: >
-                  Reward Number.
-              required: true
+        description: Returns the reward associated with reward number in url.
         tags:
             - RewardView
         responses:
@@ -108,13 +104,15 @@ class RewardView(views.APIView):
                                     type: string
                                     description: Failed to fetch login bonus reward associated to reward number.
         """
-        params = RewardForm(request.GET)
+        initial = {'reward_number': reward_number}
+        params = RewardForm(initial)
+
         if not params.is_valid():
             return JsonResponse({'message': "Reward number must be between 1 and {}".format(MAX_NUM_REWARDS)},
                                 status=status.HTTP_400_BAD_REQUEST)
         reward_num = params.cleaned_data.get('reward_number')
         try:
-            login_bonus_reward = LoginBonusRewards.objects.filter(reward_num=reward_num)
+            login_bonus_reward = LoginBonusRewards.objects.filter(reward_num=reward_num, reward_month=timezone.localtime().month)
             if not login_bonus_reward:
                 return JsonResponse({}, status=status.HTTP_200_OK)
             return JsonResponse(LoginBonusRewardSerializer(login_bonus_reward[0]).data, status=status.HTTP_200_OK)
@@ -122,4 +120,27 @@ class RewardView(views.APIView):
         except IOError as e:
             return JsonResponse({'message': "Failed to fetch login rewards {}".format(reward_num)},
                                 status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class UploadView(views.APIView):
+    permission_classes = (permissions.IsAdminUser,)
+
+    def post(self, request, *args, **kwargs):
+        file = request.get('file')
+
+        with transaction.atomic():
+            login_bonus_reader = csv.reader(file, delimiter=',')
+            for line in login_bonus_reader:
+                login_bonus_reward = LoginBonusRewards(reward_num=line[0], reward_month=line[1], item_id=line[2], item_name=line[3],
+                                                           quantity=line[4], time_to_expire=line[5])
+                try:
+                    login_bonus_reward.save()
+                except IOError as e:
+                    print("Failed to populate login rewards")
+                    return JsonResponse({'message': "Failed to populate login rewards"},
+                                        status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return JsonResponse(status=status.HTTP_200_OK)
+
+
+
 

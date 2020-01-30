@@ -449,7 +449,6 @@ class LoginView(views.APIView):
                 login(request, account)
                 request.session['username'] = username
                 logger.info("Success fully logged in to account: {}".format(username))
-                update_login_bonus(account.pk)
                 return JsonResponse(AccountSerializer(account).data, status=status.HTTP_200_OK)
             elif exists is not None:
                 logger.info("User with account name: {} exists, but was not verfied. Redirecting to account verification page.".format(username))
