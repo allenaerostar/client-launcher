@@ -11,6 +11,7 @@ def update_login_bonus(account_id):
 
     current_date = timezone.localtime()
     current_month = current_date.month
+    current_year = current_date.year
 
     if login_bonus_for_account is not None:
         if login_bonus_for_account.reward_month != current_month:
@@ -24,7 +25,7 @@ def update_login_bonus(account_id):
         if login_bonus_for_account.latest_reward_time < current_date.replace(hour=0, minute=0, second=0) and login_bonus_for_account.reward_num <= MAX_NUM_REWARDS:
             try:
                 with transaction.atomic():
-                    login_bonus_reward_item = get_login_reward_item(login_bonus_for_account.reward_num, current_month)
+                    login_bonus_reward_item = get_login_reward_item(login_bonus_for_account.reward_num, current_month, current_year)
 
                     if login_bonus_reward_item:
                         # current_date.strftime('%d-%m-%Y')
@@ -40,7 +41,7 @@ def update_login_bonus(account_id):
     else:
         try:
             with transaction.atomic():
-                login_bonus_reward_item = get_login_reward_item(1, current_month)
+                login_bonus_reward_item = get_login_reward_item(1, current_month, current_year)
 
                 if login_bonus_reward_item:
                     # current_date.strftime('%d-%m-%Y')
@@ -54,9 +55,9 @@ def update_login_bonus(account_id):
             raise e
 
 
-def get_login_reward_item(reward_num, reward_month):
+def get_login_reward_item(reward_num, reward_month, reward_year):
     try:
-        login_bonus_reward = LoginBonusRewards.objects.get(reward_num=reward_num, reward_month=reward_month)
+        login_bonus_reward = LoginBonusRewards.objects.get(reward_num=reward_num, reward_month=reward_month, reward_year=reward_year)
     except (IOError, LoginBonusRewards.DoesNotExist) as e:
         login_bonus_reward = None
         print("Failed to retrieve the item id associated with the reward num")

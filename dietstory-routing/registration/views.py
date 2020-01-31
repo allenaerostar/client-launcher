@@ -10,7 +10,6 @@ from .email import send_verification_email, send_reset_password_email
 from .verification import account_activation_token
 from .serializers import AccountSerializer
 from .password_utils import RandomPasswordGenerator
-from login_bonus.updater import update_login_bonus
 
 logger = logging.getLogger('default-logger')
 
