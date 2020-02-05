@@ -1,6 +1,8 @@
 from .models import LoginBonus, LoginBonusRewards, MAX_NUM_REWARDS
 from django.utils import timezone
 from django.db import transaction
+import requests
+
 
 
 def update_login_bonus(account_id):
@@ -26,17 +28,17 @@ def update_login_bonus(account_id):
             try:
                 with transaction.atomic():
                     login_bonus_reward_item = get_login_reward_item(login_bonus_for_account.reward_num, current_month, current_year)
-
                     if login_bonus_reward_item:
-                        # current_date.strftime('%d-%m-%Y')
-                        # api call requires receiver account ID, sender name, mesos, timestamp(dd-mm-yyyy), item id, item quantity, item stats(optional)
-                        # do api call to game server to get duey to send reward of reward_num + 1
-                        # upon successful update update reward_num and latest_reward_time
-                        login_bonus_for_account.reward_num += 1
-                        login_bonus_for_account.latest_reward_time = current_date
-                        login_bonus_for_account.save()
+                        data = {'account_id': account_id, 'item_id': login_bonus_reward_item.item_id, 'quantity':login_bonus_reward_item.quantity,'mesos':0, 'sender':"Dietstory", 'time_limit':login_bonus_reward_item.time_to_expire}
+                        response = requests.post("0.0.0.0:8485/duey", data=data)
+                        if response.status_code == requests.codes.ok:
+                            login_bonus_for_account.reward_num += 1
+                            login_bonus_for_account.latest_reward_time = current_date
+                            login_bonus_for_account.save()
+                        else:
+                            response.raise_for_status()
             except IOError as e:
-                print("Saving login bonus failed")
+                print("Sending login bonus failed")
                 raise e
     else:
         try:
@@ -44,12 +46,15 @@ def update_login_bonus(account_id):
                 login_bonus_reward_item = get_login_reward_item(1, current_month, current_year)
 
                 if login_bonus_reward_item:
-                    # current_date.strftime('%d-%m-%Y')
-                    # api call requires receiver account ID, sender name, mesos, timestamp(dd-mm-yyyy), item id, item quantity, item stats(optional)
-                    # do api call to game server to get duey to send reward_num 1
-                    # upon successful update add new entry to logins_bonus
-                    login_bonus_for_account = LoginBonus(account_id=account_id, latest_reward_time=current_date, reward_month=current_month)
-                    login_bonus_for_account.save()
+                    data = {'account_id': account_id, 'item_id': login_bonus_reward_item.item_id,
+                                'quantity': login_bonus_reward_item.quantity, 'mesos': 0, 'sender': "Dietstory",
+                                'time_limit': login_bonus_reward_item.time_to_expire}
+                    response = requests.post("0.0.0.0:8485/duey", data=data)
+                    if response.status_code == requests.codes.ok:
+                        login_bonus_for_account = LoginBonus(account_id=account_id, latest_reward_time=current_date, reward_month=current_month)
+                        login_bonus_for_account.save()
+                    else:
+                        response.raise_for_status()
         except IOError as e:
             print("Failed to create login bonus entry associated with the account id")
             raise e

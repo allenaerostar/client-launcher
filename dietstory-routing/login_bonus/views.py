@@ -206,6 +206,7 @@ class CollectReward(views.APIView):
 
     permission_classes = (permissions.IsAuthenticated,)
 
+
     def post(self, request):
         """
         summary: Collect Login Bonus Rewards
