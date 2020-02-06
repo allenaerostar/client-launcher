@@ -1,9 +1,25 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { userActions } from '_actions';
 import FormBuilder from 'components/Form/FormBuilder';
 import { connect } from 'react-redux';
 
+const ipc = window.require('electron').ipcRenderer;
+
 const UserProfile = props => {
+
+  useEffect(() => {
+    ipc.on('http-change-password-success', (e, res) => {
+      props.changePasswordSuccess();
+    });
+    ipc.on('http-change-password-fail', (e, err) => {
+      props.changePasswordFailed();
+    });
+
+    return () => {
+      ipc.removeAllListeners('http-change-password-success');
+      ipc.removeAllListeners('http-change-password-fail');
+    }
+  }, []);
 
   const formFields = [
     {

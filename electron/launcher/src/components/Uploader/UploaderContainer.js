@@ -17,7 +17,7 @@ const UploaderContainer = props => {
     if (props.uploader.futureVersions.length === 0){
       ipc.send('get-future-versions');
     }
-  }, [props.uploader.futureVersions]);
+  }, []);
 
   useEffect(() => {
     ipc.on('get-future-versions-response', (e, res) => {

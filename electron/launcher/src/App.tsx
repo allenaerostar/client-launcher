@@ -59,7 +59,7 @@ const App = props => {
       <Spinner />
       <Router history={history}>
         {
-          props.auth.isAuthenticated ? 
+          (props.auth.isAuthenticated && props.auth.user.isActive) ? 
             <Header />
             :
             null

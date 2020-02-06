@@ -35,8 +35,10 @@ export default (state = INITIAL_STATE, action) => {
       return { ...state, isAuthenticated: false, user: { ...state.user, username: '', password: ''} };
     case actionTypes.LOGOUT_FAILED:
       return { ...state, error: action.payload.error };
-    case actionTypes.REGISTER_SUCCESS:
+    case actionTypes.REGISTER_START:
       return { ...state, user: action.payload.user };
+    case actionTypes.REGISTER_SUCCESS:
+      return { ...state};
     case actionTypes.REGISTER_FAILED:
       return { ...state, error: action.payload.error};
     case actionTypes.VERIFY_EMAIL_SUCCESS:
