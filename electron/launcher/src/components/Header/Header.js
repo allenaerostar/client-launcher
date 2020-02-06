@@ -1,10 +1,50 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import logo from '../../assets/small_logo.png';
 import { NavLink, Link } from 'react-router-dom';
 import { patcherActions, userActions } from '_actions';
 import { connect } from 'react-redux';
 
+const ipc = window.require('electron').ipcRenderer;
+
 const Header = props => {
+
+  useEffect(() => {
+    if(!props.patch.reqInitialCheck){
+      ipc.on('fm-up-to-date', () => {
+        props.toggleIsLatestVersion(false);
+        props.gameClientStarted();
+      });
+      ipc.on('fm-download-start', () => {
+        props.setPatching();
+      });
+      ipc.on('fm-download-status-update', (e, update) => {
+        props.setUpdateStatus(update);
+      });
+      ipc.on('start-game-client-success', () => {
+        props.gameClientExit();
+      });
+      ipc.on('start-game-client-fail', () => {
+        props.gameClientExit();
+      });
+      ipc.on('http-logout-success', () => {
+        props.logoutSuccess();
+      });
+      ipc.on('http-logout-fail', () => {
+        props.logoutFailed();
+      });
+
+
+      return () => {
+        ipc.removeAllListeners('fm-up-to-date');
+        ipc.removeAllListeners('fm-download-start');
+        ipc.removeAllListeners('fm-download-status-update');
+        ipc.removeAllListeners('start-game-client-success');
+        ipc.removeAllListeners('start-game-client-fail');
+        ipc.removeAllListeners('http-logout-success');
+        ipc.removeAllListeners('http-logout-fail');
+      }
+    }
+  }, []);
 
   const handleButtonClick = () => {
     if(!props.patch.isGameClientRunning){

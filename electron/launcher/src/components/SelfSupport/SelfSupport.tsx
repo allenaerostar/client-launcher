@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { userActions } from '_actions';
 import FormBuilder from 'components/Form/FormBuilder';
+
+const ipc = window.require('electron').ipcRenderer;
 
 const characterForm = [
   {
@@ -13,6 +15,20 @@ const characterForm = [
 ];
 
 const SelfSupport = props => {
+  useEffect(() => {
+    ipc.on('self-help-delete-cache-success', (e, res) => {
+      props.delete_cache_success();
+    });
+    ipc.on('self-help-delete-cache-fail', (e, err) => {
+      props.delete_cache_failed();
+    });
+
+    return () => {
+      ipc.removeAllListeners('self-help-delete-cache-success');
+      ipc.removeAllListeners('self-help-delete-cache-fail');
+    }
+  }, []);
+
   return (
     <div>
         {<FormBuilder
