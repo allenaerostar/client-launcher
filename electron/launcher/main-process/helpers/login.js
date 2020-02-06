@@ -30,7 +30,13 @@ const login = cred => {
     .then(() => {
       return request(options).then(response => {
         body = response.body;
-        return response.headers['set-cookie'];
+
+        if(response.body.is_active){
+          return response.headers['set-cookie'];
+        }
+        else{
+          return null;
+        }
       })
       .catch(error => {
         throw error.error;
@@ -38,42 +44,52 @@ const login = cred => {
     })
     // PARSE Set-Cookie HEADER INTO COOKIE OBJECTS
     .then(cookieStrings => {
-      let promises = [];
+      if(cookieStrings !== null){
+        let promises = [];
 
-      for(cookieString of cookieStrings){
-        promises.push(new Promise((resolve, reject) => {
-          resolve(cookie.parse(cookieString));
-        }));
+        for(cookieString of cookieStrings){
+          promises.push(new Promise((resolve, reject) => {
+            resolve(cookie.parse(cookieString));
+          }));
+        }
+
+        return Promise.all(promises).then(cookies => {
+          return cookies;
+        });
       }
-
-      return Promise.all(promises).then(cookies => {
-        return cookies;
-      });
+      else{
+        return null
+      }
     })
     // SAVES USERNAME, PASSWORD, CSRF TOKEN, SESSION TOKEN IN OPERATING SYSTEM'S PASSWORD VAULT
     .then(cookies => {
-      let promises = [];
-      let expiry = 0;
+      if (cookies !== null){
+        let promises = [];
+        let expiry = 0;
 
-      promises.push(keytar.setPassword('Dietstory', body.name, encryptedPassword));
-      for(cookieObject of cookies){
-        if(cookieObject.hasOwnProperty('csrftoken')){
-          csrfToken = cookieObject.csrftoken;   // GLOBAL VARIABLE
-          promises.push(keytar.setPassword('Dietstory_CSRF', body.name, cookieObject.csrftoken));
+        promises.push(keytar.setPassword('Dietstory', body.name, encryptedPassword));
+        for(cookieObject of cookies){
+          if(cookieObject.hasOwnProperty('csrftoken')){
+            csrfToken = cookieObject.csrftoken;   // GLOBAL VARIABLE
+            promises.push(keytar.setPassword('Dietstory_CSRF', body.name, cookieObject.csrftoken));
+          }
+          else if(cookieObject.hasOwnProperty('sessionid')){
+            sessionKey = cookieObject.sessionid;  // GLOBAL VARIABLE
+            promises.push(keytar.setPassword('Dietstory_Session', body.name, cookieObject.sessionid));
+            expiry = Date.parse(cookieObject.expires);
+          }
         }
-        else if(cookieObject.hasOwnProperty('sessionid')){
-          sessionKey = cookieObject.sessionid;  // GLOBAL VARIABLE
-          promises.push(keytar.setPassword('Dietstory_Session', body.name, cookieObject.sessionid));
-          expiry = Date.parse(cookieObject.expires);
-        }
+        
+        return Promise.all(promises).then(() => {
+          return expiry;
+        })
+        .catch(error => {
+          throw error;
+        });
       }
-      
-      return Promise.all(promises).then(() => {
-        return expiry;
-      })
-      .catch(error => {
-        throw error;
-      });
+      else{
+        return 0;
+      }
     })
     // SAVE USER INFO FOR FUTURE AUTO-LOGIN TO USE (ENCRYPTED)
     .then(expiry => {
