@@ -1,6 +1,7 @@
 import history from '_helpers/history';
 import * as actionTypes from '_constants/user.types';
 import * as loadingTypes from '_constants/loading.types';
+import { prependOnceListener } from 'cluster';
 
 const ipc = window.require('electron').ipcRenderer;
 
