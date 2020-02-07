@@ -12,7 +12,7 @@ const Root = (props) => {
       props.checkForUpdate();
     }
     // eslint-disable-next-line
-  }, [props.patch.reqInitialCheck]);
+  }, []);
 
   useEffect(() => {
     ipc.on('fm-up-to-date', () => {
@@ -36,6 +36,7 @@ const Root = (props) => {
       ipc.removeAllListeners('fm-download-start');
       ipc.removeAllListeners('fm-download-status-update');
     }
+    // eslint-disable-next-line
   }, [])
 
   return (

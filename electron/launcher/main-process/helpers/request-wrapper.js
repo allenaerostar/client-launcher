@@ -1,5 +1,6 @@
 const rq = require('request-promise');
 const autoLogin = require('helpers/login').autoLogin;
+const errorLogger = require('helpers/error-logger');
 
 const config = require('config.json');
 const djangoUrl = config.DJANGO_SERVER.HOST +":" +config.DJANGO_SERVER.PORT;
@@ -12,6 +13,7 @@ const checkSession = () => {
         resolve(null);
       })
       .catch(error => {
+        errorLogger('Failed to check session token.', error);
         reject(error);
       })
     }
@@ -54,6 +56,7 @@ const request = options => {
       resolve(response);
     })
     .catch(error => {
+      errorLogger('Error while injecting headers.', error);
       reject(error);
     })
   });

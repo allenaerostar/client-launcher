@@ -1,7 +1,6 @@
 import history from '_helpers/history';
 import * as actionTypes from '_constants/user.types';
 import * as loadingTypes from '_constants/loading.types';
-import { prependOnceListener } from 'cluster';
 
 const ipc = window.require('electron').ipcRenderer;
 
@@ -70,7 +69,7 @@ const logoutSuccess = () => {
   }
 }
 
-const logoutFailed = () => {
+const logoutFailed = (err) => {
   return (dispatch) => {
     dispatch({ type: actionTypes.LOGOUT_FAILED, payload: { error: err } });
   }
@@ -89,7 +88,7 @@ const resetPasswordSuccess = () => {
     dispatch({
       type: actionTypes.RESET_PASSWORD_SUCCESS,
       payload: { 
-        message: `A new password has been sent to ${postData.email}.` ,
+        message: `Check your email.` ,
         type: 'success'
       }  
     });
@@ -213,7 +212,7 @@ const verifyEmailSuccess = () => {
   }
 }
 
-const verifyEmailFailed = () => {
+const verifyEmailFailed = (err) => {
   return (dispatch) => {
     dispatch({ type: loadingTypes.FETCHING_FINISH });
     dispatch({ 
@@ -233,26 +232,26 @@ const resendEmail = (postData) => {
   }
 }
 
-const resendEmailSuccess = () => {
+const resendEmailSuccess = (email) => {
   return (dispatch) => {
     dispatch({ type: loadingTypes.FETCHING_FINISH });
     dispatch({
       type: actionTypes.RESEND_VERIFICATION_EMAIL_SUCCESS,
       payload: {
-        message: `An email has been sent to ${postData.email}`,
+        message: `An email has been sent to ${email}`,
         type: 'success'
       }
     });
   }
 }
 
-const resendEmailFailed = () => {
+const resendEmailFailed = (email) => {
   return (dispatch) => {
     dispatch({ type: loadingTypes.FETCHING_FINISH });
     dispatch({
       type: actionTypes.RESEND_VERIFICATION_EMAIL_FAILED,
       payload: {
-        message: `Failed to send email to ${postData.email}`,
+        message: `Failed to send email to ${email}`,
         type: 'danger'
       }
     });
