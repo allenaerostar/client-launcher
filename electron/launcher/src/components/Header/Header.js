@@ -29,10 +29,9 @@ const Header = props => {
       ipc.on('http-logout-success', () => {
         props.logoutSuccess();
       });
-      ipc.on('http-logout-fail', () => {
-        props.logoutFailed();
+      ipc.on('http-logout-fail', (e, err) => {
+        props.logoutFailed(err);
       });
-
 
       return () => {
         ipc.removeAllListeners('fm-up-to-date');
@@ -44,6 +43,7 @@ const Header = props => {
         ipc.removeAllListeners('http-logout-fail');
       }
     }
+    // eslint-disable-next-line
   }, []);
 
   const handleButtonClick = () => {

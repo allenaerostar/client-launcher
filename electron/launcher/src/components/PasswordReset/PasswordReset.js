@@ -22,6 +22,7 @@ const ResetPassword = props => {
       ipc.removeAllListeners('http-reset-password-success');
       ipc.removeAllListeners('http-reset-password-fail');
     }
+    // eslint-disable-next-line
   }, []);
 
   const formFields = [

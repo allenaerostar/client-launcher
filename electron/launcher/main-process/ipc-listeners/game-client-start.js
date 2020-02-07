@@ -1,6 +1,7 @@
 const checkForUpdateAndDownload = require('helpers/update-game-files').checkForUpdateAndDownload;
 const exec = require('child_process').exec;
 const ipc = require('electron').ipcMain;
+const errorLogger = require('helpers/error-logger');
 
 
 const startGameClient = () => {
@@ -29,6 +30,7 @@ ipc.on('start-game-client', event => {
       event.reply('start-game-client-success');
     })
     .catch(error => {
+      errorLogger('Unable to open game client.', error);
       event.reply('start-game-client-fail');
     });
 });

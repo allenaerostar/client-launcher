@@ -1,6 +1,7 @@
 const request = require('request-promise');
 const authRequest = require('helpers/request-wrapper').request;
 const ipc = require('electron').ipcMain;
+const errorLogger = require('helpers/error-logger');
 
 const config = require('config.json').DJANGO_SERVER;
 const djangoUrl = config.HOST + ":" + config.PORT;
@@ -28,6 +29,7 @@ ipc.on('http-reset-password', (e, email) => {
   request(options).then(response => {
     e.reply('http-reset-password-success', response);
   }).catch(error => {
+    errorLogger('Unable to reset password.', error);
     e.reply('http-reset-password-fail', error);
   });
 });
@@ -56,6 +58,7 @@ ipc.on('http-change-password', (e, postData) => {
   authRequest(options).then(response => {
     e.reply('http-change-password-success', response);
   }).catch(error => {
+    errorLogger('Unable to change password.', error);
     e.reply('http-change-password-fail', error);
   });
 });
