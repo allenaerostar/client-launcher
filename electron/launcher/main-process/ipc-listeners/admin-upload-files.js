@@ -4,6 +4,7 @@ const crypto = require('crypto');
 const async = require('async');
 const request = require('helpers/request-wrapper').request;
 const FormData = require('form-data');
+const errorLogger = require('helpers/error-logger');
 
 const config = require('config.json').DJANGO_SERVER;
 const djangoUrl = config.HOST +":" +config.PORT;
@@ -179,8 +180,7 @@ const createNewFutureVersion = (input) => {
       request(options).then(() => {
         resolve(null);
       }).catch(error => {
-        let err = new Error('Error creating a new future patch version.');
-        reject(err);
+        reject(error);
       });
     }
     else{
@@ -216,7 +216,7 @@ ipc.on('upload-patch-files', (event, input) => {
     event.reply('upload-patch-files-result', result);
   })
   .catch(error => {
-    console.log(error);
+    errorLogger('Unable to upload patch files.', error)
   }); 
 });
 
@@ -231,6 +231,7 @@ ipc.on('get-future-versions', e  => {
   request(options).then(response => {
     e.reply('get-future-versions-response', response);
   }).catch(error => {
+    errorLogger('Failed to fetch future patch versions', error);
     e.reply('get-future-versions-failed', error);
   })
 });

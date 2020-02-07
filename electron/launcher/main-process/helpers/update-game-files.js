@@ -338,6 +338,7 @@ const checkForUpdateAndDownload = (event) => {
       }
     })
     .catch(error => {
+      errorLogger('Failed to update game files.', error);
       reject(error)
     });
   });
@@ -348,7 +349,7 @@ const deleteCache = () => {
     let cacheFilePath = path.join(app.getPath('userData'), 'hash_cache.json');
     fs.unlink(cacheFilePath, error => {
       if (error) {
-        console.log("Unable to delete hash_cash.json.");
+        errorLogger("Unable to delete hash_cash.json.", error);
         throw error;
       }
       console.log("Successfully deleted hash_cache.json");

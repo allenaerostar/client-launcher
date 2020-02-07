@@ -2,6 +2,7 @@ const fs = require('fs-extra');
 const path = require('path');
 const exec = require('child_process').exec;
 const app = require('electron').app;
+const errorLogger = require('helpers/error-logger');
 
 // CHECKS WINDOWS DEFENDER'S EXCLUSION PATH
 checkWinDefender = () => {
@@ -89,6 +90,8 @@ async function load(){
   try{
     await fs.remove(path.join(gameInstallationPath, 'tmp'));
   } catch(error){}
+
+  errorLogger.init();
 }
 
 module.exports.load = load;

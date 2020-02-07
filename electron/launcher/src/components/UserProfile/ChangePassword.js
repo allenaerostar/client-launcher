@@ -19,6 +19,7 @@ const UserProfile = props => {
       ipc.removeAllListeners('http-change-password-success');
       ipc.removeAllListeners('http-change-password-fail');
     }
+    // eslint-disable-next-line
   }, []);
 
   const formFields = [

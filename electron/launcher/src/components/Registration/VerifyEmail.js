@@ -13,13 +13,13 @@ const VerifiedEmail = props => {
       props.verifyEmailSuccess();
     });
     ipc.on('http-verify-email-fail', (e, err) => {
-      props.verifyEmailFailed();
+      props.verifyEmailFailed(err);
     });
     ipc.on('http-resend-verification-email-success', (e, res) => {
-      props.resendEmailSuccess();
+      props.resendEmailSuccess(props.auth.user.email);
     });
     ipc.on('http-resend-verification-email-fail', (e, res) => {
-      props.resendEmailFailed();
+      props.resendEmailFailed(props.auth.user.email);
     });
 
     return () => {

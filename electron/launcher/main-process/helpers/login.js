@@ -5,6 +5,7 @@ const path = require('path');
 const keytar = require('keytar');
 const app = require('electron').app;
 const aes256 = require('helpers/aes256');
+const errorLogger = require('helpers/error-logger');
 
 const config = require('config.json');
 const djangoUrl = config.DJANGO_SERVER.HOST +":" +config.DJANGO_SERVER.PORT;
@@ -109,6 +110,7 @@ const login = cred => {
       resolve({body: body, userInfo: userInfo});
     })
     .catch(error => {
+      errorLogger('User failed to log in.', error);
       reject(error);
     });
   });
