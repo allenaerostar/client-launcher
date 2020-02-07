@@ -1,4 +1,4 @@
-import React, { useEffect, PureComponent } from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { userActions } from '_actions';
@@ -14,7 +14,7 @@ const Login = props => {
   useEffect(() => {
     props.autoLogin();
     // eslint-disable-next-line
-  });
+  }, []);
 
   useEffect(() => {
     ipc.on('auto-login-success', (e, res) => {
@@ -32,6 +32,7 @@ const Login = props => {
       ipc.removeAllListeners('http-login-credentials-success');
       ipc.removeAllListeners('http-login-credentials-fail');
     }
+    // eslint-disable-next-line
   }, [])
 
   const formFields = [

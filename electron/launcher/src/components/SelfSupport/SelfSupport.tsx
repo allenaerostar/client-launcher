@@ -5,14 +5,14 @@ import FormBuilder from 'components/Form/FormBuilder';
 
 const ipc = window.require('electron').ipcRenderer;
 
-const characterForm = [
-  {
-    name: 'character_name',
-    label: 'Character Name',
-    type: 'text',
-    required: true
-  }
-];
+// const characterForm = [
+//   {
+//     name: 'character_name',
+//     label: 'Character Name',
+//     type: 'text',
+//     required: true
+//   }
+// ];
 
 const SelfSupport = props => {
   useEffect(() => {
@@ -27,6 +27,7 @@ const SelfSupport = props => {
       ipc.removeAllListeners('self-help-delete-cache-success');
       ipc.removeAllListeners('self-help-delete-cache-fail');
     }
+    // eslint-disable-next-line
   }, []);
 
   return (

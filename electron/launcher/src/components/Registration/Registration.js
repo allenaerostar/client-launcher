@@ -21,6 +21,7 @@ const Registration = props => {
       ipc.removeAllListeners('http-registration-success');
       ipc.removeAllListeners('http-registration-fail');
     }
+    // eslint-disable-next-line
   }, []);
 
   const formFields = [
