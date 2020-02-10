@@ -40,7 +40,9 @@ h1{
 
 .form__container{
   border-left: 3px solid #F7943A;
+  height: 578px;
   padding: 4rem 2rem 0 2rem !important;
+  overflow: scroll;
   a{
     display: block;
   }
@@ -55,19 +57,23 @@ h1{
 .hero-image{
   background: url('../src/assets/dietstory_login_background.png') no-repeat center;
   background-size: cover;
-  min-height: 578px;
+  height: 578px;
   padding: 1.5rem 3rem !important;
 }
 
 .app-container{
   &--loggedin{
     background: url('../src/assets/main_background.png') no-repeat center;
+    background-attachment: fixed;
     background-size: cover;
     min-height: 578px;
   }
 }
 
 .main-header{
+  position: fixed;
+  width: 100%;
+  z-index: 98;
   background-color: white;
   border-bottom: 2px solid #F7943A;
   box-shadow: 0 2px 4px 0 rgba(0,0,0,0.24);
@@ -89,6 +95,27 @@ h1{
       color: #4A4A4A;
     }
   } 
+}
+
+
+.sub-header{
+  font-size: 1.125rem;
+  text-decoration: none;
+  * {
+    margin-right: 1rem;
+  }
+
+  &__link {
+    color: #8c8c8c;
+    &--active{
+      color: #4A4A4A;
+      border-bottom: 2px solid #F7943A;
+    }
+
+    &:hover{
+      color: #4A4A4A;
+    }
+  }
 }
 
 .play-button{
@@ -125,7 +152,7 @@ h1{
  background-color: white;
  border: 2px solid #F7943A;
  padding: 2rem;
- margin-top: 2rem;
+ margin-top: 1.5rem;
  box-shadow: 0 2px 1px -1px rgba(0,0,0,.2), 0 1px 1px 0 rgba(0,0,0,.14), 0 1px 3px 0 rgba(0,0,0,.12);
 }
 .profile{
@@ -153,7 +180,7 @@ h1{
     -webkit-app-region: no-drag;
     & button{
       overflow: hidden;
-      background-color:white;
+      background-color: transparent;
       -webkit-appearance: none;
       border: none;
       &:hover{
@@ -187,3 +214,86 @@ h1{
 .btn-resend{
   margin-bottom: 2rem;
 }
+
+.error-text{
+  color: #bb0000;
+}
+
+.spinner-container{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: white;
+  opacity: 0.5;
+  z-index: 99;
+  // top:0;
+  // left:0;
+}
+.dropzone {
+  background-color: #D9F4FD;
+  border: 1px solid #6CD6F8;
+  text-align: center;
+  padding-top: 100px;
+  padding-bottom: 100px;
+  // height: 500px;
+}
+
+.form-step {
+  background-color:white;
+  -webkit-appearance: none;
+  position:relative;
+  // &:after {
+  //   content: '';
+  //   position: absolute;
+  //   width: 24px;
+  //   height: 28px;
+  //   top: 0;
+  //   // bottom: 0;
+  //   right: -32px;
+  //   border-top: 14px solid transparent;
+	//   border-left: 32px solid white;
+	//   border-bottom: 14px solid transparent;
+  //   // transform: rotate(45deg);
+  // }
+  // &:before {
+  //   content: '';
+  //   position: absolute;
+  //   width: 24px;
+  //   height: 28px;
+  //   top: 0;
+  //   // bottom: 0;
+  //   left: -32px;
+  //   border-top: 14px solid white;
+	//   border-left: 32px solid transparent;
+	//   border-bottom: 14px solid white;
+  //   // transform: rotate(45deg);
+  // }  
+}
+
+.container{
+  padding-top: 128px;
+  padding-bottom: 1.5rem;
+}
+
+.container.upload{
+  padding-top: 0px;
+}
+
+.file-inputs{
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  input {
+    border: 1px solid #66AFE9;
+  }
+}
+
+.uploader-ver-input{
+  margin-left: 0;
+  margin-right: 0;
+}
+
+// if currentstep - 1 is not 0, show prev step button
+// if currentStep + 1

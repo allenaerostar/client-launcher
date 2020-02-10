@@ -6,8 +6,9 @@ const FormStepNavigator = ({ steps, changeStep, currentStep }) => {
       {
         steps.map((step,index) => (
           <button
+            key={index}
             onClick={() => changeStep(index+1)}
-            className={currentStep === (index+1) ? "activeStep" : "inactiveStep" }
+            className={"form-step " + (currentStep === (index+1) ? "active" : "")}
           >
             {index+1}. {step.name}
           </button>

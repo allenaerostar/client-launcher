@@ -52,7 +52,7 @@ class S3Client:
 				http_method,
 				Params={
 					'Bucket': self.__bucket,
-					'Key': '{0}/{1}'.format(self.__root_folder, key) },
+					'Key': '{0}'.format(key) },
 				ExpiresIn=expires)
 		except Exception as e:
 			print(e) # TODO: Logging
