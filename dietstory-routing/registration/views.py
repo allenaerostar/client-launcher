@@ -439,6 +439,7 @@ class LoginView(views.APIView):
                                     description: Inputs have invalid format.
 
         """
+        
         params = LoginForm(request.data)
         if params.is_valid():
             username, password = params.cleaned_data.get('username'), params.cleaned_data.get('password')
@@ -490,6 +491,7 @@ class LogoutView(views.APIView):
                                     type: string
                                     description: Successfully logged out.
         """
+        print("Logging out")
         logout(request)
         logger.info("Successfully logged out.")
         return JsonResponse({'message': "Successfully logged out."}, status=status.HTTP_200_OK)
@@ -673,6 +675,10 @@ class ChangePasswordView(views.APIView):
         
         logger.warn("[RV-10] Invalid input parameters")
         return JsonResponse({'message': "Invalid input parameters"}, status=status.HTTP_400_BAD_REQUEST)
+    
+    class DisconnectFromServerView(views.APIView):
+
+        permission_classes = (permissions.IsAuthenticated,)
 
 class DisconnectView(views.APIView):
     permission_classes = (permissions.AllowAny,)
@@ -771,3 +777,4 @@ class DisconnectView(views.APIView):
         return JsonResponse({'message': warning_msg}, status=status.HTTP_400_BAD_REQUEST)
 
 
+            #if params.is_valid():
