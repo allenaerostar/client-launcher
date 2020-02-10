@@ -491,7 +491,6 @@ class LogoutView(views.APIView):
                                     type: string
                                     description: Successfully logged out.
         """
-        print("Logging out")
         logout(request)
         logger.info("Successfully logged out.")
         return JsonResponse({'message': "Successfully logged out."}, status=status.HTTP_200_OK)
