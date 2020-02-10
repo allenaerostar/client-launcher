@@ -439,7 +439,7 @@ class LoginView(views.APIView):
                                     description: Inputs have invalid format.
 
         """
-        
+
         params = LoginForm(request.data)
         if params.is_valid():
             username, password = params.cleaned_data.get('username'), params.cleaned_data.get('password')
@@ -749,9 +749,6 @@ class DisconnectView(views.APIView):
                     try:
                         params = {"char_id": character_name, "world_id": 0} # Where 0 = Scania.
                         res = requests.post(url=MAPLE_API_URL + "/dc", params=params)
-                        print(res)
-                        print(type(res))
-                        print(res.status_code)
 
                         if res.ok:
                             info_msg = "Successfully disconnected character: {}".format(character_name)
@@ -775,6 +772,3 @@ class DisconnectView(views.APIView):
         warning_msg = "Problem disconnecting character: {}. Character name is invalid.".format(request.data['character_name'])
         logger.warn(warning_msg)
         return JsonResponse({'message': warning_msg}, status=status.HTTP_400_BAD_REQUEST)
-
-
-            #if params.is_valid():
