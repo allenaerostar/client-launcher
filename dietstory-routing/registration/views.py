@@ -1,10 +1,11 @@
 import logging
+import requests
 
 from django.conf import settings
 from django.http import JsonResponse
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from rest_framework import views, permissions, status
-from .models import Accounts
+from .models import Accounts, Characters
 from .validate_forms import *
 from .email import send_verification_email, send_reset_password_email
 from .verification import account_activation_token
@@ -15,6 +16,8 @@ logger = logging.getLogger('default-logger')
 
 if settings.DEBUG:
     logger = logging.getLogger('dev-logger')
+
+MAPLE_API_URL = settings.DIETSTORY_API_HOST + ':' + settings.DIETSTORY_API_PORT
 
 # Next Error: RV-15
 
@@ -670,5 +673,101 @@ class ChangePasswordView(views.APIView):
         
         logger.warn("[RV-10] Invalid input parameters")
         return JsonResponse({'message': "Invalid input parameters"}, status=status.HTTP_400_BAD_REQUEST)
+
+class DisconnectView(views.APIView):
+    permission_classes = (permissions.AllowAny,)
+
+    """
+    summary: Disconnect character
+    description: Disconnect character based on their characters name
+                 and what world they are in.
+    parameters:
+        - name: character_id
+            schema:
+                type: string
+            description: >
+                The name of the character to dc.
+            required: true
+        - name: world
+            schema:
+                type: string
+            description: >
+                The world the character belongs in.
+            required: true
+    tags:
+        - DisconnectView
+    responses:
+        200:
+            content:
+                application/json:
+                    schema:
+                        type: object
+                        properties:
+                                message:
+                                    type: string
+                                    description: Successful disconnect.
+        404:
+            content:
+                application/json:
+                    schema:
+                        type: object
+                        properties:
+                                message:
+                                    type: string
+                                    description: A character with that name does not exist in
+                                                 your account.
+        400:
+            content:
+                application/json:
+                    schema:
+                        type: object
+                        properties:
+                                message:
+                                    type: string
+                                    description: There was an error disconnecting
+                                                 that character.
+    """
+    def post(self, request, *args, **kwargs):
+        logger.info("Got a request to DC a character.")
+        
+        params = DisconnectForm(request.data)
+        if params.is_valid():
+            username = request.session['username']
+            account = Accounts.objects.get(name=username)
+            characters = Characters.objects.filter(accountid=account.id)
+            character_name = params.cleaned_data['character_name']
+
+            for character in characters:
+                if character_name == character.name:
+                    # Send a request to MapleAPI
+                    try:
+                        params = {"char_id": character_name, "world_id": 0} # Where 0 = Scania.
+                        res = requests.post(url=MAPLE_API_URL + "/dc", params=params)
+                        print(res)
+                        print(type(res))
+                        print(res.status_code)
+
+                        if res.ok:
+                            info_msg = "Successfully disconnected character: {}".format(character_name)
+                            logger.info(info_msg)
+                            return JsonResponse({'message': info_msg},
+                                status=status.HTTP_200_OK)
+                        else:
+                            # Maple API could not DC the character.
+                            warning_msg = "Could not disconnect character: {}".format(character_name)
+                            logger.warn(warning_msg)
+                            return JsonResponse({'message': warning_msg},
+                                status=res.status_code)
+                    except requests.ConnectionError as e:
+                        logger.warn("Could not connect to the Maple API. " + str(e))
+                        return JsonResponse({'message:': "Error connecting the Maple API. Could not disconnect: {}".format(character_name)})
+            # If we didn't return then the character doesn't exist
+            warning_msg = "Could not disconnect character: {}. That character does not exist in your account".format(character_name)
+            logger.warn(warning_msg)
+            return JsonResponse({'message': warning_msg}, status=status.HTTP_404_NOT_FOUND)
+        
+        warning_msg = "Problem disconnecting character: {}. Character name is invalid.".format(request.data['character_name'])
+        logger.warn(warning_msg)
+        return JsonResponse({'message': warning_msg}, status=status.HTTP_400_BAD_REQUEST)
 
 
