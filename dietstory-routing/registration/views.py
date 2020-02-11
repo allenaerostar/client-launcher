@@ -687,7 +687,7 @@ class DisconnectView(views.APIView):
     description: Disconnect character based on their characters name
                  and what world they are in.
     parameters:
-        - name: character_id
+        - name: character_name
             schema:
                 type: string
             description: >
@@ -739,31 +739,29 @@ class DisconnectView(views.APIView):
         if params.is_valid():
             username = request.session['username']
             account = Accounts.objects.get(name=username)
-            characters = Characters.objects.filter(accountid=account.id)
             character_name = params.cleaned_data['character_name']
+            character = Characters.objects.get(accountid=account.id, name=character_name)
+            
+            # Send a request to MapleAPI to DC the character.
+            try:
+                params = {"char_id": character.id, "world_id": 0} # Where 0 = Scania.
+                res = requests.post(url=MAPLE_API_URL + "/dc", params=params)
 
-            for character in characters:
-                if character_name == character.name:
-                    # Send a request to MapleAPI
-                    try:
-                        params = {"char_id": character_name, "world_id": 0} # Where 0 = Scania.
-                        res = requests.post(url=MAPLE_API_URL + "/dc", params=params)
-
-                        if res.ok:
-                            info_msg = "Successfully disconnected character: {}".format(character_name)
-                            logger.info(info_msg)
-                            return JsonResponse({'message': info_msg},
-                                status=status.HTTP_200_OK)
-                        else:
-                            # Maple API could not DC the character.
-                            warning_msg = "Could not disconnect character: {}".format(character_name)
-                            logger.warn(warning_msg)
-                            return JsonResponse({'message': warning_msg},
-                                status=res.status_code)
-                    except requests.ConnectionError as e:
-                        logger.warn("Could not connect to the Maple API. " + str(e))
-                        return JsonResponse({'message:': "Error connecting the Maple API. Could not disconnect: {}".format(character_name)})
-            # If we didn't return then the character doesn't exist
+                if res.ok:
+                    info_msg = "Successfully disconnected character: {}".format(character_name)
+                    logger.info(info_msg)
+                    return JsonResponse({'message': info_msg},
+                        status=status.HTTP_200_OK)
+                else:
+                    # Maple API could not DC the character.
+                    warning_msg = "Could not disconnect character: {}".format(character_name)
+                    logger.warn(warning_msg)
+                    return JsonResponse({'message': warning_msg},
+                        status=res.status_code)
+            except requests.ConnectionError as e:
+                logger.warn("Could not connect to the Maple API. " + str(e))
+                return JsonResponse({'message:': "Error connecting the Maple API. Could not disconnect: {}".format(character_name)})
+            # If we didn't return then the character doesn't exist.
             warning_msg = "Could not disconnect character: {}. That character does not exist in your account".format(character_name)
             logger.warn(warning_msg)
             return JsonResponse({'message': warning_msg}, status=status.HTTP_404_NOT_FOUND)
