@@ -738,12 +738,12 @@ class DisconnectView(views.APIView):
         params = DisconnectForm(request.data)
         if params.is_valid():
             username = request.session['username']
-            account = Accounts.objects.get(name=username)
             character_name = params.cleaned_data['character_name']
-            character = Characters.objects.get(accountid=account.id, name=character_name)
             
             # Send a request to MapleAPI to DC the character.
             try:
+                account = Accounts.objects.get(name=username)
+                character = Characters.objects.get(accountid=account.id, name=character_name)
                 params = {"char_id": character.id, "world_id": 0} # Where 0 = Scania.
                 res = requests.post(url=MAPLE_API_URL + "/dc", params=params)
 
@@ -760,7 +760,14 @@ class DisconnectView(views.APIView):
                         status=res.status_code)
             except requests.ConnectionError as e:
                 logger.warn("Could not connect to the Maple API. " + str(e))
-                return JsonResponse({'message:': "Error connecting the Maple API. Could not disconnect: {}".format(character_name)})
+                return JsonResponse({'message:': "Error connecting the Maple API. Could not disconnect: {}".format(character_name)},
+                                        status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            
+            except Characters.DoesNotExist as e:
+                warning_msg = "Character with name: {} does not exist.".format(character_name)
+                logger.warn(warning_msg)
+                return JsonResponse({'message:': warning_msg}, status=status.HTTP_404_NOT_FOUND)
+
             # If we didn't return then the character doesn't exist.
             warning_msg = "Could not disconnect character: {}. That character does not exist in your account".format(character_name)
             logger.warn(warning_msg)

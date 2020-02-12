@@ -474,18 +474,18 @@ class ChangePasswordViewTest(TestCase):
 class DisconnectViewTest(TestCase):
     DISCONNECT_VIEW_URL = '/accounts/disconnect-character/'
     def test_disconnect_character_does_not_exist(self):
-        models.Accounts.objects.create(name='test_username',
+        models.Accounts.objects.create(name='username',
                                        password='password',
                                        email='pokemon@domain.com',
                                        birthday='1990-01-01',
                                        tempban=timezone.localtime(),
                                        verified = 1)
         session = self.client.session
-        session['username'] = 'test_username'
+        session['username'] = 'username'
         session.save()
         response = self.client.post(DisconnectViewTest.DISCONNECT_VIEW_URL,
             {
-                'character_name': 'test_char'
+                'character_name': 'testchar'
             })
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
     
@@ -493,6 +493,13 @@ class DisconnectViewTest(TestCase):
         response = self.client.post(DisconnectViewTest.DISCONNECT_VIEW_URL,
             {
                 'character_name': 'abc',
+            })
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_disconnect_character_name_toolong(self):
+        response = self.client.post(DisconnectViewTest.DISCONNECT_VIEW_URL,
+            {
+                'character_name': 'long_character__name',
             })
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         
