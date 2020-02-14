@@ -125,3 +125,79 @@ class Accounts(AbstractBaseUser, PermissionsMixin):
     class Meta:
         managed = False
         db_table = 'accounts'
+
+class Characters(models.Model):
+    accountid = models.IntegerField()
+    world = models.IntegerField()
+    name = models.CharField(max_length=13)
+    level = models.IntegerField()
+    exp = models.IntegerField()
+    gachaexp = models.IntegerField()
+    str = models.IntegerField()
+    dex = models.IntegerField()
+    luk = models.IntegerField()
+    int = models.IntegerField()
+    hp = models.IntegerField()
+    mp = models.IntegerField()
+    maxhp = models.IntegerField()
+    maxmp = models.IntegerField()
+    meso = models.IntegerField()
+    hpmpused = models.PositiveIntegerField(db_column='hpMpUsed')  # Field name made lowercase.
+    job = models.IntegerField()
+    skincolor = models.IntegerField()
+    gender = models.IntegerField()
+    fame = models.IntegerField()
+    fquest = models.IntegerField()
+    hair = models.IntegerField()
+    face = models.IntegerField()
+    ap = models.IntegerField()
+    sp = models.CharField(max_length=128)
+    map = models.IntegerField()
+    spawnpoint = models.IntegerField()
+    gm = models.IntegerField()
+    party = models.IntegerField()
+    buddycapacity = models.IntegerField(db_column='buddyCapacity')  # Field name made lowercase.
+    createdate = models.DateTimeField()
+    rank = models.PositiveIntegerField()
+    rankmove = models.IntegerField(db_column='rankMove')  # Field name made lowercase.
+    jobrank = models.PositiveIntegerField(db_column='jobRank')  # Field name made lowercase.
+    jobrankmove = models.IntegerField(db_column='jobRankMove')  # Field name made lowercase.
+    guildid = models.PositiveIntegerField()
+    guildrank = models.PositiveIntegerField()
+    messengerid = models.PositiveIntegerField()
+    messengerposition = models.PositiveIntegerField()
+    mountlevel = models.IntegerField()
+    mountexp = models.IntegerField()
+    mounttiredness = models.IntegerField()
+    omokwins = models.IntegerField()
+    omoklosses = models.IntegerField()
+    omokties = models.IntegerField()
+    matchcardwins = models.IntegerField()
+    matchcardlosses = models.IntegerField()
+    matchcardties = models.IntegerField()
+    merchantmesos = models.IntegerField(db_column='MerchantMesos', blank=True, null=True)  # Field name made lowercase.
+    hasmerchant = models.IntegerField(db_column='HasMerchant', blank=True, null=True)  # Field name made lowercase.
+    equipslots = models.IntegerField()
+    useslots = models.IntegerField()
+    setupslots = models.IntegerField()
+    etcslots = models.IntegerField()
+    familyid = models.IntegerField(db_column='familyId')  # Field name made lowercase.
+    monsterbookcover = models.IntegerField()
+    alliancerank = models.IntegerField(db_column='allianceRank')  # Field name made lowercase.
+    vanquisherstage = models.PositiveIntegerField(db_column='vanquisherStage')  # Field name made lowercase.
+    dojopoints = models.PositiveIntegerField(db_column='dojoPoints')  # Field name made lowercase.
+    lastdojostage = models.PositiveIntegerField(db_column='lastDojoStage')  # Field name made lowercase.
+    finisheddojotutorial = models.PositiveIntegerField(db_column='finishedDojoTutorial')  # Field name made lowercase.
+    vanquisherkills = models.PositiveIntegerField(db_column='vanquisherKills')  # Field name made lowercase.
+    summonvalue = models.PositiveIntegerField(db_column='summonValue')  # Field name made lowercase.
+    partnerid = models.IntegerField(db_column='partnerId')  # Field name made lowercase.
+    reborns = models.IntegerField()
+    pqpoints = models.IntegerField(db_column='PQPoints')  # Field name made lowercase.
+    datastring = models.CharField(db_column='dataString', max_length=64)  # Field name made lowercase.
+    lastlogouttime = models.DateTimeField(db_column='lastLogoutTime')  # Field name made lowercase.
+    pendantexp = models.IntegerField(db_column='pendantExp')  # Field name made lowercase.
+    jailexpire = models.BigIntegerField()
+
+    class Meta:
+        managed = False
+        db_table = 'characters'
