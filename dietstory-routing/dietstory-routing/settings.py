@@ -161,6 +161,8 @@ EMAIL_HOST_USER = secret_config['EMAIL_HOST_USER']
 EMAIL_HOST_PASSWORD = secret_config['EMAIL_HOST_PASSWORD']
 EMAIL_USE_TLS = bool(secret_config['EMAIL_USE_TLS'])
 
+DIETSTORY_API_HOST = 'http://' + secret_config['DIETSTORY_API_HOST']
+DIETSTORY_API_PORT = secret_config['DIETSTORY_API_PORT']
 
 # Set Django's test runner to the custom class UnManagedModelTestRunner
 TEST_RUNNER = 'dietstory-routing.runners.UnManagedModelTestRunner'

@@ -69,3 +69,6 @@ class PasswordChangeForm(forms.Form):
 
         PasswordChangeForm.check_equal_passwords(new_password1, new_password2)
 
+class DisconnectForm(forms.Form):
+    character_name = forms.CharField(min_length=4, max_length=13, validators=[validate_slug])
+
