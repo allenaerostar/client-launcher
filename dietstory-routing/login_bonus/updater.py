@@ -1,12 +1,15 @@
 from .models import LoginBonus, LoginBonusRewards, MAX_NUM_REWARDS
 from django.utils import timezone
 from django.db import transaction
+from django.conf import settings
 import requests
+
+MAPLE_API_URL = settings.DIETSTORY_API_HOST + ':' + settings.DIETSTORY_API_PORT
 
 
 
 def update_login_bonus(account_id):
-    url = "http://dietstory-game-server:8485/duey"
+    DUEY_URL = MAPLE_API_URL + "/duey"
     try:
         login_bonus_for_account = LoginBonus.objects.get(account_id=account_id)
     except LoginBonus.DoesNotExist:
@@ -31,7 +34,7 @@ def update_login_bonus(account_id):
                     login_bonus_reward_item = get_login_reward_item(login_bonus_for_account.reward_num, current_month, current_year)
                     if login_bonus_reward_item:
                         data = {'account_id': account_id, 'item_id': login_bonus_reward_item.item_id, 'quantity':login_bonus_reward_item.quantity,'mesos':0, 'sender':"Dietstory", 'time_limit':login_bonus_reward_item.time_to_expire}
-                        response = requests.post(url, data=data)
+                        response = requests.post(DUEY_URL, data=data)
                         if response.status_code == requests.codes.ok:
                             login_bonus_for_account.reward_num += 1
                             login_bonus_for_account.latest_reward_time = current_date
@@ -50,9 +53,9 @@ def update_login_bonus(account_id):
                     data = {'account_id': account_id, 'item_id': login_bonus_reward_item.item_id,
                                 'quantity': login_bonus_reward_item.quantity, 'mesos': 0, 'sender': "Dietstory",
                                 'time_limit': login_bonus_reward_item.time_to_expire}
-                    response = requests.post(url, data=data)
+                    response = requests.post(DUEY_URL, data=data)
                     if response.status_code == requests.codes.ok:
-                        login_bonus_for_account = LoginBonus(account_id=account_id, latest_reward_time=current_date, reward_month=current_month)
+                        login_bonus_for_account = LoginBonus(account_id=account_id, latest_reward_time=current_date, reward_month=current_month, reward_num=2)
                         login_bonus_for_account.save()
                     else:
                         response.raise_for_status("Failed to reach dietstory game server API")
