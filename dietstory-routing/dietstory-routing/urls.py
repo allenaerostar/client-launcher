@@ -18,5 +18,6 @@ from django.urls import path, include
 urlpatterns = [
     path('accounts/', include('registration.urls')),
     path('api/', include('swagger-ui.urls')),
-    path('game-files/', include('game_asset_manager.urls'))
+    path('game-files/', include('game_asset_manager.urls')),
+    path('login-bonus/', include('login_bonus.urls'))
 ]
