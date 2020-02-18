@@ -4,6 +4,7 @@ from rest_framework import status
 from django.utils import timezone 
 import registration.models as models
 import registration.verification as verification
+from login_bonus.models import LoginBonus, LoginBonusRewards
 from json import loads
 
 

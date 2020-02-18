@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'registration.apps.RegistrationConfig',
     'swagger-ui',
     'game_asset_manager.apps.GameAssetManagerConfig',
+    'login_bonus.apps.LoginBonusConfig',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
