@@ -190,9 +190,10 @@ class UploadLoginBonusRewardsView(views.APIView):
                     login_bonus_reward.item_name = line[4]
                     login_bonus_reward.quantity = line[5]
                     login_bonus_reward.time_to_expire = line[6]
+                    login_bonus_reward.item_flag = line[7]
                 except (IOError, LoginBonusRewards.DoesNotExist):
                     login_bonus_reward = LoginBonusRewards(reward_num=line[0], reward_month=line[1], reward_year=line[2], item_id=line[3], item_name=line[4],
-                                                           quantity=line[5], time_to_expire=line[6])
+                                                           quantity=line[5], time_to_expire=line[6], item_flag=line[7])
                 try:
                     login_bonus_reward.save()
                 except IOError as e:

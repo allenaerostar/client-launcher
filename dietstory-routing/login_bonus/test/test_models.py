@@ -20,7 +20,7 @@ class LoginBonus(TestCase):
 
 class LoginBonusRewards(TestCase):
     def setUp(self):
-        models.LoginBonusRewards.objects.create(reward_num=15, reward_month=5, reward_year=2020, item_id=5, item_name="Onyx Apple", quantity=5, time_to_expire=7200000)
+        models.LoginBonusRewards.objects.create(reward_num=15, reward_month=5, reward_year=2020, item_id=5, item_name="Onyx Apple", quantity=5, time_to_expire=7200000, item_flag=1)
 
     def test_loginbonusrewards_creation(self):
         login_bonus_reward = models.LoginBonusRewards.objects.get(reward_num=15, reward_month=5, reward_year=2020)
@@ -29,6 +29,7 @@ class LoginBonusRewards(TestCase):
         self.assertTrue(login_bonus_reward.reward_month == 5)
         self.assertTrue(login_bonus_reward.reward_year == 2020)
         self.assertTrue(login_bonus_reward.item_id == 5)
+        self.assertTrue(login_bonus_reward.item_flag == 1)
         self.assertTrue(login_bonus_reward.item_name == "Onyx Apple")
         self.assertTrue(login_bonus_reward.quantity == 5)
         self.assertTrue(login_bonus_reward.time_to_expire == 7200000)
