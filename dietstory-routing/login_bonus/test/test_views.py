@@ -60,7 +60,7 @@ class RewardViewTest(TestCase):
                     'reward_month': RewardViewTest.current_month,
                     'reward_year': RewardViewTest.current_year,
                     'item_id': 5,
-                    'item_flag': 1,
+                    'item_flag': 0,
                     'item_name': "Onyx Apple",
                     'quantity': 5,
                     'time_to_expire': 7200000}
