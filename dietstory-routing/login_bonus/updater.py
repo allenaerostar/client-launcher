@@ -33,7 +33,14 @@ def update_login_bonus(account_id):
                 with transaction.atomic():
                     login_bonus_reward_item = get_login_reward_item(login_bonus_for_account.reward_num, current_month, current_year)
                     if login_bonus_reward_item:
-                        data = {'account_id': account_id, 'item_id': login_bonus_reward_item.item_id, 'quantity':login_bonus_reward_item.quantity,'mesos':0, 'sender':"Dietstory", 'time_limit':login_bonus_reward_item.time_to_expire}
+                        data = {
+                            'account_id': account_id, 
+                            'item_id': login_bonus_reward_item.item_id,
+                            'flag': login_bonus_reward_item.item_flag, 
+                            'quantity':login_bonus_reward_item.quantity,
+                            'mesos':0, 
+                            'sender':"Dietstory", 
+                            'time_limit':login_bonus_reward_item.time_to_expire }
                         response = requests.post(DUEY_URL, data=data)
                         if response.status_code == requests.codes.ok:
                             login_bonus_for_account.reward_num += 1
@@ -50,9 +57,14 @@ def update_login_bonus(account_id):
                 login_bonus_reward_item = get_login_reward_item(1, current_month, current_year)
 
                 if login_bonus_reward_item:
-                    data = {'account_id': account_id, 'item_id': login_bonus_reward_item.item_id,
-                                'quantity': login_bonus_reward_item.quantity, 'mesos': 0, 'sender': "Dietstory",
-                                'time_limit': login_bonus_reward_item.time_to_expire}
+                    data = {
+                        'account_id': account_id,
+                        'item_id': login_bonus_reward_item.item_id,
+                        'flag': login_bonus_reward_item.item_flag,
+                        'quantity': login_bonus_reward_item.quantity, 
+                        'mesos': 0, 
+                        'sender': "Dietstory",
+                        'time_limit': login_bonus_reward_item.time_to_expire }
                     response = requests.post(DUEY_URL, data=data)
                     if response.status_code == requests.codes.ok:
                         login_bonus_for_account = LoginBonus(account_id=account_id, latest_reward_time=current_date, reward_month=current_month, reward_num=2)

@@ -9,9 +9,9 @@ class RewardsViewTest(TestCase):
     current_month = timezone.localtime().month
     currrent_year = timezone.localtime().year
     def setUp(self):
-        login_bonus.models.LoginBonusRewards.objects.create(reward_num=1, reward_month=RewardsViewTest.current_month, reward_year=RewardsViewTest.currrent_year, item_id=5, item_name="Onyx Apple", quantity=5,
+        login_bonus.models.LoginBonusRewards.objects.create(reward_num=1, reward_month=RewardsViewTest.current_month, reward_year=RewardsViewTest.currrent_year, item_id=5, item_flag=1, item_name="Onyx Apple", quantity=5,
                                         time_to_expire=7200000)
-        login_bonus.models.LoginBonusRewards.objects.create(reward_num=2, reward_month=RewardsViewTest.current_month, reward_year=RewardsViewTest.currrent_year, item_id=6, item_name="Cheese Cookie", quantity=5,
+        login_bonus.models.LoginBonusRewards.objects.create(reward_num=2, reward_month=RewardsViewTest.current_month, reward_year=RewardsViewTest.currrent_year, item_id=6, item_flag=0, item_name="Cheese Cookie", quantity=5,
                                             time_to_expire=7200000)
 
     def test_get_login_bonus_rewards_list(self):
@@ -23,6 +23,7 @@ class RewardsViewTest(TestCase):
             'reward_month': RewardsViewTest.current_month,
             'reward_year': RewardsViewTest.currrent_year,
             'item_id': 5,
+            'item_flag': 1,
             'item_name': "Onyx Apple",
             'quantity': 5,
             'time_to_expire': 7200000
@@ -32,6 +33,7 @@ class RewardsViewTest(TestCase):
                 'reward_month': RewardsViewTest.current_month,
                 'reward_year': RewardsViewTest.currrent_year,
                 'item_id': 6,
+                'item_flag': 0,
                 'item_name': "Cheese Cookie",
                 'quantity': 5,
                 'time_to_expire': 7200000
@@ -58,6 +60,7 @@ class RewardViewTest(TestCase):
                     'reward_month': RewardViewTest.current_month,
                     'reward_year': RewardViewTest.current_year,
                     'item_id': 5,
+                    'item_flag': 0,
                     'item_name': "Onyx Apple",
                     'quantity': 5,
                     'time_to_expire': 7200000}

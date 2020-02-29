@@ -22,6 +22,7 @@ class LoginBonusRewards(models.Model):
     reward_month = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(12)])
     reward_year = models.IntegerField(validators=[MinValueValidator(int(timezone.localtime().year))])
     item_id = models.IntegerField(validators=[MinValueValidator(0)])
+    item_flag = models.IntegerField(default=0, validators=[MinValueValidator(0)])
     item_name = models.TextField(null=True)
     quantity = models.IntegerField(default=1, validators=[MinValueValidator(1)])
     time_to_expire = models.IntegerField(default=0, validators=[MinValueValidator(0)])
