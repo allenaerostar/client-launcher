@@ -2,6 +2,8 @@ import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { patcherActions } from '_actions';
 
+import LoginRewardsContainer from 'components/LoginRewards/LoginRewardsContainer';
+
 const ipc = window.require('electron').ipcRenderer;
 
 const Root = (props) => {
@@ -43,8 +45,7 @@ const Root = (props) => {
     <section className="container">
       <div className="row">
         <div className="hero-card col-12">
-          <h1>Welcome!</h1>
-          <p>Enjoy your stay!</p>
+          <LoginRewardsContainer></LoginRewardsContainer>
         </div>
       </div>
     </section>
