@@ -30,3 +30,6 @@ class LoginBonusRewards(models.Model):
     class Meta:
         managed = True
         db_table = 'login_bonus_rewards'
+        constraints = [
+            models.UniqueConstraint(fields=['reward_num', 'reward_month', 'reward_year'], name='reward')
+        ]
