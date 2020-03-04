@@ -17,7 +17,7 @@ logger = logging.getLogger('default-logger')
 if settings.DEBUG:
     logger = logging.getLogger('dev-logger')
 
-MAPLE_API_URL = settings.DIETSTORY_API_HOST + ':' + settings.DIETSTORY_API_PORT
+MAPLE_API_URL = "{0}:{1}".format(settings.DIETSTORY_API_HOST, str(settings.DIETSTORY_API_PORT))
 
 # Next Error: RV-15
 
