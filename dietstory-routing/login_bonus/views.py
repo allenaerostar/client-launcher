@@ -3,15 +3,12 @@ import io
 from django.http import JsonResponse
 from django.utils import timezone
 from rest_framework import views, permissions, status
-from .models import LoginBonusRewards, MAX_NUM_REWARDS
+from .models import LoginBonus, LoginBonusRewards, MAX_NUM_REWARDS
 from .serializers import LoginBonusRewardSerializer
 from .validate_forms import RewardForm, UploadRewardsForm
 from django.db import transaction
 from login_bonus.updater import update_login_bonus
 from registration.models import Accounts
-
-
-
 
 class RewardsView(views.APIView):
     permission_classes = (permissions.AllowAny,)
@@ -127,6 +124,67 @@ class RewardView(views.APIView):
                                 status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
+class PlayerRewardView(views.APIView):
+    """
+    summary: Get account's previously obtained reward
+    description: Returns the player's previously obtained reward.
+    tags:
+        - RewardView
+    responses:
+        200:
+            content:
+                application/json:
+                    schema:
+                        type: object
+                        properties:
+                            reward_num:
+                                type: number
+                                description: Reward number.
+                            item_id:
+                                type: number
+                                description: Item id.
+                            item_name:
+                                type: string
+                                description: Item name.
+                            quantity:
+                                type: number
+                                description: Quantity of item to be given out.
+        404:
+            content:
+                application/json:
+                    schema:
+                        type: string
+                        properties:
+                            message:
+                                type: string
+                                description: Account cannot be found.
+    """
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get(self, request):
+        current_date = timezone.localtime()
+        current_month = current_date.month
+        current_year = current_date.year
+
+        try:
+            account = Accounts.objects.get(name=request.user.name)
+        except Accounts.DoesNotExist:
+            return JsonResponse({'message': "Cannot collect login bonus reward for non-existent account"},
+                                status=status.HTTP_404_NOT_FOUND)
+
+        try:
+            playerBonus = LoginBonus.objects.get(account=account, reward_month=current_month)
+        except LoginBonus.DoesNotExist:
+            return JsonResponse({}, status=status.HTTP_200_OK)
+
+        try:
+            reward = LoginBonusRewards.objects.get(reward_num=playerBonus.reward_num - 1, reward_month=current_month, reward_year=current_year)
+        except LoginBonusRewards.DoesNotExist:
+            return JsonResponse({}, status=status.HTTP_200_OK)
+
+        return JsonResponse(LoginBonusRewardSerializer(reward).data, status=status.HTTP_200_OK)
+
+
 class UploadLoginBonusRewardsView(views.APIView):
     permission_classes = (permissions.IsAdminUser,)
 
@@ -190,9 +248,10 @@ class UploadLoginBonusRewardsView(views.APIView):
                     login_bonus_reward.item_name = line[4]
                     login_bonus_reward.quantity = line[5]
                     login_bonus_reward.time_to_expire = line[6]
+                    login_bonus_reward.item_flag = line[7]
                 except (IOError, LoginBonusRewards.DoesNotExist):
                     login_bonus_reward = LoginBonusRewards(reward_num=line[0], reward_month=line[1], reward_year=line[2], item_id=line[3], item_name=line[4],
-                                                           quantity=line[5], time_to_expire=line[6])
+                                                           quantity=line[5], time_to_expire=line[6], item_flag=line[7])
                 try:
                     login_bonus_reward.save()
                 except IOError as e:
@@ -200,7 +259,6 @@ class UploadLoginBonusRewardsView(views.APIView):
                     return JsonResponse({'message': "Failed to populate login rewards"},
                                         status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             return JsonResponse({'message': "Populated login rewards successfully!"},status=status.HTTP_200_OK)
-
 
 class CollectReward(views.APIView):
 
@@ -245,18 +303,18 @@ class CollectReward(views.APIView):
         """
         try:
             account = Accounts.objects.get(name=request.user.name, password=request.user.password)
-            try:
-                update_login_bonus(account.pk)
-                current_date = timezone.localtime()
-                return JsonResponse({"next_reward_time": str(current_date.replace(day=current_date.day + 1,hour=0, minute=0, second=0) - current_date)},
-                                    status=status.HTTP_200_OK)
-            except IOError as e:
-                return JsonResponse({'message': "Failed to collect login reward for the user"},
-                                    status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            update_login_bonus(account.pk)
+            current_date = timezone.localtime()
+            return JsonResponse({"next_reward_time": str(current_date.replace(day=current_date.day + 1,hour=0, minute=0, second=0) - current_date)},
+                                status=status.HTTP_200_OK)
 
         except Accounts.DoesNotExist:
             return JsonResponse({'message': "Cannot collect login bonus reward for non-existent account"},
                                 status=status.HTTP_404_NOT_FOUND)
+
+        except IOError as e:
+            return JsonResponse({'message': "Failed to collect login reward for the user"},
+                                status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 
