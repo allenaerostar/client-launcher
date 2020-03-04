@@ -4,7 +4,7 @@ from django.db import transaction
 from django.conf import settings
 import requests
 
-MAPLE_API_URL = settings.DIETSTORY_API_HOST + ':' + settings.DIETSTORY_API_PORT
+MAPLE_API_URL = "{0}:{1}".format(settings.DIETSTORY_API_HOST, str(settings.DIETSTORY_API_PORT))
 
 
 
