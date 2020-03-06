@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import logo from '../../assets/small_logo.png';
 import { NavLink, Link } from 'react-router-dom';
-import { patcherActions, userActions } from '_actions';
+import { patcherActions, userActions, loginRewardActions } from '_actions';
 import { connect } from 'react-redux';
 
 const ipc = window.require('electron').ipcRenderer;
@@ -32,6 +32,10 @@ const Header = props => {
       ipc.on('http-logout-fail', (e, err) => {
         props.logoutFailed(err);
       });
+      ipc.on('claim-login-bonus-success', () => {
+        props.getLoginRewards();
+      });
+      
 
       return () => {
         ipc.removeAllListeners('fm-up-to-date');
@@ -41,6 +45,7 @@ const Header = props => {
         ipc.removeAllListeners('start-game-client-fail');
         ipc.removeAllListeners('http-logout-success');
         ipc.removeAllListeners('http-logout-fail');
+        ipc.removeAllListeners('claim-login-bonus-success');
       }
     }
     // eslint-disable-next-line
@@ -48,6 +53,12 @@ const Header = props => {
 
   const handleButtonClick = () => {
     if(!props.patch.isGameClientRunning){
+      let now = Date.now();
+
+      if(now > props.loginRewards.collectionTime + 30000){
+        props.claimReward();
+      }
+
       props.startGameClient();
     }
   };
@@ -110,7 +121,8 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     startGameClient: () => dispatch(patcherActions.startGameClient()),
-    logout: () => dispatch(userActions.logout())
+    logout: () => dispatch(userActions.logout()),
+    claimReward: () => dispatch(loginRewardActions.claimLoginReward())
   }
 }
 

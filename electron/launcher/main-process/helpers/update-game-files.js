@@ -5,6 +5,7 @@ const path = require('path');
 const async = require('async');
 const fs = require('fs-extra');
 const qs = require('qs');
+const errorLogger = require('helpers/error-logger');
 
 
 const app = require('electron').app;
@@ -231,7 +232,7 @@ const checkForUpdateAndDownload = (event) => {
           fs.writeFileSync(cacheFilePath, JSON.stringify([...localHashes]), 'utf8');
         }, () => {
           // DO NOTHING IF FAILED TO WRITE CACHE FILE
-          console.log("Failed to write cache file.");
+          errorLogger('Failed to write cache file.', {})
         });
       }
     })
