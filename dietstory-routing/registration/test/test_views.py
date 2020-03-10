@@ -4,6 +4,7 @@ from rest_framework import status
 from django.utils import timezone 
 import registration.models as models
 import registration.verification as verification
+from login_bonus.models import LoginBonus, LoginBonusRewards
 from json import loads
 
 
@@ -470,6 +471,39 @@ class ChangePasswordViewTest(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(self.client.session['_auth_user_hash'],
                          models.Accounts.objects.get(name='username').get_session_auth_hash())
+
+class DisconnectViewTest(TestCase):
+    DISCONNECT_VIEW_URL = '/accounts/disconnect-character/'
+    def test_disconnect_character_does_not_exist(self):
+        models.Accounts.objects.create(name='username',
+                                       password='password',
+                                       email='pokemon@domain.com',
+                                       birthday='1990-01-01',
+                                       tempban=timezone.localtime(),
+                                       verified = 1)
+        session = self.client.session
+        session['username'] = 'username'
+        session.save()
+        response = self.client.post(DisconnectViewTest.DISCONNECT_VIEW_URL,
+            {
+                'character_name': 'testchar'
+            })
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+    
+    def test_disconnect_character_name_too_short(self):
+        response = self.client.post(DisconnectViewTest.DISCONNECT_VIEW_URL,
+            {
+                'character_name': 'abc',
+            })
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_disconnect_character_name_toolong(self):
+        response = self.client.post(DisconnectViewTest.DISCONNECT_VIEW_URL,
+            {
+                'character_name': 'long_character__name',
+            })
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        
 
 
 

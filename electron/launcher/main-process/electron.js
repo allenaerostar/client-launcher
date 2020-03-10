@@ -7,13 +7,16 @@ const isDev = require("electron-is-dev");
 const path = require("path");
 const initialize = require("helpers/on-app-load").load;
 const ipc = electron.ipcMain;
+const errorLogger = require('helpers/error-logger');
 
 const log = require('electron-log');
 autoUpdater.logger = log;
 autoUpdater.logger.transports.file.level = "info";
 
 // SCRIPTS WHEN APPLICATION STARTS UP
-initialize();
+initialize().catch(error => {
+    errorLogger('Error running app initialization scripts.', error);
+})
 
 let mainWindow;
 
@@ -24,7 +27,10 @@ function createWindow() {
         resizable: false,
         frame: false,
         icon: path.join(__dirname, 'dietstory-desktop-icon.ico'),
-        webPreferences: {nodeIntegration: true}
+        webPreferences: {
+            nodeIntegration: true,
+            webSecurity: false
+        }
     }
 
     if(isDev){
@@ -69,6 +75,7 @@ require('ipc-listeners/game-client-start');
 require('ipc-listeners/user-reset-password');
 require('ipc-listeners/user-self-help');
 require('ipc-listeners/admin-upload-files');
+require('ipc-listeners/login-bonus');
 
 // ONCE UPDATE IS DOWNLOADED, NOTIFY USER
 autoUpdater.on('update-downloaded', () => {

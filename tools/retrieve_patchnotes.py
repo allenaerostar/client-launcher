@@ -1,6 +1,7 @@
 """
 This tool calls the Github API retrieve a list of pull requests and iterates through
-them looking for the "PATCHNOTES:" keyword.
+them looking for the "PATCHNOTES:" keyword using the current time - 7 days to the current time
+as the time frame to look between.
 """
 import argparse
 import logging

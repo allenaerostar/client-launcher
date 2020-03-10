@@ -2,9 +2,10 @@ const fs = require('fs-extra');
 const path = require('path');
 const exec = require('child_process').exec;
 const app = require('electron').app;
+const errorLogger = require('helpers/error-logger');
 
 // CHECKS WINDOWS DEFENDER'S EXCLUSION PATH
-checkWinDefender = () => {
+const checkWinDefender = () => {
   return new Promise((resolve, reject) => {
     let command = '$pref = Get-MpPreference; $pref.ExclusionPath';
     let options = {
@@ -22,7 +23,7 @@ checkWinDefender = () => {
 }
 
 // ADDS GAME FOLDER INTO WINDOWS DEFENDER EXCLUSION PATH
-addExclusionPath = () => {
+const addExclusionPath = () => {
   return new Promise((resolve, reject) => {
     let command = `Start-Process powershell -Verb RunAs -WindowStyle Hidden -ArgumentList 'Add-MpPreference -ExclusionPath "${gameInstallationPath}"'`;
     let options = {
@@ -39,56 +40,57 @@ addExclusionPath = () => {
   });
 }
 
-async function load(){
+const load = () => {
+  return new Promise((resolve, reject) => {
 
-  // SETTING DIETSTORY GAME INSTALLATION PATH
-  if(process.platform === 'win32'){
-    // WINDOWS  ---  C:\Users\<Username>\AppData\Local\Dietstory\Game
-    global.gameInstallationPath = path.join(app.getPath('appData'), '../Local', app.getName(), 'Game');
-  }
-  else{
-    // MAC OS   ---  ~/Library/Application Support/Dietstory/Game
-    // LINUX    ---  ~/.config/Dietstory/Game
-    global.gameInstallationPath = path.join(app.getPath('userData'), 'Game');
-  }
-
-  // CREATING GLOBAL VARIABLE FOR SESSION
-  global.sessionKey = '';
-  global.sessionExpiry = 0;
-  global.csrfToken = '';
-
-  // MAKE `Dietstory` DIRECTORY IF IT DOES NOT EXIST
-  try{
-    await fs.stat(path.join(gameInstallationPath, '..'));
-  } catch(error){
-    if(error.code === 'ENOENT'){
-      await fs.mkdir(error.path);
+    // SETTING DIETSTORY GAME INSTALLATION PATH
+    if(process.platform === 'win32'){
+      // WINDOWS  ---  C:\Users\<Username>\AppData\Local\Dietstory\Game
+      global.gameInstallationPath = path.join(app.getPath('appData'), '../Local', app.getName(), 'Game');
     }
-  }
-
-  // MAKE `Game` DIRECTORY IN THE DIRECTORY ABOVE IF IT DOES NOT EXIST
-  try{
-    await fs.stat(gameInstallationPath);
-  } catch(error){
-    if(error.code === 'ENOENT'){
-      await fs.mkdir(error.path);
+    else{
+      // MAC OS   ---  ~/Library/Application Support/Dietstory/Game
+      // LINUX    ---  ~/.config/Dietstory/Game
+      global.gameInstallationPath = path.join(app.getPath('userData'), 'Game');
     }
-  }
 
-  // ADDS GAME INSTALLTION FOLDER TO WINDOWS DEFENDER EXLUSION LIST IF NOT ALREADY THERE
-  if(process.platform === 'win32'){
-    try{
-      let excluded = await checkWinDefender();
-      if(!excluded){
-        await addExclusionPath();
+    // CREATING GLOBAL VARIABLE FOR SESSION
+    global.sessionKey = '';
+    global.sessionExpiry = 0;
+    global.csrfToken = '';
+
+    // INITIALIZING ERROR LOGGING 
+    errorLogger.init();
+
+    // MAKING SURE THE GAME FOLDER EXISTS
+    fs.ensureDir(path.join(gameInstallationPath, '..')).then(() => {
+      return fs.ensureDir(gameInstallationPath);
+    })
+    // CHECKING WINDOWS DEFENDER SETTINGS
+    .then(() => {
+      if(process.platform === 'win32'){
+        return checkWinDefender();
       }
-    } catch(error){}
-  }
-
-  // DELETES TEMP FOLDER IF IT EXIST
-  try{
-    await fs.remove(path.join(gameInstallationPath, 'tmp'));
-  } catch(error){}
+      else{
+        return true;
+      }
+    })
+    // ADDING EXCLUSION DIRECTORY TO WINDOWS DEFENDER, ELEVATION PROMPT
+    .then(excluded => {
+      if(!excluded){
+        return addExclusionPath();
+      }
+      else{
+        return null;
+      }
+    })
+    .then(() => {
+      resolve(0);
+    })
+    .catch(error => {
+      reject(error);
+    })
+  })
 }
 
 module.exports.load = load;

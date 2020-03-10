@@ -1,5 +1,6 @@
 const request = require('request-promise');
 const ipc = require('electron').ipcMain;
+const errorLogger = require('helpers/error-logger');
 
 const config = require('config.json').DJANGO_SERVER;
 const djangoUrl = config.HOST +":" +config.PORT;
@@ -31,6 +32,7 @@ ipc.on('http-registration', (e, user) => {
   request(options).then(response => {
     e.reply('http-registration-success', response);
   }).catch(error => {
+    errorLogger('Unable to register user.', error);
     e.reply('http-registration-fail', error);
   });
 });
@@ -61,6 +63,7 @@ ipc.on('http-verify-email', (e, postData) => {
   request(options).then(response => {
     e.reply('http-verify-email-success', response);
   }).catch(error => {
+    errorLogger('Unable to verify user\'s email address.', error);
     e.reply('http-verify-email-fail', error);
   });
 });
@@ -91,6 +94,7 @@ ipc.on('http-resend-verification-email', (e, email) => {
   request(options).then(response => {
     e.reply('http-resend-verification-email-success', response);
   }).catch(error => {
+    errorLogger('Failed to resend account verification email.', error);
     e.reply('http-resend-verification-email-fail', error);
   });
 });

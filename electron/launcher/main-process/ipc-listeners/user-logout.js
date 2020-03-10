@@ -5,6 +5,7 @@ const path = require('path');
 const request = require('helpers/request-wrapper').request;
 const ipc = electron.ipcMain;
 const app = electron.app;
+const errorLogger = require('helpers/error-logger');
 
 const config = require('config.json').DJANGO_SERVER;
 const djangoUrl = config.HOST +":" +config.PORT;
@@ -74,7 +75,7 @@ ipc.on('http-logout', (e, postData) => {
     });
   })
   .catch(error => {
-    // DO NOTHING ON ERROR
+    errorLogger('Failed to log out.', error);
   })
   .finally(response => {
     e.reply('http-logout-success', response);

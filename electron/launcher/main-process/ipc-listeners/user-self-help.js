@@ -19,7 +19,7 @@ ipc.on('self-help-disconnect', (e, postData) => {
     console.log("Disconnecting character with name: " + postData.character_name);
     let options = {
         method: 'POST',
-        uri: djangoUrl + '/accounts/disconnect_character/',
+        uri: djangoUrl + '/accounts/disconnect-character/',
         headers: {'content-type': 'application/x-www-form-urlencoded'},
         form: postData,
     }

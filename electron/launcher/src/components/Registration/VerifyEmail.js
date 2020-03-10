@@ -1,10 +1,34 @@
-import React, { useState } from 'react';
+import React, { useEfect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { userActions } from '_actions';
 import PreAuthContainer from 'components/PreAuthContainer';
 
+const ipc = window.require('electron').ipcRenderer;
+
 const VerifiedEmail = props => {
+
+  useEfect(() => {
+    ipc.on('http-verify-email-success', (e, res) => {
+      props.verifyEmailSuccess();
+    });
+    ipc.on('http-verify-email-fail', (e, err) => {
+      props.verifyEmailFailed(err);
+    });
+    ipc.on('http-resend-verification-email-success', (e, res) => {
+      props.resendEmailSuccess(props.auth.user.email);
+    });
+    ipc.on('http-resend-verification-email-fail', (e, res) => {
+      props.resendEmailFailed(props.auth.user.email);
+    });
+
+    return () => {
+      ipc.removeAllListeners('http-verify-email-success');
+      ipc.removeAllListeners('http-verify-email-fail');
+      ipc.removeAllListeners('http-resend-verification-email-success');
+      ipc.removeAllListeners('http-resend-verification-email-fail');
+    }
+  }, [])
 
   const [postData, setPostData] = useState({
     'email': props.auth.user.email,

@@ -1,11 +1,28 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { userActions } from '_actions';
 import FormBuilder from 'components/Form/FormBuilder';
 import PreAuthContainer from 'components/PreAuthContainer';
 
+const ipc = window.require('electron').ipcRenderer;
+
 const Registration = props => {
+
+  useEffect(() => {
+    ipc.on('http-registration-success', (e, res) => {
+      props.registerSuccess(props.auth.user.email);
+    });
+    ipc.on('http-registration-fail', (e, err) => {
+      props.registerFailed();
+    });
+
+    return () => {
+      ipc.removeAllListeners('http-registration-success');
+      ipc.removeAllListeners('http-registration-fail');
+    }
+    // eslint-disable-next-line
+  }, []);
 
   const formFields = [
     {

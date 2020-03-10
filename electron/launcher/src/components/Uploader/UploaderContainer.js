@@ -17,7 +17,8 @@ const UploaderContainer = props => {
     if (props.uploader.futureVersions.length === 0){
       ipc.send('get-future-versions');
     }
-  }, [props.uploader.futureVersions]);
+    // eslint-disable-next-line
+  }, []);
 
   useEffect(() => {
     ipc.on('get-future-versions-response', (e, res) => {
@@ -35,7 +36,8 @@ const UploaderContainer = props => {
       ipc.removeAllListeners('upload-patch-files-status');
       ipc.removeAllListeners('upload-patch-files-result');
     }
-  }, [])
+    // eslint-disable-next-line
+  }, []);
 
   const [inputs, setInputs] = useState({newVersion: true});
   const [files, setFiles] = useState([]);
@@ -104,6 +106,7 @@ const UploaderContainer = props => {
       props.uploader.futureVersions.map(futureVersion => {
         let str = `${futureVersion.major_ver}.${futureVersion.minor_ver}`
         existingVersions.set(str, null);
+        return futureVersion;
       })
 
       // BAD FORMAT

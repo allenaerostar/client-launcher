@@ -5,6 +5,8 @@ import { userActions } from '_actions';
 import FormBuilder from 'components/Form/FormBuilder';
 import PreAuthContainer from 'components/PreAuthContainer';
 
+const ipc = window.require('electron').ipcRenderer;
+
 // Future iterations will an action pulled from redux instead of from App
 const Login = props => {
 
@@ -12,7 +14,26 @@ const Login = props => {
   useEffect(() => {
     props.autoLogin();
     // eslint-disable-next-line
-  });
+  }, []);
+
+  useEffect(() => {
+    ipc.on('auto-login-success', (e, res) => {
+      props.loginSuccess(res);
+    });
+    ipc.on('http-login-credentials-success', (e, res) => {
+      props.loginSuccess(res);
+    });
+    ipc.on('http-login-credentials-fail', (e, err) => {
+      props.loginFailed();
+    });
+
+    return () => {
+      ipc.removeAllListeners('uto-login-success');
+      ipc.removeAllListeners('http-login-credentials-success');
+      ipc.removeAllListeners('http-login-credentials-fail');
+    }
+    // eslint-disable-next-line
+  }, [])
 
   const formFields = [
     {
@@ -43,9 +64,6 @@ const Login = props => {
         </Link>
         <Link to="/reset-password">
           > Forgot your password?
-        </Link>
-        <Link to="/verify-email">
-          > Verify your email
         </Link>
     </PreAuthContainer>
   );
