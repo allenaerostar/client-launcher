@@ -8,6 +8,8 @@ const errorLogger = require('helpers/error-logger');
 const config = require('config.json').DJANGO_SERVER;
 const djangoUrl = config.HOST +":" +config.PORT;
 
+const ICON_URL_TEMPLATE = 'https://maplestory.io/api/GMS/83/item/{item_id}/iconRaw';
+
 // GET CURRENT REWARD COUNTER FROM THE SERVER
 const fetchLoginRewardIndex = () => {
   return new Promise((resolve, reject) => {
@@ -99,7 +101,7 @@ let getItemIcon = (iconDirectory, rewardObject) => {
           resolve(iconPath);
         }
         else{
-          let rs = _request(`https://maplestory.io/api/GMS/83/item/${rewardObject.item_id}/iconRaw`).on('error', error => {
+          let rs = _request(ICON_URL_TEMPLATE.replace('{item_id}', rewardObject.item_id)).on('error', error => {
             reject(error);
           })
           .pipe(fs.createWriteStream(iconPath));
