@@ -5,6 +5,7 @@ const path = require('path');
 const async = require('async');
 const fs = require('fs-extra');
 const qs = require('qs');
+const errorLogger = require('helpers/error-logger');
 
 
 const app = require('electron').app;
@@ -231,7 +232,7 @@ const checkForUpdateAndDownload = (event) => {
           fs.writeFileSync(cacheFilePath, JSON.stringify([...localHashes]), 'utf8');
         }, () => {
           // DO NOTHING IF FAILED TO WRITE CACHE FILE
-          console.log("Failed to write cache file.");
+          errorLogger('Failed to write cache file.', {})
         });
       }
     })
@@ -338,6 +339,7 @@ const checkForUpdateAndDownload = (event) => {
       }
     })
     .catch(error => {
+      errorLogger('Failed to update game files.', error);
       reject(error)
     });
   });
@@ -348,7 +350,7 @@ const deleteCache = () => {
     let cacheFilePath = path.join(app.getPath('userData'), 'hash_cache.json');
     fs.unlink(cacheFilePath, error => {
       if (error) {
-        console.log("Unable to delete hash_cash.json.");
+        errorLogger("Unable to delete hash_cash.json.", error);
         throw error;
       }
       console.log("Successfully deleted hash_cache.json");

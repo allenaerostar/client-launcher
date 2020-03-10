@@ -295,5 +295,77 @@ h1{
   margin-right: 0;
 }
 
-// if currentstep - 1 is not 0, show prev step button
-// if currentStep + 1
+
+// DAILY LOGIN REWARDS
+////////////////////////////////////////////
+.rewards-container{
+  border: 2px solid #F7943A;
+  height: 275px;
+  width: 250px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.first-reward{
+  height: 24%;
+  width: 94%;
+  flex-direction: row;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.other-rewards{
+  border-top-style: solid;
+  border-width: 1px;
+  border-color: gray;
+  height: 19%;
+  width: 94%;
+  flex-direction: row;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.reward-text-container{
+  height: 100%;
+  width: 164px;
+}
+
+.reward-top-text{
+  height: 50%;
+  width: 100%;
+  font-weight: bold;
+  display: flex;
+  align-items: flex-end;
+  flex-direction: row;
+}
+
+.reward-bottom-text{
+  height: 50%;
+  width: 100%;
+}
+
+.reward-top-span{
+  display: inline-block;
+}
+
+.reward-bottom-span{
+  display: inline-block;
+  font-size: 14px;
+}
+
+.empty-reward{
+  border-top-style: solid;
+  border-width: 1px;
+  border-color: gray;
+  height: 19%;
+  width: 94%;
+}
+
+.reward-image{
+  border: 1px solid #F7943A;
+  border-radius: 8px;
+  padding: 2px;
+}
