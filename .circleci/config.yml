@@ -34,12 +34,12 @@ jobs:
       - run:
           name:  Build Dietstory Django Server Test image
           command: |
-            docker build -t benjixd/dietstory-django-tests -f Dockerfile.test .
+            docker build -t dietstory-django-tests -f Dockerfile.test .
       - run: # Run Dietstory Django Server Tests
           name: Run Dietstory Django Server Tests
           path: dietstory-routing
           command: |
-            docker run -p 8000:8000 benjixd/dietstory-django-tests
+            docker run -p 8000:8000 dietstory-django-tests
       - persist_to_workspace: # Persist required files for deployment
           root: ~/project
           paths: dietstory-routing
@@ -62,7 +62,7 @@ jobs:
           name: Build Docker Image
           command: |
             echo "Building docker image" && \
-            docker build -t benjixd/dietstory-django -f Dockerfile.prod .
+            docker build -t dietstory-django -f Dockerfile.prod .
       - run:
          name: Clean up secrets
          command: |
@@ -104,8 +104,8 @@ jobs:
       - run:
          name: Build Docker image
          command: |
-           echo "echo "Building docker image" && \
-           docker build -t benjixd/dietstory-django -f Dockerfile.prod .
+           echo "Building docker image" && \
+           docker build -t dietstory-django -f Dockerfile.prod .
       - run:
          name: Clean up secrets
          command: |
