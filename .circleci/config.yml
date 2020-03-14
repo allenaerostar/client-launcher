@@ -35,7 +35,7 @@ jobs:
           name:  Build Dietstory Django Server Test image
           command: |
             ls &&
-            docker build -t dietstory-django-tests -f Dockerfile.test .
+            docker build -t dietstory-django-tests -f dietstory-routing/Dockerfile.test .
       - run: # Run Dietstory Django Server Tests
           name: Run Dietstory Django Server Tests
           path: dietstory-routing
