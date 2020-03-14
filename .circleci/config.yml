@@ -28,7 +28,7 @@ version: 2
 jobs:
   build-artifacts:
     machine: true # Build using our custom docker build image
-    
+    working_directory: ~/project/dietstory-routing
     steps:
       - checkout # check out the code in the project directory
       - run:
