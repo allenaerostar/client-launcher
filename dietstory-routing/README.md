@@ -53,23 +53,28 @@ coverage html
 ```
 > View the coverage report found under `htmlcov/index.html`. You can install coverage on pip: `pip install coverage`
 
-## Using Docker
-Build the docker image specified under `docker/` with the following command:
+## Using Docker for local development
+Build the docker image specified under the root directory with the following command:
 ```
-docker build -t dietstory-django -f run_server .
+docker build -t dietstory-django -f Dockerfile.dev .
 ```
 Run the docker image by mounting the project and exposing port 8000:
 ```
 docker run -v $(pwd):/mnt -p 8000:8000 dietstory-django
-```  
-## Using Docker For Tests
-Build the docker image specified under `docker/` with the following command:
 ```
-docker build -t dietstory-django-tests -f run_tests .
+You can also build and run the image with the command:
+```
+docker-compose up
+```
+This will automatically expose it on port 8000 and mount the projects root directory.
+## Using Docker For Tests
+Build the docker image specified under the root directory with the following command:
+```
+docker build -t dietstory-django-tests -f Dockerfile.test .
 ```
 Run the docker image by mounting the project and exposing port 8000:
 ```
-docker run -v $(pwd):/mnt -p 8000:8000 dietstory-django-tests
+docker run -p 8000:8000 dietstory-django-tests
 ```
 > Note: Ensure that you have setup a MySQL database for the Django server to connect to. Modify `settings.py` to ensure correct configurations.
 

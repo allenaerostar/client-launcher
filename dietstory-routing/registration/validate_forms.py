@@ -71,4 +71,3 @@ class PasswordChangeForm(forms.Form):
 
 class DisconnectForm(forms.Form):
     character_name = forms.CharField(min_length=4, max_length=13, validators=[validate_slug])
-

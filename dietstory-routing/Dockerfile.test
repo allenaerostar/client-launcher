@@ -1,0 +1,37 @@
+FROM python:3.7.5-alpine
+
+LABEL maintainer="Benjamin Zhao <yl4zhao@edu.uwaterloo.ca>"
+
+ENV CONFIG_DIR=/tmp/config/
+
+# Add Project Requirements
+COPY requirements.txt ${CONFIG_DIR}
+
+# Install Python Packages Dependencies
+RUN apk add --no-cache build-base \
+	&& apk add --no-cache mariadb-connector-c-dev \
+	&& pip install --no-cache-dir -r ${CONFIG_DIR}/requirements.txt \
+	&& apk del build-base
+
+RUN mkdir /code
+WORKDIR /code
+COPY . /code/
+
+# Generate config file for tests
+RUN echo '{ \
+		"SECRET_KEY": "hello_world", \
+		"DEBUG": true, \
+        "LOG_LEVEL_DEV": "DEBUG", \
+        "LOG_LEVEL_DEFAULT": "INFO", \
+		"ALLOWED_HOSTS": [], \
+		"DATABASES": {"default": {}}, \
+		"EMAIL_BACKEND": "", \
+		"EMAIL_HOST": "", \
+		"EMAIL_PORT": "587", \
+		"EMAIL_HOST_USER": "", \
+		"EMAIL_HOST_PASSWORD": "", \
+		"EMAIL_USE_TLS": "True", \
+		"DIETSTORY_API_HOST": "localhost", \
+		"DIETSTORY_API_PORT": "8485", \
+		"TEST_DATABASES": {"default": {"ENGINE": "django.db.backends.sqlite3","NAME": "dietstory"}}}' > dietstory-routing/dietstory_secret_config.json \
+	&& python -u manage.py test -v2
