@@ -8,3 +8,4 @@ boto3==1.10.34
 apscheduler==3.6.3
 requests==2.22.0
 random-password-generator==2.1.0
+gunicorn==19.9.0

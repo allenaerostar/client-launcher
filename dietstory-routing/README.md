@@ -61,7 +61,12 @@ docker build -t dietstory-django -f Dockerfile.dev .
 Run the docker image by mounting the project and exposing port 8000:
 ```
 docker run -v $(pwd):/mnt -p 8000:8000 dietstory-django
-```  
+```
+You can also build and run the image with the command:
+```
+docker-compose up
+```
+This will automatically expose it on port 8000 and mount the projects root directory.
 ## Using Docker For Tests
 Build the docker image specified under the root directory with the following command:
 ```

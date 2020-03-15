@@ -34,12 +34,21 @@ jobs:
       - run:
           name:  Build Dietstory Django Server Test image
           command: |
+<<<<<<< HEAD
             docker build -t benjixd/dietstory-django-tests -f Dockerfile.test .
+=======
+            cd dietstory-routing && \
+            docker build -t dietstory-django-tests -f Dockerfile.test .
+>>>>>>> 2fde8d6dfee185374c9688eb85a4b412029f331c
       - run: # Run Dietstory Django Server Tests
           name: Run Dietstory Django Server Tests
           path: dietstory-routing
           command: |
+<<<<<<< HEAD
             docker run -p 8000:8000 benjixd/dietstory-django-tests
+=======
+            docker run -p 8000:8000 dietstory-django-tests
+>>>>>>> 2fde8d6dfee185374c9688eb85a4b412029f331c
       - persist_to_workspace: # Persist required files for deployment
           root: ~/project
           paths: dietstory-routing
@@ -57,6 +66,7 @@ jobs:
           command: |
             echo "Downloading dev SECRET_CONFIG_FILE.json from S3." && \
             aws s3 cp s3://dietstory-api-server-assets/dev/config/dietstory_secret_config.json \
+<<<<<<< HEAD
                       dietstory-routing
       - run:
           name: Build Docker Image
@@ -76,6 +86,22 @@ jobs:
          name: Clean up secrets
          command: |
             rm dietstory-routing/dietstory_secret_config.json
+=======
+            dietstory-routing/dietstory-routing
+      - run:
+          name: Build and push Dietstory Django Dev image
+          command: |
+            TAG=0.1.$CIRCLE_BUILD_NUM
+            echo "Building Dietstory Django Dev image" && \
+            cd dietstory-routing && \
+            docker build -t dietstory/dietstory-django-dev:$TAG -f Dockerfile.prod . && \
+            echo "$DOCKER_PASS" | docker login --username $DOCKER_USER --password-stdin && \
+            docker push dietstory/dietstory-django-dev:$TAG
+      - run:
+         name: Clean up secrets
+         command: |
+            rm dietstory-routing/dietstory-routing/dietstory_secret_config.json
+>>>>>>> 2fde8d6dfee185374c9688eb85a4b412029f331c
       - run:
           name: Compress Artifacts
           command: |
@@ -109,6 +135,7 @@ jobs:
           command: |
             echo "Downloading prod SECRET_CONFIG_FILE.json from S3." && \
             aws s3 cp s3://dietstory-api-server-assets/prod/config/dietstory_secret_config.json \
+<<<<<<< HEAD
                       dietstory-routing
       - run:
          name: Build Docker image
@@ -119,6 +146,22 @@ jobs:
          name: Clean up secrets
          command: |
             rm dietstory-routing/dietstory_secret_config.json
+=======
+            dietstory-routing/dietstory-routing
+      - run:
+         name: Build and push Dietstory Django Prod image
+         command: |
+           TAG=0.1.$CIRCLE_BUILD_NUM
+           echo "Building Dietstory Django Prod image" && \
+           cd dietstory-routing && \
+           docker build -t dietstory/dietstory-django-prod:$TAG -f Dockerfile.prod . && \
+           echo "$DOCKER_PASS" | docker login --username $DOCKER_USER --password-stdin && \
+           docker push dietstory/dietstory-django-prod:$TAG
+      - run:
+         name: Clean up secrets
+         command: |
+            rm dietstory-routing/dietstory-routing/dietstory_secret_config.json
+>>>>>>> 2fde8d6dfee185374c9688eb85a4b412029f331c
       - run:
           name: Compress Artifacts
           command: |
