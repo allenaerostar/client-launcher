@@ -503,14 +503,6 @@ class DisconnectViewTest(TestCase):
                 'character_name': 'long_character__name',
             })
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        
-
-
-
-
-
-
-
 
 
 

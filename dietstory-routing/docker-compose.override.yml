@@ -1,0 +1,17 @@
+# Dev override configuration for docker-compose.
+# Brings up the Dietstory Django server for local development.
+# - Builds the image defined in Dockerfile.dev
+# - Mounts the root directory to the image to allow local changes to be reflected in the image.
+# - Exposes the service on port 8000.
+version: '3.7'
+services:
+    dietstory-django:
+        build:
+            context: .
+            dockerfile: Dockerfile.dev
+        ports:
+            - "8000:8000"
+        volumes:
+            # Mount project root to enable hot code reloading
+            # for local development.
+            - .:/mnt
