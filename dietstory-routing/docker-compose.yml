@@ -1,0 +1,6 @@
+# Base configuration for docker-compose
+# 
+version: '3.7'
+services:
+    dietstory-django:
+        image: dietstory/dietstory-django-prod:latest

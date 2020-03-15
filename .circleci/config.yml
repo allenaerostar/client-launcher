@@ -60,11 +60,14 @@ jobs:
             aws s3 cp s3://dietstory-api-server-assets/dev/config/dietstory_secret_config.json \
             dietstory-routing/dietstory-routing
       - run:
-          name: Build Docker Image
+          name: Build and push Dietstory Django Dev image
           command: |
-            echo "Building docker image" && \
+            TAG=0.1.$CIRCLE_BUILD_NUM
+            echo "Building Dietstory Django Dev image" && \
             cd dietstory-routing && \
-            docker build -t dietstory-django -f Dockerfile.prod .
+            docker build -t dietstory/dietstory-django-dev:$TAG -f Dockerfile.prod . && \
+            echo "$DOCKER_PASS" | docker login --username $DOCKER_USER --password-stdin && \
+            docker push dietstory/dietstory-django-dev:$TAG
       - run:
          name: Clean up secrets
          command: |
@@ -104,11 +107,14 @@ jobs:
             aws s3 cp s3://dietstory-api-server-assets/prod/config/dietstory_secret_config.json \
             dietstory-routing/dietstory-routing
       - run:
-         name: Build Docker image
+         name: Build and push Dietstory Django Prod image
          command: |
-           echo "Building docker image" && \
+           TAG=0.1.$CIRCLE_BUILD_NUM
+           echo "Building Dietstory Django Prod image" && \
            cd dietstory-routing && \
-           docker build -t dietstory-django -f Dockerfile.prod .
+           docker build -t dietstory/dietstory-django-prod:$TAG -f Dockerfile.prod . && \
+           echo "$DOCKER_PASS" | docker login --username $DOCKER_USER --password-stdin && \
+           docker push dietstory/dietstory-django-prod:$TAG
       - run:
          name: Clean up secrets
          command: |

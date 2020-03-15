@@ -1,0 +1,12 @@
+# Production configuration for docker-compose.
+version: '3.7'
+services:
+    dietstory-django:
+        container_name: "dietstory-django-server"
+        ports:
+            - "8000:8000"
+        deploy:
+            restart_policy:
+                # Always restart the container if it is stopped,
+                # unless it was stopped manually.
+                condition: unless-stopped

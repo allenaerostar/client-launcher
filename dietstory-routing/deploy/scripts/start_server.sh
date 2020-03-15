@@ -1,11 +1,9 @@
 #!/bin/bash
 
-SERVER_NAME=dietstory-django-server
-
 source ~/.bashrc
 
-# Run Server
-sudo  docker run -d \
-	-p 8000:8000 \
-	--name=${SERVER_NAME} \
-	benjixd/dietstory-django-server
+# Runs the server by overriding base docker compose 
+# configurations with production configs.
+sudo docker-compose -f \
+	../../docker-compose.yml -f \
+	../../docker-compose.prod.yml up

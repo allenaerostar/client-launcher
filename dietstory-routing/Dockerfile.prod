@@ -19,4 +19,4 @@ RUN apk add --no-cache build-base \
 	&& apk del build-base
 
 # Run Django project
-CMD gunicorn --timeout=30 --workers=4 --bind 0.0.0.0:8000 django_app.wsgi:application
+CMD gunicorn --timeout=30 --workers=4 --bind 0.0.0.0:8000 dietstory-routing.wsgi:application
