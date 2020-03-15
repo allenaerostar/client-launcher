@@ -60,4 +60,3 @@ def add_game_version(major_ver, minor_ver, live_by):
 
     except Exception as e:
         print(e)
-        raise e

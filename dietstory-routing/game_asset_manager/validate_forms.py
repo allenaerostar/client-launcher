@@ -94,13 +94,6 @@ class SubmitGameFileForm(GameMetadataForm):
         FileExtensionValidator(allowed_extensions=['.exe', '.wz']),
         MaxSizeValidator(max_size=5368709120)])
 
-class SubmitGameFileForm(GameMetadataForm):
-    file_hash = forms.CharField(max_length=50)
-    file_name = forms.CharField(min_length=1, max_length=50)
-    file = forms.FileField(validators=[
-        FileExtensionValidator(allowed_extensions=['.exe', '.wz']),
-        MaxSizeValidator(max_size=5368709120)])
-
 
 
 
