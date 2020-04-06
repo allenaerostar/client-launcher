@@ -23,7 +23,7 @@ def update_login_bonus(account_id):
         if login_bonus_for_account.reward_month != current_month:
             try:
                 login_bonus_for_account.reward_month = current_month
-                login_bonus_for_account.reward_num = 0
+                login_bonus_for_account.reward_num = 1
                 login_bonus_for_account.save()
             except IOError as e:
                 print("Resetting monthly bonus failed")
