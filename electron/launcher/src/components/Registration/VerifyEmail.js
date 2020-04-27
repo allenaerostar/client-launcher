@@ -1,4 +1,4 @@
-import React, { useEfect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { userActions } from '_actions';
@@ -8,7 +8,7 @@ const ipc = window.require('electron').ipcRenderer;
 
 const VerifiedEmail = props => {
 
-  useEfect(() => {
+  useEffect(() => {
     ipc.on('http-verify-email-success', (e, res) => {
       props.verifyEmailSuccess();
     });
@@ -28,7 +28,7 @@ const VerifiedEmail = props => {
       ipc.removeAllListeners('http-resend-verification-email-success');
       ipc.removeAllListeners('http-resend-verification-email-fail');
     }
-  }, [])
+  }, []);
 
   const [postData, setPostData] = useState({
     'email': props.auth.user.email,
