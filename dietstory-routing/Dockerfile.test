@@ -1,6 +1,6 @@
 FROM python:3.7.5-alpine
 
-MAINTAINER Benjamin Zhao <yl4zhao@edu.uwaterloo.ca>
+LABEL maintainer="Benjamin Zhao <yl4zhao@edu.uwaterloo.ca>"
 
 ENV CONFIG_DIR=/tmp/config/
 
@@ -13,9 +13,12 @@ RUN apk add --no-cache build-base \
 	&& pip install --no-cache-dir -r ${CONFIG_DIR}/requirements.txt \
 	&& apk del build-base
 
-# Run mounted Django project
-CMD cd /mnt \ 
-	&& echo '{ \
+RUN mkdir /code
+WORKDIR /code
+COPY . /code/
+
+# Generate config file for tests
+RUN echo '{ \
 		"SECRET_KEY": "hello_world", \
 		"DEBUG": true, \
         "LOG_LEVEL_DEV": "DEBUG", \

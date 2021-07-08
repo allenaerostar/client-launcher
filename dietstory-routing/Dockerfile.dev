@@ -1,6 +1,6 @@
 FROM python:3.7.5-alpine
 
-MAINTAINER Benjamin Zhao <yl4zhao@edu.uwaterloo.ca>
+LABEL maintainer="Benjamin Zhao <yl4zhao@edu.uwaterloo.ca>"
 
 ENV CONFIG_DIR=/tmp/config/
 
@@ -15,4 +15,4 @@ RUN apk add --no-cache build-base \
 
 # Run mounted Django project
 CMD cd /mnt \
-	&& python -u manage.py runserver 0.0.0.0:8000 --noreload 
+	&& python -u manage.py runserver 0.0.0.0:8000 --noreload

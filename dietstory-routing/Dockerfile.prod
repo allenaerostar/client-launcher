@@ -1,0 +1,22 @@
+FROM python:3.7.5-alpine
+
+LABEL maintainer="Benjamin Zhao <yl4zhao@edu.uwaterloo.ca>"
+
+ENV CONFIG_DIR=/tmp/config/
+
+# Add Project Requirements
+COPY requirements.txt ${CONFIG_DIR}
+
+# Copy Project source code
+COPY . /code
+
+WORKDIR /code
+
+# Install Python Packages Dependencies
+RUN apk add --no-cache build-base \
+	&& apk add --no-cache mariadb-connector-c-dev \
+	&& pip install --no-cache-dir -r ${CONFIG_DIR}/requirements.txt \
+	&& apk del build-base
+
+# Run Django project
+CMD gunicorn --timeout=30 --workers=1 --threads=3 --bind 0.0.0.0:8000 dietstory-routing.wsgi:application
