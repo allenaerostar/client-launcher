@@ -71,7 +71,7 @@
     ]
   },
   "devDependencies": {
-    "electron": "^6.1.7",
+    "electron": "^15.5.5",
     "electron-builder": "^22.1.0",
     "electron-rebuild": "^1.8.8",
     "redux-devtools": "^3.5.0"
